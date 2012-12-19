@@ -1,5 +1,0 @@
-<?php
-// Italian
-return array (
-	
-);

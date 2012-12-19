@@ -1,5 +1,0 @@
-<?php
-// German
-return array (
-			
-);
