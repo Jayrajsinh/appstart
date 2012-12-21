@@ -67,34 +67,43 @@ class Contact_Form_Contact extends Standard_Form {
 
 		//PLZ
 		$plz = $this->createElement ( "text", "plz", array (
-				'label' => 'Phone 1:',
+				'label' => 'PLZ',
 				'size' => '20',
 				'filters' => array (
 						'StringTrim' 
 				) 
 		) );
 		$this->addElement ( $plz );
+		
+		//country
+		$countryandcontinents =  Zend_Locale::getTranslationList('Territory','en');
+		asort($countryandcontinents);
+		foreach($countryandcontinents as $key=>$value){
+			if(is_numeric($key)) continue;
+			$countries[$value] = $value;
+		}
+		$country = $this->createElement('select','country',array(
+				'label' => 'Country',
+				'Multioptions' => $countries,
+				'validators' => array(
+						array(
+								$notEmptyValidator,
+								true
+							)
+						)
+		));
+		$this->addElement($country);
 
 		//City
-		$city = $this->createElement ( "text", "phone_1", array (
-				'label' => 'Phone 1:',
+		$city = $this->createElement ( "text", "city", array (
+				'label' => 'City:',
 				'size' => '20',
 				'filters' => array (
 						'StringTrim' 
 				) 
 		) );
-		$this->addElement ( $phone_1 );
+		$this->addElement ( $city );
 
-		//country
-		$phone_1 = $this->createElement ( "text", "phone_1", array (
-				'label' => 'Phone 1:',
-				'size' => '20',
-				'filters' => array (
-						'StringTrim' 
-				) 
-		) );
-		$this->addElement ( $phone_1 );
-		
 		// Phone 1
 		$phone_1 = $this->createElement ( "text", "phone_1", array (
 				'label' => 'Phone 1:',
@@ -213,6 +222,7 @@ class Contact_Form_Contact extends Standard_Form {
 		//Information
 		$information = $this->createElement('textarea', 'information',array(
 				'label' => "Information",
+				'id' => "content_textarea",
 				'filters' => array (
 						'StringTrim'
 				)

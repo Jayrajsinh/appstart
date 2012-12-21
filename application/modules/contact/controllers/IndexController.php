@@ -118,6 +118,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 	}
 	public function editAction() {
 		// action body
+		$edit = true;
 		$form = new Contact_Form_Contact ();
 		$request = $this->getRequest ();
 		$img_uri = "resource/contact/images";
@@ -148,7 +149,14 @@ class Contact_IndexController extends Zend_Controller_Action {
 				$timings = $dataDetails [0]['timings'];
 				$form->populate ( $dataDetails [0] );
 				$logoname = $dataDetails [0] ["logo"];
-				$this->view->logo_path = $this->view->baseUrl($img_uri ."/" . $logoname);
+				$this->view->logo_path = $this->view->baseUrl($image_uri ."/" . $logoname);
+				$image_uri = "resource/module-cms/thumb/";
+				$ext_image_path = array_pop ( explode ( ".",$logoname ) );
+				if ($logoname!="" && file_exists ( $image_uri . str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $logoname ) )) {
+					$logoname = str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $logoname );
+					$this->view->image_thumb = $this->view->baseUrl($image_uri ."/" . $logoname);
+				}
+				$this->view->edit = $edit;
 				$this->view->timings = $timings;
 			}
 			foreach ( $form->getElements () as $element ) {
@@ -166,7 +174,6 @@ class Contact_IndexController extends Zend_Controller_Action {
 		} else {
 			$this->_redirect ( '/' );
 		}
-		
 		$this->view->form = $form;
 		$this->view->assign ( array (
 				"partial" => "index/partials/edit.phtml" 
@@ -180,6 +187,8 @@ class Contact_IndexController extends Zend_Controller_Action {
 		$response = array ();
 		
 		if ($this->_request->isPost ()) {
+			$source_dir = Standard_Functions::getResourcePath () . "contact/images/";
+			$upload_dir = Standard_Functions::getResourcePath () . "contact/thumb/";
 			if ($request->getParam ( "upload", "" ) != "") {
 				$adapter = new Zend_File_Transfer_Adapter_Http ();
 				$adapter->setDestination ( Standard_Functions::getResourcePath () . "contact/images" );
@@ -208,7 +217,6 @@ class Contact_IndexController extends Zend_Controller_Action {
 					$user_id = Standard_Functions::getCurrentUser ()->user_id;
 					$date_time = Standard_Functions::getCurrentDateTime ();
 					$logo_path = $request->getParam ( "logo_path", "" );
-					
 					$mapper = new Contact_Model_Mapper_Contact ();
 					$mapper->getDbTable ()->getAdapter ()->beginTransaction ();
 					
@@ -229,13 +237,22 @@ class Contact_IndexController extends Zend_Controller_Action {
 						$mapperLanguage = new Admin_Model_Mapper_CustomerLanguage ();
 						$modelLanguages = $mapperLanguage->fetchAll ( "customer_id = " . $customer_id );
 						if (is_array ( $modelLanguages )) {
+							$is_uploaded_image = false;
 							foreach ( $modelLanguages as $languages ) {
 								$modelDetails = new Contact_Model_ContactDetail ( $arrFormValues );
 								$modelDetails->setContactId ( $contact_id );
 								$modelDetails->setLanguageId ( $languages->getLanguageId () );
 								$modelDetails->setTimings ( $timings );
-								if ($logo_path != "") {
-									$modelDetails->setLogo ( $logo_path );
+								$logo_path = $request->getParam("logo_path");
+								if (! is_dir ( $upload_dir )) {
+									mkdir ( $upload_dir, 755 );
+								}
+								if (!$is_uploaded_image && $logo_path != "") {
+									$filename = $this->moveUploadFile ( $source_dir, $upload_dir, $logo_path );
+									$modelDetails->setLogo ($filename);
+									$is_uploaded_image = true;
+								} else if($request->getParam ( "logo_path" ,null) !== null) {
+									$modelDetails->setLogo ($filename);
 								}
 								$modelDetails->setCreatedBy ( $user_id );
 								$modelDetails->setCreatedAt ( $date_time );
@@ -246,7 +263,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 							}
 						}
 					} else {
-						// Update record
+						// Update record]
 						$model->setLastUpdatedBy ( $user_id );
 						$model->setLastUpdatedAt ( $date_time );
 						$model = $model->save ();
@@ -255,14 +272,23 @@ class Contact_IndexController extends Zend_Controller_Action {
 						$contact_id = $model->get ( "contact_id" );
 						
 						$modelDetails = new Contact_Model_ContactDetail ( $arrFormValues );
-						if ($logo_path != "") {
-							$modelDetails->setLogo ( $logo_path );
+						if ($logo_path == "deleted" ) {
+							$modelDetails->setLogo ("");
+						}
+						echo $logo_path;
+						die();	
+						if ($logo_path != "" && $logo_path != "deleted") {
+							$filename = $this->moveUploadFile ( $source_dir, $upload_dir, $logo_path );
+							$modelDetails->setLogo ($filename);
+							$is_uploaded_image = true;
 						}
 						$modelDetails->setTimings ( $timings );
 						$modelDetails->setCreatedBy ( $user_id );
 						$modelDetails->setCreatedAt ( $date_time );
 						$modelDetails->setLastUpdatedBy ( $user_id );
 						$modelDetails->setLastUpdatedAt ( $date_time );
+						print_r($modelDetails);
+						die();
 						$modelDetails = $modelDetails->save ();
 					}
 					
@@ -453,5 +479,85 @@ class Contact_IndexController extends Zend_Controller_Action {
 		
 		$jsonGrid = Zend_Json::encode ( $response );
 		$this->_response->appendBody ( $jsonGrid );
+	}
+
+	private function moveUploadFile($source_dir, $dest_dir, $filename) {
+		$source_file_name = $filename;
+		$expension = array_pop ( explode ( ".", $filename ) );
+		try {
+			$i = 1;
+			while ( file_exists ( $dest_dir . $filename ) ) {
+				$filename = str_replace ( "." . $expension, "_" . $i ++ . "." . $expension, $source_file_name );
+			}
+			if (! is_dir ( $dest_dir )) {
+				mkdir ( $dest_dir, 755 );
+			}
+			while(!file_exists($source_dir . $source_file_name)) {
+			}
+				
+			if (copy ( $source_dir . $source_file_name, $dest_dir . $filename )) {
+				
+			}
+			$thumbname = str_replace ( "." . $expension, "_thumb." . $expension, $filename );
+			$this->generateThumb ( $dest_dir . $filename, $dest_dir . $thumbname, 0, 75 );
+
+		} catch ( Exception $ex ) {
+				
+		}
+		return $filename;
+	}
+	
+	public function generateThumb($src, $dest, $destWidth = 0, $destHeight = 0) {
+		/* read the source image */
+		$stype = array_pop ( explode ( ".", $src ) );
+		switch ($stype) {
+			case 'gif' :
+				$source_image = imagecreatefromgif ( $src );
+				break;
+			case 'jpg' :
+			case 'jpeg' :
+				$source_image = imagecreatefromjpeg ( $src );
+				break;
+			case 'png' :
+				$source_image = imagecreatefrompng ( $src );
+				break;
+		}
+	
+		$width = imagesx ( $source_image );
+		$height = imagesy ( $source_image );
+	
+		$desired_height = 0;
+		$desired_width = 0;
+		if ($destWidth == 0) {
+			$desired_height = $destHeight;
+			$desired_width = floor ( $width * ($destHeight / $height) );
+		} else {
+			$desired_height = floor ( $destHeight * ($destWidth / $width) );
+			$desired_width = $destWidth;
+		}
+	
+		/* create a new, "virtual" image */
+		$virtual_image = imagecreatetruecolor ( $desired_width, $desired_height );
+		
+		imagealphablending($virtual_image, false);
+		imagesavealpha($virtual_image, true);
+		
+		imagealphablending($source_image, true);
+		/* copy source image at a resized size */
+		imagecopyresampled ( $virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height );
+	
+		/* create the physical thumbnail image to its destination */
+		switch ($stype) {
+			case 'gif' :
+				imagegif ( $virtual_image, $dest );
+				break;
+			case 'jpg' :
+			case 'jpeg' :
+				imagejpeg ( $virtual_image, $dest );
+				break;
+			case 'png' :
+				imagepng ( $virtual_image, $dest,0 );
+				break;
+		}
 	}
 }
