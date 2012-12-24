@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2012-12-19 20:29:39
+Date: 2012-12-24 19:59:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -354,7 +354,7 @@ INSERT INTO `customer_module` VALUES ('331', '11', '31', '11', '0', '1', null, n
 INSERT INTO `customer_module` VALUES ('332', '12', '31', '12', '0', '1', null, null, null, 'NO');
 INSERT INTO `customer_module` VALUES ('333', '13', '18', '13', '0', '1', null, null, null, null);
 INSERT INTO `customer_module` VALUES ('334', '13', '21', '13', '0', '1', null, null, null, null);
-INSERT INTO `customer_module` VALUES ('335', '13', '1', '13', '0', '1', null, null, null, null);
+INSERT INTO `customer_module` VALUES ('335', '13', '1', '13', '0', '1', null, null, '2012-12-24 13:42:04', 'YES');
 INSERT INTO `customer_module` VALUES ('336', '13', '5', '13', '0', '1', null, null, null, null);
 INSERT INTO `customer_module` VALUES ('337', '13', '8', '13', '0', '1', null, null, null, null);
 INSERT INTO `customer_module` VALUES ('338', '13', '17', '13', '0', '1', null, null, null, null);
@@ -1106,7 +1106,7 @@ CREATE TABLE `module_cms` (
   `created_by` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`module_cms_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_cms
@@ -1116,6 +1116,7 @@ INSERT INTO `module_cms` VALUES ('6', '8', '0', '1', '2', '9', '2012-11-09 15:45
 INSERT INTO `module_cms` VALUES ('8', '8', '5', '1', '1', '9', '2012-11-09 15:47:09', '9', '2012-11-09 15:47:09');
 INSERT INTO `module_cms` VALUES ('9', '8', '8', '1', '1', '9', '2012-11-09 15:48:05', '9', '2012-11-09 15:48:05');
 INSERT INTO `module_cms` VALUES ('11', '1', '0', '1', '3', '2', '2012-12-04 17:03:58', '2', '2012-12-04 17:02:42');
+INSERT INTO `module_cms` VALUES ('12', '1', '0', '1', '4', '2', '2012-12-20 18:27:36', '2', '2012-12-20 18:27:36');
 
 -- ----------------------------
 -- Table structure for `module_cms_1`
@@ -1175,7 +1176,7 @@ CREATE TABLE `module_cms_detail` (
   `thumb` varchar(128) DEFAULT NULL,
   `content` text,
   PRIMARY KEY (`module_cms_detail_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_cms_detail
@@ -1198,6 +1199,8 @@ INSERT INTO `module_cms_detail` VALUES ('35', '9', '3', 'C101 Bentley', 'Blue hi
 INSERT INTO `module_cms_detail` VALUES ('36', '9', '4', 'C101 Bentley', 'Blue hills_thumb.jpg', '<p>I am child of bentley</p>');
 INSERT INTO `module_cms_detail` VALUES ('39', '11', '1', 'qew', 'Winter_6.jpg', '<p>ewq</p>');
 INSERT INTO `module_cms_detail` VALUES ('40', '11', '2', 'qew', 'Sunset.jpg', '<p>ewq</p>');
+INSERT INTO `module_cms_detail` VALUES ('41', '12', '1', 'I am the king of this wholw whole Whore Whore OMG!\'s!', '', '');
+INSERT INTO `module_cms_detail` VALUES ('42', '12', '2', 'I am the king of this wholw whole Whore Whore OMG!\'s!', '', '');
 
 -- ----------------------------
 -- Table structure for `module_cms_detail_1`
@@ -1263,7 +1266,7 @@ CREATE TABLE `module_contact` (
   CONSTRAINT `fk_contact_created` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`),
   CONSTRAINT `fk_contact_update` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`user_id`),
   CONSTRAINT `fk_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_contact
@@ -1273,6 +1276,9 @@ INSERT INTO `module_contact` VALUES ('4', '1', '1', '2', '1', '2012-10-04 15:39:
 INSERT INTO `module_contact` VALUES ('5', '5', '1', '1', '6', '2012-09-28 18:28:06', '6', '2012-09-28 18:28:06');
 INSERT INTO `module_contact` VALUES ('32', '21', '1', '1', '11', '2012-11-21 17:32:30', '11', '2012-11-21 17:28:34');
 INSERT INTO `module_contact` VALUES ('49', '1', '1', '3', '2', '2012-12-19 18:26:30', '2', '2012-12-19 18:23:30');
+INSERT INTO `module_contact` VALUES ('71', '1', '1', '4', '2', '2012-12-21 18:19:06', '2', '2012-12-21 18:17:36');
+INSERT INTO `module_contact` VALUES ('72', '1', '1', '5', '2', '2012-12-21 18:22:15', '2', '2012-12-21 18:22:15');
+INSERT INTO `module_contact` VALUES ('73', '1', '1', '6', '2', '2012-12-24 12:51:14', '2', '2012-12-21 18:28:27');
 
 -- ----------------------------
 -- Table structure for `module_contact_detail`
@@ -1313,7 +1319,7 @@ CREATE TABLE `module_contact_detail` (
   CONSTRAINT `fk_cd_language` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`),
   CONSTRAINT `fk_cd_updated` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`user_id`),
   CONSTRAINT `fk_contact` FOREIGN KEY (`contact_id`) REFERENCES `module_contact` (`contact_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_contact_detail
@@ -1331,6 +1337,12 @@ INSERT INTO `module_contact_detail` VALUES ('97', '32', '3', 'zxc', '', null, nu
 INSERT INTO `module_contact_detail` VALUES ('98', '32', '4', 'zxc', '', null, null, null, '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node><day0><open_1>09:00 AM</open_1><close_1>06:00 PM</close_1><comment1></comment1><closed_1>0</closed_1></day0><day1><open_2>09:00 AM</open_2><close_2>06:00 PM</close_2><comment2></comment2><closed_2>0</closed_2></day1><day2><open_3>09:00 AM</open_3><close_3>06:00 PM</close_3><comment3></comment3><closed_3>0</closed_3></day2><day3><open_4>09:00 AM</open_4><close_4>06:00 PM</close_4><comment4></comment4><closed_4>0</closed_4></day3><day4><open_5>09:00 AM</open_5><close_5>06:00 PM</close_5><comment5></comment5><closed_5>0</closed_5></day4><day5><open_6>09:00 AM</open_6><close_6>06:00 PM</close_6><comment6></comment6><closed_6>0</closed_6></day5><day6><open_7>09:00 AM</open_7><close_7>06:00 PM</close_7><comment7></comment7><closed_7>0</closed_7></day6></node>', null, '', '11', '2012-11-21 17:28:34', '11', '2012-11-21 17:28:34');
 INSERT INTO `module_contact_detail` VALUES ('131', '49', '1', 'blankHitler', '', null, null, null, '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node><record><order>7</order><day>7</day><from>07:07</from><to>07:07</to></record><record><order>9</order><day>9</day><from>09:09</from><to>09:26</to></record></node>', '/appstart/public/resource/contact/images/', '', '2', '2012-12-19 18:26:30', '2', '2012-12-19 18:26:30');
 INSERT INTO `module_contact_detail` VALUES ('132', '49', '2', 'blankHitler', '', null, null, null, '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node><record><order>1</order><day>1</day><from>01:01</from><to>11:23</to></record></node>', null, '', '2', '2012-12-19 18:23:30', '2', '2012-12-19 18:23:30');
+INSERT INTO `module_contact_detail` VALUES ('157', '71', '1', 'asdfgh', '', '', '', '0', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-21 18:19:06', '2', '2012-12-21 18:19:06');
+INSERT INTO `module_contact_detail` VALUES ('158', '71', '2', 'asdfgh', '', '', '', '0', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', 'Sunset.jpg', '', '2', '2012-12-21 18:17:36', '2', '2012-12-21 18:17:36');
+INSERT INTO `module_contact_detail` VALUES ('159', '72', '1', 'hdfghff', '', '', 'birju', '2', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-21 18:22:15', '2', '2012-12-21 18:22:15');
+INSERT INTO `module_contact_detail` VALUES ('160', '72', '2', 'hdfghff', '', '', 'birju', '2', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-21 18:22:15', '2', '2012-12-21 18:22:15');
+INSERT INTO `module_contact_detail` VALUES ('161', '73', '1', '123', '', '380052', 'ahmedabadEdited', 'Angola', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-24 12:51:14', '2', '2012-12-24 12:51:14');
+INSERT INTO `module_contact_detail` VALUES ('162', '73', '2', '123', '', '', 'ahmedabad', 'Angola', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-21 18:28:27', '2', '2012-12-21 18:28:27');
 
 -- ----------------------------
 -- Table structure for `module_document`
@@ -1475,9 +1487,6 @@ CREATE TABLE `module_events_detail` (
   `title` text,
   `description` text,
   `image` varchar(128) DEFAULT NULL,
-  `street` varchar(255) DEFAULT NULL,
-  `zip` varchar(64) DEFAULT NULL,
-  `country` varchar(64) DEFAULT NULL,
   `notes` text,
   `last_updated_by` int(11) DEFAULT NULL,
   `last_updated_at` datetime DEFAULT NULL,
@@ -1493,14 +1502,30 @@ CREATE TABLE `module_events_detail` (
 -- ----------------------------
 -- Records of module_events_detail
 -- ----------------------------
-INSERT INTO `module_events_detail` VALUES ('1', '1', '1', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In English', 'Test Event In English', 'appstart-logo.png', null, null, null, null, '1', '2012-10-08 17:33:27', '1', '2012-10-08 17:33:27');
-INSERT INTO `module_events_detail` VALUES ('2', '1', '2', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In French', 'Test Event In French', 'appstart-logo.png', null, null, null, null, '1', '2012-10-08 17:34:10', '1', '2012-10-08 17:34:10');
-INSERT INTO `module_events_detail` VALUES ('3', '2', '1', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In English', 'Test Event 2 In English', 'appstart-admin.png', null, null, null, null, '1', '2012-10-08 17:36:52', '1', '2012-10-08 17:36:52');
-INSERT INTO `module_events_detail` VALUES ('4', '2', '2', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In French', 'Test Event 2 In French', 'appstart-admin.png', null, null, null, null, '1', '2012-10-08 17:35:44', '1', '2012-10-08 17:35:44');
-INSERT INTO `module_events_detail` VALUES ('37', '11', '1', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '', '', '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
-INSERT INTO `module_events_detail` VALUES ('38', '11', '2', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '', '', '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
-INSERT INTO `module_events_detail` VALUES ('39', '11', '3', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '', '', '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
-INSERT INTO `module_events_detail` VALUES ('40', '11', '4', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '', '', '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('1', '1', '1', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In English', 'Test Event In English', 'appstart-logo.png', null, '1', '2012-10-08 17:33:27', '1', '2012-10-08 17:33:27');
+INSERT INTO `module_events_detail` VALUES ('2', '1', '2', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In French', 'Test Event In French', 'appstart-logo.png', null, '1', '2012-10-08 17:34:10', '1', '2012-10-08 17:34:10');
+INSERT INTO `module_events_detail` VALUES ('3', '2', '1', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In English', 'Test Event 2 In English', 'appstart-admin.png', null, '1', '2012-10-08 17:36:52', '1', '2012-10-08 17:36:52');
+INSERT INTO `module_events_detail` VALUES ('4', '2', '2', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In French', 'Test Event 2 In French', 'appstart-admin.png', null, '1', '2012-10-08 17:35:44', '1', '2012-10-08 17:35:44');
+INSERT INTO `module_events_detail` VALUES ('37', '11', '1', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('38', '11', '2', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('39', '11', '3', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('40', '11', '4', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+
+-- ----------------------------
+-- Table structure for `module_events_location`
+-- ----------------------------
+DROP TABLE IF EXISTS `module_events_location`;
+CREATE TABLE `module_events_location` (
+  `module_events_detail_id` int(11) NOT NULL,
+  `address` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `plz` varchar(25) CHARACTER SET utf8 DEFAULT NULL,
+  `country` varchar(25) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`module_events_detail_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of module_events_location
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `module_home_wallpaper`
@@ -1939,6 +1964,51 @@ INSERT INTO `module_image_gallery_detail_1` VALUES ('22', '12', '2', 'qwe1', '<p
 INSERT INTO `module_image_gallery_detail_1` VALUES ('23', '13', '1', 'qwe', '<p>zxc</p>', 'Winter.jpg', null, null);
 
 -- ----------------------------
+-- Table structure for `module_music`
+-- ----------------------------
+DROP TABLE IF EXISTS `module_music`;
+CREATE TABLE `module_music` (
+  `module_music_id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) DEFAULT NULL,
+  `status` tinyint(4) DEFAULT NULL,
+  `order` int(11) DEFAULT NULL,
+  `last_updated_by` int(11) DEFAULT NULL,
+  `last_updated_at` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`module_music_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Records of module_music
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `module_music_detail`
+-- ----------------------------
+DROP TABLE IF EXISTS `module_music_detail`;
+CREATE TABLE `module_music_detail` (
+  `module_music_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `module_music_id` int(11) DEFAULT NULL,
+  `language_id` int(11) DEFAULT NULL,
+  `title` varchar(120) DEFAULT NULL,
+  `artist` varchar(120) DEFAULT NULL,
+  `album` varchar(120) DEFAULT NULL,
+  `track_url` varchar(256) DEFAULT NULL,
+  `preview_url` varchar(256) DEFAULT NULL,
+  `album_art_url` varchar(256) DEFAULT NULL,
+  `last_updated_by` int(11) DEFAULT NULL,
+  `last_updated_at` date DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` date DEFAULT NULL,
+  PRIMARY KEY (`module_music_detail_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Records of module_music_detail
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `module_push_message`
 -- ----------------------------
 DROP TABLE IF EXISTS `module_push_message`;
@@ -2041,6 +2111,35 @@ CREATE TABLE `module_social_media` (
 
 -- ----------------------------
 -- Records of module_social_media
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `module_social_media_detail`
+-- ----------------------------
+DROP TABLE IF EXISTS `module_social_media_detail`;
+CREATE TABLE `module_social_media_detail` (
+  `module_social_media_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `module_social_media_id` int(11) NOT NULL,
+  `language_id` int(11) NOT NULL,
+  `social_media_type_id` int(11) NOT NULL,
+  `title` varchar(50) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `icon_path` varchar(255) DEFAULT NULL,
+  `last_updated_by` int(11) DEFAULT NULL,
+  `last_updated_at` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`module_social_media_detail_id`),
+  KEY `fk_smd_media_id` (`module_social_media_id`) USING BTREE,
+  KEY `fk_smd_language` (`language_id`) USING BTREE,
+  KEY `fk_smd_media_type` (`social_media_type_id`) USING BTREE,
+  CONSTRAINT `fk_smd_language` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`),
+  CONSTRAINT `fk_smd_media_id` FOREIGN KEY (`module_social_media_id`) REFERENCES `module_social_media` (`module_social_media_id`),
+  CONSTRAINT `fk_smd_media_type` FOREIGN KEY (`social_media_type_id`) REFERENCES `social_media_type` (`social_media_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Records of module_social_media_detail
 -- ----------------------------
 
 -- ----------------------------
@@ -2183,6 +2282,123 @@ INSERT INTO `resolution` VALUES ('5', '640x960', 'iPhone 4, iPhone 4S', '640', '
 INSERT INTO `resolution` VALUES ('6', '1136x640', 'iPhone 5', '1136', '640');
 INSERT INTO `resolution` VALUES ('7', '1024x768', 'iPad', '1024', '768');
 INSERT INTO `resolution` VALUES ('8', '480x800', 'Galaxy S, Galaxy S II', '480', '800');
+
+-- ----------------------------
+-- Table structure for `social_media_icon`
+-- ----------------------------
+DROP TABLE IF EXISTS `social_media_icon`;
+CREATE TABLE `social_media_icon` (
+  `social_media_icon_id` int(11) NOT NULL AUTO_INCREMENT,
+  `social_media_type_id` int(11) DEFAULT NULL,
+  `icon_path` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`social_media_icon_id`),
+  KEY `fk_smt_id` (`social_media_type_id`) USING BTREE,
+  CONSTRAINT `fk_smt_id` FOREIGN KEY (`social_media_type_id`) REFERENCES `social_media_type` (`social_media_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Records of social_media_icon
+-- ----------------------------
+INSERT INTO `social_media_icon` VALUES ('1', '1', 'facebook/fb_1.png');
+INSERT INTO `social_media_icon` VALUES ('2', '1', 'facebook/fb_2.png');
+INSERT INTO `social_media_icon` VALUES ('3', '1', 'facebook/fb_3.png');
+INSERT INTO `social_media_icon` VALUES ('4', '1', 'facebook/fb_4.png');
+INSERT INTO `social_media_icon` VALUES ('5', '1', 'facebook/fb_5.png');
+INSERT INTO `social_media_icon` VALUES ('6', '1', 'facebook/fb_6.png');
+INSERT INTO `social_media_icon` VALUES ('7', '1', 'facebook/fb_7.png');
+INSERT INTO `social_media_icon` VALUES ('8', '1', 'facebook/fb_8.png');
+INSERT INTO `social_media_icon` VALUES ('9', '1', 'facebook/fb_9.png');
+INSERT INTO `social_media_icon` VALUES ('10', '1', 'facebook/fb_10.png');
+INSERT INTO `social_media_icon` VALUES ('11', '1', 'facebook/fb_11.png');
+INSERT INTO `social_media_icon` VALUES ('12', '1', 'facebook/fb_12.png');
+INSERT INTO `social_media_icon` VALUES ('13', '1', 'facebook/fb_13.png');
+INSERT INTO `social_media_icon` VALUES ('14', '1', 'facebook/fb_14.png');
+INSERT INTO `social_media_icon` VALUES ('15', '1', 'facebook/fb_15.png');
+INSERT INTO `social_media_icon` VALUES ('16', '1', 'facebook/fb_16.png');
+INSERT INTO `social_media_icon` VALUES ('17', '1', 'facebook/fb_17.png');
+INSERT INTO `social_media_icon` VALUES ('18', '1', 'facebook/fb_18.png');
+INSERT INTO `social_media_icon` VALUES ('19', '1', 'facebook/fb_19.png');
+INSERT INTO `social_media_icon` VALUES ('20', '1', 'facebook/fb_20.png');
+INSERT INTO `social_media_icon` VALUES ('21', '1', 'facebook/fb_21.png');
+INSERT INTO `social_media_icon` VALUES ('22', '1', 'facebook/fb_22.png');
+INSERT INTO `social_media_icon` VALUES ('23', '2', 'twitter/twitter_1.png');
+INSERT INTO `social_media_icon` VALUES ('24', '2', 'twitter/twitter_2.png');
+INSERT INTO `social_media_icon` VALUES ('25', '2', 'twitter/twitter_3.png');
+INSERT INTO `social_media_icon` VALUES ('26', '2', 'twitter/twitter_4.png');
+INSERT INTO `social_media_icon` VALUES ('27', '2', 'twitter/twitter_5.png');
+INSERT INTO `social_media_icon` VALUES ('28', '2', 'twitter/twitter_6.png');
+INSERT INTO `social_media_icon` VALUES ('29', '2', 'twitter/twitter_7.png');
+INSERT INTO `social_media_icon` VALUES ('30', '2', 'twitter/twitter_8.png');
+INSERT INTO `social_media_icon` VALUES ('31', '2', 'twitter/twitter_9.png');
+INSERT INTO `social_media_icon` VALUES ('32', '2', 'twitter/twitter_10.png');
+INSERT INTO `social_media_icon` VALUES ('33', '2', 'twitter/twitter_11.png');
+INSERT INTO `social_media_icon` VALUES ('34', '2', 'twitter/twitter_12.png');
+INSERT INTO `social_media_icon` VALUES ('35', '2', 'twitter/twitter_13.png');
+INSERT INTO `social_media_icon` VALUES ('36', '2', 'twitter/twitter_14.png');
+INSERT INTO `social_media_icon` VALUES ('37', '2', 'twitter/twitter_15.png');
+INSERT INTO `social_media_icon` VALUES ('38', '2', 'twitter/twitter_16.png');
+INSERT INTO `social_media_icon` VALUES ('39', '2', 'twitter/twitter_17.png');
+INSERT INTO `social_media_icon` VALUES ('40', '2', 'twitter/twitter_18.png');
+INSERT INTO `social_media_icon` VALUES ('41', '2', 'twitter/twitter_19.png');
+INSERT INTO `social_media_icon` VALUES ('42', '2', 'twitter/twitter_20.png');
+INSERT INTO `social_media_icon` VALUES ('43', '2', 'twitter/twitter_21.png');
+INSERT INTO `social_media_icon` VALUES ('44', '2', 'twitter/twitter_22.png');
+INSERT INTO `social_media_icon` VALUES ('45', '2', 'twitter/twitter_23.png');
+INSERT INTO `social_media_icon` VALUES ('46', '2', 'twitter/twitter_24.png');
+INSERT INTO `social_media_icon` VALUES ('47', '2', 'twitter/twitter_25.png');
+INSERT INTO `social_media_icon` VALUES ('48', '2', 'twitter/twitter_26.png');
+INSERT INTO `social_media_icon` VALUES ('49', '2', 'twitter/twitter_27.png');
+INSERT INTO `social_media_icon` VALUES ('50', '2', 'twitter/twitter_28.png');
+INSERT INTO `social_media_icon` VALUES ('51', '2', 'twitter/twitter_29.png');
+INSERT INTO `social_media_icon` VALUES ('52', '2', 'twitter/twitter_30.png');
+INSERT INTO `social_media_icon` VALUES ('53', '3', 'LinkedIn/li_1.png');
+INSERT INTO `social_media_icon` VALUES ('54', '3', 'LinkedIn/li_2.png');
+INSERT INTO `social_media_icon` VALUES ('55', '3', 'LinkedIn/li_3.png');
+INSERT INTO `social_media_icon` VALUES ('56', '3', 'LinkedIn/li_4.png');
+INSERT INTO `social_media_icon` VALUES ('57', '3', 'LinkedIn/li_5.png');
+INSERT INTO `social_media_icon` VALUES ('58', '3', 'LinkedIn/li_6.png');
+INSERT INTO `social_media_icon` VALUES ('59', '3', 'LinkedIn/li_7.png');
+INSERT INTO `social_media_icon` VALUES ('60', '3', 'LinkedIn/li_8.png');
+INSERT INTO `social_media_icon` VALUES ('61', '3', 'LinkedIn/li_9.png');
+INSERT INTO `social_media_icon` VALUES ('62', '3', 'LinkedIn/li_10.png');
+INSERT INTO `social_media_icon` VALUES ('63', '3', 'LinkedIn/li_11.png');
+INSERT INTO `social_media_icon` VALUES ('64', '3', 'LinkedIn/li_12.png');
+INSERT INTO `social_media_icon` VALUES ('65', '3', 'LinkedIn/li_13.png');
+INSERT INTO `social_media_icon` VALUES ('66', '3', 'LinkedIn/li_14.png');
+INSERT INTO `social_media_icon` VALUES ('67', '3', 'LinkedIn/li_15.png');
+INSERT INTO `social_media_icon` VALUES ('68', '4', 'flickr/flickr_1.png');
+INSERT INTO `social_media_icon` VALUES ('69', '4', 'flickr/flickr_2.png');
+INSERT INTO `social_media_icon` VALUES ('70', '4', 'flickr/flickr_3.png');
+INSERT INTO `social_media_icon` VALUES ('71', '4', 'flickr/flickr_4.png');
+INSERT INTO `social_media_icon` VALUES ('72', '4', 'flickr/flickr_5.png');
+INSERT INTO `social_media_icon` VALUES ('73', '4', 'flickr/flickr_6.png');
+INSERT INTO `social_media_icon` VALUES ('74', '4', 'flickr/flickr_7.png');
+INSERT INTO `social_media_icon` VALUES ('75', '4', 'flickr/flickr_8.png');
+INSERT INTO `social_media_icon` VALUES ('76', '4', 'flickr/flickr_9.png');
+INSERT INTO `social_media_icon` VALUES ('77', '4', 'flickr/flickr_10.png');
+INSERT INTO `social_media_icon` VALUES ('78', '4', 'flickr/flickr_11.png');
+INSERT INTO `social_media_icon` VALUES ('79', '4', 'flickr/flickr_12.png');
+INSERT INTO `social_media_icon` VALUES ('80', '4', 'flickr/flickr_13.png');
+INSERT INTO `social_media_icon` VALUES ('81', '4', 'flickr/flickr_14.png');
+INSERT INTO `social_media_icon` VALUES ('82', '4', 'flickr/flickr_15.png');
+
+-- ----------------------------
+-- Table structure for `social_media_type`
+-- ----------------------------
+DROP TABLE IF EXISTS `social_media_type`;
+CREATE TABLE `social_media_type` (
+  `social_media_type_id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`social_media_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Records of social_media_type
+-- ----------------------------
+INSERT INTO `social_media_type` VALUES ('1', 'Facebook');
+INSERT INTO `social_media_type` VALUES ('2', 'Twitter');
+INSERT INTO `social_media_type` VALUES ('3', 'LinkedIn');
+INSERT INTO `social_media_type` VALUES ('4', 'Flickr');
 
 -- ----------------------------
 -- Table structure for `system_user`
