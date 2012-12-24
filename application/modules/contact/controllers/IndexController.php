@@ -149,8 +149,8 @@ class Contact_IndexController extends Zend_Controller_Action {
 				$timings = $dataDetails [0]['timings'];
 				$form->populate ( $dataDetails [0] );
 				$logoname = $dataDetails [0] ["logo"];
+				$image_uri = "resource/contact/thumb/";
 				$this->view->logo_path = $this->view->baseUrl($image_uri ."/" . $logoname);
-				$image_uri = "resource/module-cms/thumb/";
 				$ext_image_path = array_pop ( explode ( ".",$logoname ) );
 				if ($logoname!="" && file_exists ( $image_uri . str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $logoname ) )) {
 					$logoname = str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $logoname );
@@ -275,9 +275,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 						if ($logo_path == "deleted" ) {
 							$modelDetails->setLogo ("");
 						}
-						echo $logo_path;
-						die();	
-						if ($logo_path != "" && $logo_path != "deleted") {
+						if ($logo_path != "" && $logo_path != "deleted" && $logo_path != "/appstart/public/") {
 							$filename = $this->moveUploadFile ( $source_dir, $upload_dir, $logo_path );
 							$modelDetails->setLogo ($filename);
 							$is_uploaded_image = true;
@@ -287,8 +285,6 @@ class Contact_IndexController extends Zend_Controller_Action {
 						$modelDetails->setCreatedAt ( $date_time );
 						$modelDetails->setLastUpdatedBy ( $user_id );
 						$modelDetails->setLastUpdatedAt ( $date_time );
-						print_r($modelDetails);
-						die();
 						$modelDetails = $modelDetails->save ();
 					}
 					
@@ -404,7 +400,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 		), "cd.contact_id = c.contact_id AND cd.language_id = " . $active_lang_id, array (
 				"cd.contact_detail_id" => "contact_detail_id",
 				"cd.location" => "location",
-				"cd.address" => "address",
+				"cd.city" => "city",
 				"cd.phone_1" => "phone_1" 
 		) )->where ( "c.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
 		// print_r($select->__toString());
@@ -447,7 +443,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 				if (is_array ( $details )) {
 					$details = $details [0];
 					$row [5] ["cd.location"] = $row [0] = $details->getLocation ();
-					$row [5] ["cd.address"] = $row [1] = $details->getAddress ();
+					$row [5] ["cd.city"] = $row [1] = $details->getCity ();
 					$row [5] ["cd.phone_1"] = $row [4] = $details->getPhone1 ();
 				}
 			}

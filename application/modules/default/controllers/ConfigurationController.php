@@ -176,7 +176,7 @@ class Default_ConfigurationController extends Zend_Controller_Action {
 					"id" => $row [5] ["cm_customer_module_id"] 
 			), "default", true );
     		$edit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
-			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
+			$delete = '<a href="' . $deleteUrl . '" class="grid_publish" >'.$this->view->translate('Publish').'</a>';
 			$sap = '';
 			
 			$response ['aaData'] [$rowId] [5] = $edit . $sap . $delete;

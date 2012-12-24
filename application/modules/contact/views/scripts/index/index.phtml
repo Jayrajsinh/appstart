@@ -32,7 +32,7 @@
 	<thead>
 		<tr>
 	        <th scope="col"><?php echo $this->translate('Location Name'); ?></th>
-		    <th scope="col"><?php echo $this->translate('Address'); ?></th>
+		    <th scope="col"><?php echo $this->translate('City'); ?></th>
 		    <th scope="col"><?php echo $this->translate('Status'); ?></th>
 		    <th scope="col"><?php echo $this->translate('Order'); ?></th>
 		    <th scope="col"><?php echo $this->translate('Phone 1'); ?></th>
@@ -54,7 +54,7 @@ $(document).ready(function() {
 		aaSorting: [[ 3, "asc" ]],
 		"aoColumns": [
 						{ "sName": "cd.location" },
-						{ "sName": "cd.address" },
+						{ "sName": "cd.city" },
 						{ "sName": "c.status" },
 						{ "sName": "c.order" },
 						{ "sName": "cd.phone_1" },

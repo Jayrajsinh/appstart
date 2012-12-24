@@ -72,7 +72,7 @@ class HomeWallpaper_Form_HomeWallpaper extends Standard_Form {
 		
 		//Set as Default button
 		$this->addElement('checkbox', 'default', array(
-				'label'      => 'Set as default',
+				'label'      => 'Use as home screen',
 				'value'      => '1'
 		));
 		

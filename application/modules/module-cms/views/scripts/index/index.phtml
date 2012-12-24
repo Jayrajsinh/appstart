@@ -156,7 +156,7 @@ $(document).ready(function() {
     	return false;
     });
     var source = builddata();
-	$("#jqxTree").jqxTree({source:source,width: 250 });	
+	$("#jqxTree").jqxTree({source:source});	
     $('#jqxTree').jqxTree('expandAll');
     window.grid = dataTable({
 		aaSorting: [[ 2, "desc" ]],

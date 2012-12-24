@@ -93,35 +93,6 @@ class Events_Form_Events extends Standard_Form {
 			 ->addValidator('Extension', false, 'jpg,png,gif');
 		$this->addElement($image);
 		
-		//street
-		$street = $this->createElement('text', 'street',array(
-				'label' => 'Street Nearby',
-				'filters' => array(
-						'StringTrim'
-					)
-				)
-		);
-		$this->addElement($street);
-		
-		//zip
-		$zip = $this->createElement("text", 'zip',array(
-				'label' => 'Zip Code',
-				'filters' => array(
-						'StringTrim'
-					)
-				)	
-		);
-		$this->addElement($zip);
-		
-		//country
-		$country = $this->createElement("text", 'country',array(
-				'label' => 'Country',
-				'filters' => array(
-						'StringTrim'
-					)
-				)
-		);
-		$this->addElement($country);
 		//notes
 		$notes = $this->createElement("textarea", 'notes',array(
 				'label' => 'Notes',

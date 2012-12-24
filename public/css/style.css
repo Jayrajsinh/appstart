@@ -927,7 +927,7 @@ a.edit-flag:hover{background-image: none; display: block;}
 	resize:vertical;
 }
 #frmAddEditContact select{
-	width: 100px !important;
+	width: 180px !important;
 	min-width: 100px;
 	size: 5;
 }
@@ -1058,6 +1058,9 @@ div.logo-box td.desc{
 }
 .timinglink{
 	cursor: pointer !important;
+}
+.countryHelper select[name="country"]{
+	width:200px !important;
 }
  /* TimeEntry styles */
 .timeEntry_control {

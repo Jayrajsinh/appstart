@@ -40,8 +40,7 @@ class ModuleCms2_RestController extends Standard_Rest_Controller {
 	
 	protected function _sync() {
 		$customer_id = $this->_request->getParam("customer_id",null);
-		$device_type = $this->_request->getParam("device_type",null);
-		if($customer_id===null || $device_type == null) {
+		if($customer_id===null) {
 			$this->_sendError("Invalid request");
 		} else {
 			try{

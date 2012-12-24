@@ -8,9 +8,6 @@ class Events_Model_ModuleEventsDetail extends Standard_Model {
 	private $_start_date_time;
 	private $_end_date_time;
 	private $_image;
-	private $_street;
-	private $_zip;
-	private $_country;
 	private $_notes;
 	private $_last_updated_by;
 	private $_last_updated_at;
