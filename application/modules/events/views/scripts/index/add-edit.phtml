@@ -1,9 +1,33 @@
 <?php $form = $this->form; ?>
+<style>
+.popupLabel{
+	display:inline;
+	display:inline-block;
+	width: 50px;
+	padding: 5px;
+}
+
+.popupInput{
+	display:inline;
+	display:inline-block;
+	padding: 5px;
+}
+.popupSubmit{
+	margin-left: 115px;
+	margin-top: 5px;
+}
+#textareaContent *{
+	vertical-align: middle !important;
+	resize:none;
+}
+
+</style>
 <script type="text/javascript" src="<?php echo $this->baseUrl("libs/tinymce/js/tiny_mce.js"); ?>"></script>
 <script type="text/javascript">
 tinyMCE.init({
 	// General options
-	mode : "textareas",
+	mode : "exact",
+	elements : "ta1,ta2",
 	theme : "advanced",
 	plugins : "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave,visualblocks",
 
@@ -101,8 +125,16 @@ tinyMCE.init({
 				</td>
 			</tr>
 			<tr>
-				<td>					
-					
+				<td>
+					<label>Event Location(s):</label>
+				</td>
+				<td>
+					<div id="container">
+						<div class="row">
+							
+						</div>
+					</div>					
+					<a class="addEventLocation">Add Event Location</a>	
 				</td>
 			</tr>
 			<tr>
@@ -126,6 +158,27 @@ tinyMCE.init({
 		</tbody>
 	</table>
 </form>
+</div>
+<div id="hiddenPopup" style="display:none">
+	<div id="textareaContent">
+		<label for="textarea" style="vertical-align:top">Address</label>
+		<textarea name="popupTextarea" style="margin-left:20px" id="textarea"></textarea>
+	</div>
+	<div class="popupLabel">
+		<label>City</label>
+	</div>
+	<div class="popupInput">
+		<input type="text" name="popupCity">
+	</div>
+	<div class="popupLabel">
+		<label>Plz</label>
+	</div>
+	<div class="popupInput">
+		<input type="text" name="popupPlz">
+	</div>
+	<div class="popupSubmit">
+		<input type="button" class="submitLocation" value="submit">
+	</div>
 </div>
 <script type="text/javascript">
 // <!--
@@ -213,6 +266,26 @@ $(document).ready(function() {
 	  		});
 			e.preventDefault();
 		}
+	});
+	$(".addEventLocation").on("click",function(){
+		$("#hiddenPopup").dialog({
+			modal:true,
+			width:300,
+			resizable:false,
+			title:"Add Location"
+		})
+	});
+	$(".submitLocation").on("click",function(){
+		window.createdXML = window.createdXML? window.createdXML: [];
+		var totalRows = window.createdXML.length + 1;
+		var createdTr = 
+		"<tr class=row" + (totalRows) + ">" +
+		"<td class='address'>" +"<textarea>" + $("textarea[name=popupTextarea]").attr("value") +"</textarea>"+"</td>" +
+		"<td class='address'>" + $("input[name=popupCity]").attr("value") +"</td>" +
+		"<td class='address'>" + $("input[name=popupPlz]").attr("value") +"</td>"
+		+ "</tr>";
+		$('.timings tbody').append(createdTr);
+		$("#hiddenPopup").dialog("close");
 	});
 });
 // -->

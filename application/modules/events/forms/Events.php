@@ -57,6 +57,7 @@ class Events_Form_Events extends Standard_Form {
 		// Description
 		$description = $this->createElement ( "textarea", "description", array (
 				'label' => 'Description:',
+				'id' => 'ta1',
 				'size' => '128',
 				'filters' => array (
 						'StringTrim' 
@@ -96,6 +97,7 @@ class Events_Form_Events extends Standard_Form {
 		//notes
 		$notes = $this->createElement("textarea", 'notes',array(
 				'label' => 'Notes',
+				'id' => 'ta2',
 				'size' => '90',
 				'filters' => array(
 						'StringTrim'
