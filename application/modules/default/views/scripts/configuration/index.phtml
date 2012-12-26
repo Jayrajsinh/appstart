@@ -319,7 +319,7 @@ var grid ="";
                         			var id = data.selectedData.value;
                         			$("#background_image_path").attr("value",id);
                             	});
-								$("#img-icon").attr("src","<?php echo $this->baseUrl()."/icon/"; ?>" + data["cm_icon"]);
+								$("#img-icon").attr("src","<?php echo $this->baseUrl()."/resource/default/images/icon/"; ?>" + data["cm_icon"]);
 								//$("#img-background").attr("src","<?php //echo $this->baseUrl()."/background/"; ?>" + data["d_background_image"]);
                             	if(data["cm_visibility"]==1) {
                             		$("#visibility").attr("checked","checked");
@@ -365,7 +365,6 @@ var grid ="";
 					next();
 				}).queue(function(next){
 					// Upoad Images
-					var count = 0;
 					$("input[type='file']").each(function(){
 						var input = $(this).attr("id");
 						if($(this).attr("value") != "")
@@ -383,17 +382,10 @@ var grid ="";
 									}	
 								},
 								complete: function(){
-									count++;
-									if(count==2){
-										next();
-									}
+									next();
 								}
 							});
 						} else {
-							count++;
-							if(count==2){
-								next();
-							}
 							next();
 						}
 					});

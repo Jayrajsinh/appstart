@@ -16,11 +16,27 @@
 	margin-left: 115px;
 	margin-top: 5px;
 }
-#textareaContent *{
+.textareaContent *{
 	vertical-align: middle !important;
 	resize:none;
 }
 
+.locationLabel{
+	display:inline;
+	display:inline-block;
+	width: 50px;
+	padding: 5px;	
+}
+
+.locationInput{
+	display:inline;
+	display:inline-block;
+	padding: 5px;	
+}
+
+#load-locations{
+	display: none;
+}
 </style>
 <script type="text/javascript" src="<?php echo $this->baseUrl("libs/tinymce/js/tiny_mce.js"); ?>"></script>
 <script type="text/javascript">
@@ -129,12 +145,38 @@ tinyMCE.init({
 					<label>Event Location(s):</label>
 				</td>
 				<td>
-					<div id="container">
-						<div class="row">
-							
+					<div id="locationContainer">
+						<div class="locationBox" id="record-1">
+							<div class="textareaContent" style="float:left">
+								<label for="textarea" style="vertical-align:top">Address</label>
+								<textarea name="address[]" style="margin-left:20px"></textarea>
+							</div>
+							<div style="float:left">
+								<div class="locationLabel"> 
+									<label>City</label>
+								</div>
+								<div class="locationInput">
+									<input name="city[]" type="text">
+								</div>
+							</div>
+							<div style="float:left">
+								<div class="locationLabel">
+									<label>Plz</label>
+								</div>
+								<div class="locationInput">
+									<input type="text" name="plz[]">
+								</div>
+							</div>
+							<div class="locationDelete">
+								<a class="deleteLocation">&nbsp;</a>
+								<div class="deleteText">Delete Location</div>
+							</div>
 						</div>
-					</div>					
-					<a class="addEventLocation">Add Event Location</a>	
+					</div>	
+					<div class="footer" style="clear:both">
+						<a class="addEventLocation">Add Event Location</a>
+						<a class="loadEventLocation">Load Event Location</a>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -160,7 +202,7 @@ tinyMCE.init({
 </form>
 </div>
 <div id="hiddenPopup" style="display:none">
-	<div id="textareaContent">
+	<div class="textareaContent">
 		<label for="textarea" style="vertical-align:top">Address</label>
 		<textarea name="popupTextarea" style="margin-left:20px" id="textarea"></textarea>
 	</div>
@@ -179,6 +221,8 @@ tinyMCE.init({
 	<div class="popupSubmit">
 		<input type="button" class="submitLocation" value="submit">
 	</div>
+</div>
+<div id="load-locations">
 </div>
 <script type="text/javascript">
 // <!--
@@ -273,20 +317,73 @@ $(document).ready(function() {
 			width:300,
 			resizable:false,
 			title:"Add Location"
-		})
+		});
 	});
 	$(".submitLocation").on("click",function(){
-		window.createdXML = window.createdXML? window.createdXML: [];
-		var totalRows = window.createdXML.length + 1;
-		var createdTr = 
-		"<tr class=row" + (totalRows) + ">" +
-		"<td class='address'>" +"<textarea>" + $("textarea[name=popupTextarea]").attr("value") +"</textarea>"+"</td>" +
-		"<td class='address'>" + $("input[name=popupCity]").attr("value") +"</td>" +
-		"<td class='address'>" + $("input[name=popupPlz]").attr("value") +"</td>"
-		+ "</tr>";
-		$('.timings tbody').append(createdTr);
+		var rowNumber = $('.locationBox').length;
+		var clonedLocationBox = $("#record-1").clone().attr("id","record-" + rowNumber);
+		clonedLocationBox
+		.find('input[name^=city]')
+		.attr("value",$("input[name=popupCity]").attr("value"));
+		
+		clonedLocationBox
+		.find('input[name^=plz]')
+		.attr("value",$("input[name=popupPlz]").attr("value"));
+		
+		clonedLocationBox
+		.find('textarea[name^=address]')
+		.attr("value",$("textarea[name=popupTextarea]").attr("value"));
+
+		$('#locationContainer').append(clonedLocationBox);
 		$("#hiddenPopup").dialog("close");
 	});
+
+	$(".loadEventLocation").on("click",function(){
+		var promptus = false;
+    	var self = this;
+		$(document).queue(function(next){
+			promptus = new prompt({
+            	reference : self,
+                element : "#locationContainer",
+                beforeShow : function(){
+	                this.alternateMessage = this.showLoadingMessage("<?php echo $this->translate('Fetching Your Office Locations...'); ?>");
+                }            
+            });
+            next();            
+		}).queue(function(next){
+	    	$.ajax({
+	            url: "<?php echo $this->url(array("module"=>"events","controller"=>"index","action"=>"load-contacts")); ?>",
+	            cache: false,
+	            type: "POST",
+	            success:function(data){
+	            	$("#gridDialog").html(data).dialog({
+						modal:true,
+						width:500,
+						resizable:false,
+						title:"Add Location"
+					});
+	            	next();
+	            }
+	        });
+	         
+		}).queue(function(next){
+			$(".importLoadedContacts").on("click",function(){
+				alert("helloo");
+			});
+			promptus.close();
+			next();
+  		});
+	});
+
 });
 // -->
+function selectAll() {
+	if($("#chkSelectAll").attr("checked") == "checked") {
+		$(".contact").attr("checked","checked");
+    } else {
+    	$(".contact").removeAttr("checked");
+    }
+}
 </script>
+<div id="gridDialog">
+</div>

@@ -523,4 +523,62 @@ class Events_IndexController extends Zend_Controller_Action
     	$jsonGrid = Zend_Json::encode ( $response );
     	$this->_response->appendBody ( $jsonGrid );
     }
+    public function loadContactsAction(){
+        $active_lang_id = Standard_Functions::getCurrentUser ()->active_language_id;
+        $customer_id = Standard_Functions::getCurrentUser ()->customer_id;
+        $contactMapper = new Contact_Model_Mapper_Contact();
+        $data = $contactMapper->fetchAll("customer_id =" .$customer_id);
+        $contactDetailMapper = new Contact_Model_Mapper_ContactDetail();
+        $output = '<input class="button importLoadedContacts" type="submit" value="Import" name="submit" style="float:right">';
+        $output .= '<table style="border-spacing:0;border-collapse:collapse;width:100%" class="pattern-style-b" id="dataGridReorder">';
+        $output .= '<tr>';
+        $output .= '<th></th>';
+        $output .= '<th>Select All<br/><input type="checkbox" id="chkSelectAll" onclick="selectAll();" /></th>';
+        $output .= '<th>Address</th>';
+        $output .= '<th>City</th>';
+        $output .= '<th>Plz</th>';
+        $output .= '</tr>';
+        if ($data) {
+            $i = 0;
+            foreach ( $data as $contact) {
+                $dataDetails = $contactDetailMapper->fetchAll("language_id ='" .$active_lang_id. "'AND contact_id =" .$contact->getContactId());
+                foreach($dataDetails as $key=>$value){
+                    $fetchedContacts[$key] = $value;
+                    $record[$i]['address'] = $fetchedContacts[$key]->getAddress();
+                    $record[$i]['city'] = $fetchedContacts[$key]->getPlz();
+                    $record[$i]['plz'] = $fetchedContacts[$key]->getCity();
+                }
+                $i++;
+            }
+            $i = 1;
+            foreach ($record as $record) {
+                $output .= '<tr>';
+                $output .= '<td>'.$i.'</td>';
+                $output .= '<td><input type="checkbox" name="contact[]" class="contact" value="1"/></td>';
+                $output .= '<td>';
+                $output .= $record['address'];
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $record['city'];
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $record['plz'];
+                $output .= '</td>';
+                $output .= '</tr>';
+                $i++;
+            }
+            $output .= '</table>';
+            echo $output;
+            //echo json_encode($record);
+            die();
+        }else{
+            $output .= '<tr>';
+            $output .= '<td collspan="5">No track found</td>';
+            $output .= '</tr>';
+            $output .= '</table>';
+            echo $output;
+            //echo json_encode($record);
+            die();
+        }
+    }
 }
