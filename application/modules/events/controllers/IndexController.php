@@ -170,6 +170,17 @@ class Events_IndexController extends Zend_Controller_Action
     		}
     		
     		if(isset($dataDetails[0]) && is_array($dataDetails[0])) {
+                $locationDetails = new Events_Model_Mapper_ModuleEventsLocation();
+                $locations = $locationDetails->getDbTable()->fetchAll("module_events_detail_id =". $dataDetails[0]["module_events_detail_id"])->toArray();
+                $location = array();
+                foreach($locations as $locations){
+                    $temp = array(
+                        'address' => $locations['address'],
+                        'plz' => $locations['plz'],
+                        'city' => $locations['city']
+                    );
+                    array_push($location, $temp);
+                }
     			$dateTime = new DateTime($dataDetails[0]["start_date_time"]);
     			$dataDetails[0]["start_date_time"] = $dateTime->format("d/m/Y H:i");
     			
@@ -177,7 +188,8 @@ class Events_IndexController extends Zend_Controller_Action
     			$dataDetails[0]["end_date_time"] = $dateTime->format("d/m/Y H:i");
     			
     			$form->populate ( $dataDetails[0] );
-    			$this->view->image_path=$dataDetails[0]["image"];
+    			$this->view->location = json_encode($location);
+                $this->view->image_path=$dataDetails[0]["image"];
     			$this->view->image_src=$this->view->baseUrl("resource/events/images/" . $dataDetails[0]["image"]);
     		}
     		foreach ( $form->getElements () as $element ) {
@@ -239,28 +251,16 @@ class Events_IndexController extends Zend_Controller_Action
     			
     			try {
     				$arrFormValues = $form->getValues();
-    				$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
+                    if($arrFormValues["start_date_time"] != "" && $arrFormValues["start_date_time"] != ""){
+                        $start_date = DateTime::createFromFormat ( "d/m/Y H:i", $arrFormValues["start_date_time"] );
+                        $arrFormValues["start_date_time"] = $start_date->format ( "Y-m-d H:i:s" ) ;
+                        $end_date = DateTime::createFromFormat ( "d/m/Y H:i", $arrFormValues["end_date_time"] );
+                        $arrFormValues["end_date_time"] = $end_date->format ( "Y-m-d H:i:s" ) ;
+                    }   
+                    $customer_id = Standard_Functions::getCurrentUser ()->customer_id;
     				$user_id = Standard_Functions::getCurrentUser ()->user_id;
     				$date_time = Standard_Functions::getCurrentDateTime ();
     				$image_path = $request->getParam ("image_path", "");
-
-    				$parts = explode("/",$arrFormValues["start_date_time"]);
-    				$temp = $parts[0];
-    				$parts[0] = $parts[1];
-    				$parts[1] = $temp;
-    				$arrFormValues["start_date_time"] = implode("/",$parts);
-    				
-    				$parts = explode("/",$arrFormValues["end_date_time"]);
-    				$temp = $parts[0];
-    				$parts[0] = $parts[1];
-    				$parts[1] = $temp;
-    				$arrFormValues["end_date_time"] = implode("/",$parts);
-    				
-    				$dateTime = new DateTime($arrFormValues["start_date_time"]);
-    				$arrFormValues["start_date_time"] = $dateTime->format("Y-m-d H:i:s");
-    				$dateTime = new DateTime($arrFormValues["end_date_time"]);
-    				$arrFormValues["end_date_time"] = $dateTime->format("Y-m-d H:i:s");
-				
     				$model = new Events_Model_ModuleEvents($arrFormValues);
     				
     				if($request->getParam ( "module_events_id", "" ) == "") {
@@ -296,6 +296,25 @@ class Events_IndexController extends Zend_Controller_Action
     							$modelDetails->setLastUpdatedBy ( $user_id );
     							$modelDetails->setLastUpdatedAt ( $date_time );
     							$modelDetails = $modelDetails->save();
+                                //Adding locations
+                                $detail_id = $modelDetails->get("module_events_detail_id");
+                                $location = array();
+                                for($i=0;$i<count($arrFormValues[address]);$i++){
+                                    $tempLocationArray = array(
+                                            'address' => $arrFormValues[address][$i],
+                                            'plz' => $arrFormValues[plz][$i],
+                                            'city' => $arrFormValues[city][$i],
+                                        );
+                                        array_push($location,$tempLocationArray);
+                                }
+                                foreach($location as $location){
+                                    $modelLocation = new Events_Model_ModuleEventsLocation();
+                                    $modelLocation->setModuleEventsDetailId($detail_id);
+                                    $modelLocation->setAddress($location['address']);
+                                    $modelLocation->setPlz($location['plz']);
+                                    $modelLocation->setCity($location['city']);   
+                                    $modelLocation->save();
+                                }
     						}
     					}
     				} else {
@@ -307,6 +326,14 @@ class Events_IndexController extends Zend_Controller_Action
     					// Save Events Details
     					
     					$modelDetails = new Events_Model_ModuleEventsDetail($arrFormValues);
+                        $detail_id = $modelDetails->get('module_events_detail_id');
+                        $mapperLocation = new Events_Model_Mapper_ModuleEventsLocation();
+                        $existingLocations = $mapperLocation->fetchAll("module_events_detail_id =".$detail_id);
+                        if(is_array($existingLocations)){
+                            foreach ($existingLocations as $existingLocation) {
+                                $existingLocation->delete();
+                            }
+                        }
     					if($image_path != "")
     					{
     						$modelDetails->setImage($image_path);
@@ -318,7 +345,25 @@ class Events_IndexController extends Zend_Controller_Action
     					$modelDetails->setLastUpdatedBy ( $user_id );
     					$modelDetails->setLastUpdatedAt ( $date_time );
     					$modelDetails = $modelDetails->save();
-    				}
+                        $modelLocation = new Events_Model_ModuleEventsLocation();
+                        $location = array();
+                        for($i=0;$i<count($arrFormValues[address]);$i++){
+                            $tempLocationArray = array(
+                                    'address' => $arrFormValues[address][$i],
+                                    'plz' => $arrFormValues[plz][$i],
+                                    'city' => $arrFormValues[city][$i],
+                                );
+                                array_push($location,$tempLocationArray);
+                        }
+                        foreach($location as $location){
+                            $modelLocation = new Events_Model_ModuleEventsLocation();
+                            $modelLocation->setModuleEventsDetailId($detail_id);
+                            $modelLocation->setAddress($location['address']);
+                            $modelLocation->setPlz($location['plz']);
+                            $modelLocation->setCity($location['city']);   
+                            $modelLocation->save();
+                        }
+				    }
     				
     				// set is pulish to false
     				$customermoduleMapper = new Admin_Model_Mapper_CustomerModule();
@@ -371,11 +416,20 @@ class Events_IndexController extends Zend_Controller_Action
     			$mapper = new Events_Model_Mapper_ModuleEvents();
     			$mapper->getDbTable()->getAdapter()->beginTransaction();
     			try {
-    				$detailsMapper = new Events_Model_Mapper_ModuleEventsDetail();
-    				$details = $detailsMapper->fetchAll("module_events_id=".$events->getModuleEventsId());
-    				if(is_array($details)) {
+    				
+                    $detailsMapper = new Events_Model_Mapper_ModuleEventsDetail();
+    				$locationMapper = new Events_Model_Mapper_ModuleEventsLocation();
+                    $details = $detailsMapper->fetchAll("module_events_id=".$events->getModuleEventsId());
+                    if(is_array($details)) {
     					foreach($details as $eventDetail) {
-    						$eventDetail->delete();
+                            $detail_id = $eventDetail->get("module_events_detail_id");
+    						$locations = $locationMapper->fetchAll("module_events_detail_id =".$detail_id);
+                            if(is_array($locations)){
+                                foreach ($locations as $location) {
+                                $location->delete();
+                                }
+                            }
+                            $eventDetail->delete();
     					}
     				}
     				
@@ -545,8 +599,8 @@ class Events_IndexController extends Zend_Controller_Action
                 foreach($dataDetails as $key=>$value){
                     $fetchedContacts[$key] = $value;
                     $record[$i]['address'] = $fetchedContacts[$key]->getAddress();
-                    $record[$i]['city'] = $fetchedContacts[$key]->getPlz();
-                    $record[$i]['plz'] = $fetchedContacts[$key]->getCity();
+                    $record[$i]['city'] = $fetchedContacts[$key]->getCity();
+                    $record[$i]['plz'] = $fetchedContacts[$key]->getPlz();
                 }
                 $i++;
             }

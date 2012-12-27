@@ -1093,7 +1093,7 @@ div.logo-box td.desc{
 }
 .locationBox{
 	width:500px;
-	padding-top: 15px;
+	padding-top: 15px 0 15px 0;
 }
 
 a.deleteLocation{
@@ -1107,4 +1107,7 @@ a.deleteLocation{
 .deleteText{
 	color:RED;
 	text-align: left;
+}
+textarea[name='address']{
+	margin-left:20px;
 }

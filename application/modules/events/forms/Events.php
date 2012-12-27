@@ -94,6 +94,39 @@ class Events_Form_Events extends Standard_Form {
 			 ->addValidator('Extension', false, 'jpg,png,gif');
 		$this->addElement($image);
 		
+		//Address
+		$address = $this->createElement('textarea', 'address',array(
+				'label' => 'Address',
+				'filters' => array(
+						'StringTrim'
+						)
+				)
+		);
+		$address->setIsArray(true);
+		$this->addElement($address);
+
+		//Plz
+		$plz = $this->createElement('text', 'plz',array(
+				'label' => 'Plz',
+				'filters' => array(
+						'StringTrim'
+						)
+				)
+		);
+		$plz->setIsArray(true);
+		$this->addElement($plz);
+
+		//City
+		$city = $this->createElement('text', 'city',array(
+				'label' => 'City',
+				'filters' => array(
+						'StringTrim'
+						)
+				)
+		);
+		$city->setIsArray(true);
+		$this->addElement($city);
+
 		//notes
 		$notes = $this->createElement("textarea", 'notes',array(
 				'label' => 'Notes',

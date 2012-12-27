@@ -146,32 +146,6 @@ tinyMCE.init({
 				</td>
 				<td>
 					<div id="locationContainer">
-						<div class="locationBox" id="record-1">
-							<div class="textareaContent" style="float:left">
-								<label for="textarea" style="vertical-align:top">Address</label>
-								<textarea name="address[]" style="margin-left:20px"></textarea>
-							</div>
-							<div style="float:left">
-								<div class="locationLabel"> 
-									<label>City</label>
-								</div>
-								<div class="locationInput">
-									<input name="city[]" type="text">
-								</div>
-							</div>
-							<div style="float:left">
-								<div class="locationLabel">
-									<label>Plz</label>
-								</div>
-								<div class="locationInput">
-									<input type="text" name="plz[]">
-								</div>
-							</div>
-							<div class="locationDelete">
-								<a class="deleteLocation">&nbsp;</a>
-								<div class="deleteText">Delete Location</div>
-							</div>
-						</div>
 					</div>	
 					<div class="footer" style="clear:both">
 						<a class="addEventLocation">Add Event Location</a>
@@ -222,11 +196,38 @@ tinyMCE.init({
 		<input type="button" class="submitLocation" value="submit">
 	</div>
 </div>
-<div id="load-locations">
-</div>
+<script type="text/template" id="locationTemplate">
+	<div class="locationBox" id="record-">
+		<div class="textareaContent" style="float:left">
+			<?php echo $form->address->renderLabel() ;?>
+			<?php echo $form->address->renderViewHelper() ;?>
+		</div>
+		<div style="float:left">
+			<div class="locationLabel"> 
+				<?php echo $form->city->renderLabel() ;?>
+			</div>
+			<div class="locationInput">
+				<?php echo $form->city->renderViewHelper() ;?>
+			</div>
+		</div>
+		<div style="float:left">
+			<div class="locationLabel">
+				<?php echo $form->plz->renderLabel() ;?>
+			</div>
+			<div class="locationInput">
+				<?php echo $form->plz->renderViewHelper() ;?>
+			</div>
+		</div>
+		<div class="locationDelete" id="delete-">
+			<a class="deleteLocation">&nbsp;</a>
+			<div class="deleteText">Delete Location</div>
+		</div>
+	</div>
+</script>
 <script type="text/javascript">
 // <!--
 $(document).ready(function() {
+	$('#locationContainer').html($("#locationTemplate").html());
 	$('#start_date_time').datetimepicker({ 
 		showOn: "both",
 		buttonImage: "<?php echo $this->baseUrl("images/calander.png");?>",
@@ -319,9 +320,14 @@ $(document).ready(function() {
 			title:"Add Location"
 		});
 	});
-	$(".submitLocation").on("click",function(){
-		var rowNumber = $('.locationBox').length;
-		var clonedLocationBox = $("#record-1").clone().attr("id","record-" + rowNumber);
+	$(".submitLocation").on("click",function(){ 
+		window.rowNumber =  window.rowNumber ? window.rowNumber :  $('#locationContainer .locationBox').length;
+		if(!$("#record").length){
+			var clonedLocationBox = $($("#locationTemplate").html());
+			clonedLocationBox = clonedLocationBox.attr("id","record-" + rowNumber);
+		} else {
+			var clonedLocationBox = $("#record").clone().attr("id","record-" + rowNumber);
+		}
 		clonedLocationBox
 		.find('input[name^=city]')
 		.attr("value",$("input[name=popupCity]").attr("value"));
@@ -334,7 +340,12 @@ $(document).ready(function() {
 		.find('textarea[name^=address]')
 		.attr("value",$("textarea[name=popupTextarea]").attr("value"));
 
+		clonedLocationBox
+		.find('.locationDelete')
+		.attr("id","delete-" + rowNumber);
+
 		$('#locationContainer').append(clonedLocationBox);
+		window.rowNumber++;
 		$("#hiddenPopup").dialog("close");
 	});
 
@@ -368,13 +379,77 @@ $(document).ready(function() {
 	         
 		}).queue(function(next){
 			$(".importLoadedContacts").on("click",function(){
-				alert("helloo");
+				$("#dataGridReorder input[name='contact[]']:checked").each(function(){
+				    window.rowNumber =  window.rowNumber ? window.rowNumber :  $('#locationContainer .locationBox').length;
+				    var tr = $(this).parents("tr")
+				    var address = tr.find("td:nth-child(3)").html();
+				    var city = tr.find("td:nth-child(4)").html();
+				    var plz = tr.find("td:nth-child(5)").html();
+				    if(!$("#record").length){
+						var clonedLocationBox = $($("#locationTemplate").html());
+						clonedLocationBox = clonedLocationBox.attr("id","record-" + rowNumber);
+					} else {
+						var clonedLocationBox = $("#record").clone().attr("id","record-" + rowNumber);
+					}
+					clonedLocationBox
+					.find('input[name^=city]')
+					.attr("value",city);
+					
+					clonedLocationBox
+					.find('input[name^=plz]')
+					.attr("value",plz);
+					
+					clonedLocationBox
+					.find('textarea[name^=address]')
+					.attr("value",address);
+
+					clonedLocationBox
+					.find('.locationDelete')
+					.attr("id","delete-" + rowNumber);
+
+					$('#locationContainer').append(clonedLocationBox);
+					rowNumber++;
+					$("#gridDialog").dialog("close");
+				});
 			});
 			promptus.close();
 			next();
   		});
 	});
+	
+	$('.deleteText').live("click",function(){
+		var deletedRow = $(this).parent().attr("id").replace("delete-",'');
+		$("#record-"+deletedRow).remove();
+	});
+	
+	var data = <?php echo $this->location; ?>
+	window.rowNumber =  window.rowNumber ? window.rowNumber :  $('#locationContainer .locationBox').length;
+	for(x in data){
+		obj = data[x];
 
+		if(typeof(obj) == "object"){				
+					tmpTemplate = $($("#locationTemplate").html());
+					tmpTemplate = tmpTemplate.attr("id","record-" +window.rowNumber ) 
+					tmpTemplate
+					.find('input[name^=city]')
+					.attr("value",obj.city);
+					
+					tmpTemplate
+					.find('input[name^=plz]')
+					.attr("value",obj.plz);
+					
+					tmpTemplate
+					.find('textarea[name^=address]')
+					.attr("value",obj.address);
+
+					tmpTemplate
+					.find('.locationDelete')
+					.attr("id","delete-" + window.rowNumber);
+
+					$('#locationContainer').append(tmpTemplate);
+					window.rowNumber++;
+		}	
+	}
 });
 // -->
 function selectAll() {
