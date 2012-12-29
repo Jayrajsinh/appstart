@@ -28,7 +28,7 @@ function dataTable(params){
 			throw "Please provide prper ID for filter form to the table you want to apply dataTables";
 		}
 	}
-
+	
 	// Check for server side enabled and ajax source
 	if ( params.bServerSide || params.bServerSide == true ){
 		if( !params.sAjaxSource ){
@@ -39,8 +39,67 @@ function dataTable(params){
 	if ( !params.aoColumns ){
 		throw "No aoColumns define for the grid";
 	}
+
+	
+	var fnServerDataSuccess = params.fnServerDataSuccess || undefined;
+	var fnServerData = function( sSource, aoData, fnCallback){
+    	var blockElement = $(element).parent();
+        $(document).queue(function(next){ 
+            blockElement.block({
+                message: '<div class="grid_loading">Loading Grid Data...</div>',
+            	onBlock: next
+            });
+		}).queue(function(next){
+			$.ajax({
+                type: "POST",
+                url : sSource,
+                data: aoData,
+                cache: false,
+                dataType: "json",
+                success: function(json){
+                	fnCallback(json);
+                	if(fnServerDataSuccess != undefined){
+                		fnServerDataSuccess(json);
+                	}
+                }
+            }).complete(next);
+		}).queue(function(next){
+			var charWidth = params.charLimit;
+			if(charWidth != undefined) {
+				for(i=0;i<charWidth.length;i++) {
+					if(charWidth[i]<=0) continue;
+					
+					var content = $(element + " tbody tr td:nth-child("+(i+1)+")").html();
+					if(content!= undefined && content.length > charWidth[i])
+					{
+						var exerpt = content.substr(0,charWidth[i]);
+						$(element + " tbody tr td:nth-child("+(i+1)+")").html('<div class="tip"><div class="less">'+exerpt+ ' ...</div><div class="more">' + content + '</div></div>');
+						$(element + " .more").hide();
+						$(this).find(".less").css("display","inline");
+						$(element + " .tip").on("mouseover",function(){
+							$(this).find(".more").css("position","absolute");
+							$(this).find(".more").css("backgroundColor","#fdf9d8");
+							$(this).find(".more").css("border","1px double #f59507");
+							$(this).find(".more").css("padding","5px");
+							$(this).find(".more").css("color","#000");
+						    $(this).find(".more").show();
+						});
+						$(element + " .tip").on("mouseout",function(){
+						    $(this).find(".more").hide();
+						});
+					}
+				}
+			}
+			blockElement.unblock({
+				onUnblock: next
+			});
+		});
+    };
+	
 	var gridObject = {
     	"aoColumns": params.aoColumns,
+    	"sDom" : 'rt<"bottom"ipl>',
+    	"bAutoWidth": false,
     	"oPagination" : params.oPagination ? params.oPagination : undefined,
     	"sPaginationType" : params.sPaginationType ? params.sPaginationType : "full_numbers",
     	"oLanguage": {"sUrl": window.dataTableLangUrl},
@@ -51,32 +110,8 @@ function dataTable(params){
         "bSortClasses": params.bSortClasses ? params.bSortClasses : false,
         "bLengthChange": params.bLengthChange ? params.bLengthChange : true,
         "sAjaxSource": params.sAjaxSource,
-        "fnServerData": function( sSource, aoData, fnCallback ){
-        	var blockElement = $(element).parent();
-            $(document).queue(function(next){ 
-                blockElement.block({
-                    message: '<div class="grid_loading">Loading Grid Data...</div>',
-                	onBlock: next
-                });
-			}).queue(function(next){
-				$.ajax({
-	                type: "POST",
-	                url : sSource,
-	                data: aoData,
-	                cache: false,
-	                dataType: "json",
-	                success: function(json){fnCallback(json);}
-	            }).complete(next);
-			}).queue(function(next){
-				blockElement.unblock({
-					onUnblock: next
-				});
-			});
-        },
+        "fnServerData": fnServerData,
         "fnServerParams": function ( aoData ) {
-        	if(params.fnServerParams){        		        		
-        		params.fnServerParams(aoData);
-        	}
         	if(filterForm){
         		tmData= $(filterForm).serializeArray();
                	$(tmData).each(function(){

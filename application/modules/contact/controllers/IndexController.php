@@ -149,13 +149,10 @@ class Contact_IndexController extends Zend_Controller_Action {
 				$timings = $dataDetails [0]['timings'];
 				$form->populate ( $dataDetails [0] );
 				$logoname = $dataDetails [0] ["logo"];
-				$image_uri = "resource/contact/thumb/";
-				$this->view->logo_path = $this->view->baseUrl($image_uri ."/" . $logoname);
-				$ext_image_path = array_pop ( explode ( ".",$logoname ) );
-				if ($logoname!="" && file_exists ( $image_uri . str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $logoname ) )) {
-					$logoname = str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $logoname );
-					$this->view->image_thumb = $this->view->baseUrl($image_uri ."/" . $logoname);
-				}
+				$image_uri = "resource/contact/images/";
+				$this->view->logo_path = $logoname;
+				$this->view->image_thumb = $this->view->baseUrl($image_uri ."/" . $logoname);
+				
 				$this->view->edit = $edit;
 				$this->view->timings = $timings;
 			}

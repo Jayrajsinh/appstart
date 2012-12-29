@@ -26,9 +26,152 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 				"controller" => "category",
 				"action" => "index" 
 		), "default", true );
+		$this->view->bulkupload = $this->view->url ( array (
+				"module" => "module-image-gallery-1",
+				"controller" => "index",
+				"action" => "bulk-upload"
+		), "default", true );
 		$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 		$categories = $this->_getCategories ($customer_id);
 		$this->view->categories = $categories;
+	}
+	public function bulkUploadAction() {
+		$request = $this->getRequest ();
+	
+		if ($this->_request->isPost ()) {
+			$response = array ();
+			if ($request->getParam ( "upload", "" ) != "") {
+				$this->_helper->layout ()->disableLayout ();
+				$this->_helper->viewRenderer->setNoRender ();
+	
+				$image_name = $request->getParam ( "image[]", "" );
+				$category_id = $request->getParam ( "category_id", "" );
+	
+				$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
+				$user_id = Standard_Functions::getCurrentUser ()->user_id;
+				$date_time = Standard_Functions::getCurrentDateTime ();
+	
+				$upload_dir = Standard_Functions::getResourcePath () . "module-image-gallery-1/thumb/" . $customer_id . "/";
+				$source_dir = Standard_Functions::getResourcePath () . "module-image-gallery-1/images/";
+				$mapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGallery1 ();
+				$mapper->getDbTable ()->getAdapter ()->beginTransaction ();
+	
+				try {
+					$adapter = new Zend_File_Transfer_Adapter_Http ();
+					$adapter->setDestination ( Standard_Functions::getResourcePath () . "module-image-gallery-1/images" );
+					foreach ( $adapter->getFileInfo () as $info ) {
+						if ($adapter->receive ()) {
+							$image_path = $info ["name"];
+								
+							$model = new ModuleImageGallery1_Model_ModuleImageGallery1 ();
+							$maxOrder = $mapper->getNextOrder ( $category_id );
+							$model->setOrder ( $maxOrder + 1 );
+							$model->setModuleImageGalleryCategory1Id ( $category_id );
+							$model->setCustomerId ( $customer_id );
+							$model->setCreatedBy ( $user_id );
+							$model->setCreatedAt ( $date_time );
+							$model->setLastUpdatedBy ( $user_id );
+							$model->setLastUpdatedAt ( $date_time );
+							$model->setStatus ( 1 );
+							$model = $model->save ();
+								
+							// Save image Details
+							$module_image_gallery_id = $model->get ( "module_image_gallery_1_id" );
+							$result ["module_image_gallery_1_id"] = $module_image_gallery_id;
+							$mapperLanguage = new Admin_Model_Mapper_CustomerLanguage ();
+							$modelLanguages = $mapperLanguage->fetchAll ( "customer_id = " . $customer_id );
+							if (is_array ( $modelLanguages )) {
+								$is_uploaded_image = false;
+								foreach ( $modelLanguages as $languages ) {
+									$modelDetails = new ModuleImageGallery1_Model_ModuleImageGalleryDetail1 ();
+									$modelDetails->setModuleImageGallery1Id ( $module_image_gallery_id );
+									$modelDetails->setLanguageId ( $languages->getLanguageId () );
+									if (! is_dir ( $upload_dir )) {
+										mkdir ( $upload_dir, 755 );
+									}
+									if (! $is_uploaded_image && $image_path != "") {
+										$filename = $this->moveUploadFile ( $source_dir, $upload_dir, $image_path );
+										$modelDetails->setImagePath ( $filename );
+										$ext_image_path = array_pop ( explode ( ".", $image_path ) );
+										if ($image_path != "") {
+											$image_path = str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $image_path );
+										}
+										$result ["image_path"] = $this->view->baseurl ( "resource/module-image-gallery-1/thumb/" . $customer_id . "/" . $image_path );
+										$response [] = $result;
+	
+										$is_uploaded_image = true;
+									} else if ($image_path != "") {
+										$modelDetails->setImagePath ( $filename );
+									}
+									$modelDetails = $modelDetails->save ();
+								}
+							}
+						}
+					}
+					$mapper->getDbTable ()->getAdapter ()->commit ();
+					$response = array (
+							"success" => 'true',
+							"result" => $response
+					);
+				} catch ( Exception $ex ) {
+					$mapper->getDbTable ()->getAdapter ()->rollBack ();
+					$response = array (
+							"errors" => "Error Occured"
+					);
+				}
+				echo Zend_Json::encode ( $response );
+				exit ();
+			} else {
+				// Save Details
+				$array_module_image_gallery_id = $request->getParam("module_image_gallery_1_id",null);
+	
+				if(is_array($array_module_image_gallery_id)) {
+					$mapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGallery1 ();
+					$mapper->getDbTable ()->getAdapter ()->beginTransaction ();
+					try {
+						foreach($array_module_image_gallery_id as $module_image_gallery_id) {
+							$mapperDetails = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryDetail1();
+							$modelDetails = $mapperDetails->fetchAll("module_image_gallery_1_id = " . $module_image_gallery_id);
+							if(is_array($modelDetails)) {
+								foreach($modelDetails as $details) {
+									$details->setTitle($request->getParam("title_" . $module_image_gallery_id,""));
+									$details->setDescription($request->getParam("description_" . $module_image_gallery_id,""));
+									$details->save();
+								}
+							}
+						}
+	
+						$mapper->getDbTable ()->getAdapter ()->commit ();
+						$response = array (
+								"success" => true
+						);
+					} catch (Exception $ex) {
+						$mapper->getDbTable ()->getAdapter ()->rollBack ();
+						$response = array (
+								"errors" => "Error Occured"
+						);
+					}
+				}
+				echo Zend_Json::encode ( $response );
+				exit ();
+			}
+		}
+		$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
+		$options = array (
+				"" => 'Select Category'
+		);
+		$mapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryCategory1();
+		$models = $mapper->fetchAll ("customer_id =" .$customer_id);
+		if($models){
+			foreach($models as $key=>$records){
+				$detailMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryCategoryDetail1();
+				$detailModels = $detailMapper->fetchAll("module_image_gallery_category_1_id =" .$records->getModuleImageGalleryCategory1Id());
+				foreach($detailModels as $categories){
+					$options[$categories->getModuleImageGalleryCategory1Id()] = $categories->getTitle();
+				}
+			}
+		}
+		$this->view->categories = $options;
 	}
 	public function addAction() {
 		$form = new ModuleImageGallery1_Form_ModuleImageGallery ();

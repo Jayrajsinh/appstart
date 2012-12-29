@@ -59,7 +59,18 @@ class Default_Plugin_Authentication extends Zend_Controller_Plugin_Abstract {
 				}
 			}
 		}
-		//var_dump($config);die;
+		/* $configArray = $config->toArray();
+		
+		$mapper = new Admin_Model_Mapper_CustomerModule();
+		$model = $mapper->fetchAll("customer_id=".Standard_Functions::getCurrentUser()->customer_id);
+		$modules = array();
+		$active_lang_id = Standard_Functions::getCurrentUser ()->active_language_id;
+		foreach ($model as $customerModule) {
+			$mapperDetail = new Admin_Model_Mapper_CustomerModuleDetail();
+			$modelDetail = $mapperDetail->fetchAll("customer_module_id = ".$customerModule->get("customer_module_id"). " AND language_id=".$active_lang_id);
+			
+		} */
+		//var_dump($c["Modules"]["pages"]);die;
 		//die;
 		$navigation = new Zend_Navigation ( $config );
 		$view->navigation ( $navigation )->setAcl ( $this->_acl )->setRole ( $this->_auth->getStorage ()->read ()->group_id );

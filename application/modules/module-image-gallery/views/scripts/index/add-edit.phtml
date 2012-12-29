@@ -182,7 +182,7 @@ function callTinymce(id){
 						}
 					} else {
 						?>
-						<input type="text" name="data[1][arrtag][]" value="<?php echo $keyword;?>"
+						<input type="text" name="data[1][arrtag][]" value=""
 						class="tag" id="keywords" />
 					<?php
 					}
@@ -197,12 +197,12 @@ function callTinymce(id){
 		        	<?php echo $form->submit->renderViewHelper() ?>&nbsp;
 					<?php echo $form->reset->renderViewHelper()?>
 				</td>
-				<?php if($mode == "add"){
+				<?php if($mode == "add"){/*
 				?>
 				<td><input type="button" id="btnAdd" value="add another name"  /></td>
 				<td><input type="button" id="btnDel" value="remove name" /></td>
 				<?php
-				} 
+				*/} 
 				?>
 			</tr>
 		</table>

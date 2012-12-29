@@ -54,6 +54,7 @@ $(document).ready(function() {
 				 ],
 		id : $('#dataGrid'),
 		filterForm : $('#frmFilter'),
+		charLimit : [0,35,0,0],
 		sAjaxSource: "<?php echo $this->url(array("module"=>"admin","controller"=>"business-type","action"=>"grid"),"default",true);?>"
 	});
     $(document).on("submit","#frmFilter",function(){

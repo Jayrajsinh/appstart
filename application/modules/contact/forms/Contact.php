@@ -57,7 +57,6 @@ class Contact_Form_Contact extends Standard_Form {
 		// Address
 		$address = $this->createElement ( "textarea", "address", array (
 				'label' => 'Address:',
-				'id' => 'valign',
 				'size' => '90',
 				'filters' => array (
 						'StringTrim' 
@@ -200,6 +199,7 @@ class Contact_Form_Contact extends Standard_Form {
 		$website = $this->createElement ( "text", "website", array (
 				'label' => 'Website:',
 				'size' => '35',
+				'style' => 'width: 465px;',
 				'filters' => array (
 						'StringTrim' 
 				) 

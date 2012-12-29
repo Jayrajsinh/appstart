@@ -9,8 +9,8 @@ tinyMCE.init({
 	plugins : "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave,visualblocks",
 
 	// Theme options
-	theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,fontselect,hr,fontsizeselect",
-	theme_advanced_buttons2 : "code,|,insertdate,inserttime,preview,|,forecolor,backcolor,formatselect",
+	theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,styleselect,fontselect,hr,fontsizeselect,formatselect",
+	theme_advanced_buttons2 : "code,|,insertdate,inserttime,preview,|,forecolor,backcolor,|,justifyleft,justifycenter,justifyright,justifyfull",
 	theme_advanced_buttons3 : "",
 	
 	// set value of textarea if null
@@ -97,6 +97,9 @@ tinyMCE.init({
 	width: 100%;
 	height: 400px;
 }
+div.logo-box td {
+	width: auto;
+}
 </style>
 <div id="filterBox">
 	<table
@@ -110,177 +113,203 @@ tinyMCE.init({
 <div class="boxBorderBottom">
 	<form id="frmAddEditContact" method="<?php echo $form->getMethod();?>"
 		action="<?php echo $form->getAction();?>" class="zend_form">
-	<table>
-			<tbody>
-				<tr>
-					<td>
-						<?php echo $form->contact_id->renderViewHelper(); ?>
-						<?php echo $form->contact_detail_id->renderViewHelper(); ?>
-						<?php echo $form->language_id->renderViewHelper(); ?>
-					</td>
-				</tr>
-				<tr>
-					<td rowspan="2"><?php echo $form->address->renderLabel() ?></td>
-					<td rowspan="2"><?php echo $form->address->renderViewHelper()?></td>
-					<td class="colon2" colspan="3" valign="top">
-						<table border="1px" class="timings">
-							<thead>
-								<tr><th colspan="6">Office Timings</th></tr>
-								<tr>
-									<th width="70px">Order</th>
-									<th width="200px">Day</th>
-									<th width="100px">Open From</th>
-									<th width="100px">Open To</th>
-									<th width="70px" colspan="2">Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-							<?php
-							if($this->timings){
-								$timings = $this->timings;
-								//creating object from timings data from database
-								$xml = simplexml_load_string($timings);
-								//adding the record in object to make sure edited data stays in object								
-							    
-								echo "<script type='text/javascript'>
-										window.createdXML =  [];	
-										window.createdXMLNew =  ".json_encode($xml).";	
-										if(window.createdXMLNew.record!=undefined){
-											if(window.createdXMLNew.record.length!=undefined){
-												for(x in window.createdXMLNew.record){
-													if(typeof window.createdXMLNew.record[x]=='object'){
-														window.createdXML.push(window.createdXMLNew.record[x]);
+		<?php echo $form->contact_id->renderViewHelper(); ?>
+		<?php echo $form->contact_detail_id->renderViewHelper(); ?>
+		<?php echo $form->language_id->renderViewHelper(); ?>
+	<table width="100%">
+		<tr>
+			<td valign="top">
+				<table width="100%">
+					<tr>
+						<td>
+							<?php echo $form->location->renderLabel() ?>
+						</td>
+						<td>
+							<?php echo $form->location->renderViewHelper()?>
+						</td>
+						<td valign="top" rowspan="4" style="padding-top: 10px;">
+							<?php echo $form->information->renderLabel(); ?>
+						</td>
+						<td rowspan="4" width="465">
+							<?php echo $form->information->renderViewHelper(); ?>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							<?php echo $form->address->renderLabel() ?>
+						</td>
+						<td>
+							<?php echo $form->address->renderViewHelper()?>
+						</td>
+					</tr>
+					<tr>
+						<td><?php echo $form->city->renderLabel(); ?></td>
+						<td><?php echo $form->city->renderViewHelper(); ?></td>
+					</tr>
+					<tr>
+						<td><?php echo $form->plz->renderLabel(); ?></td>
+						<td><?php echo $form->plz->renderViewHelper(); ?></td>
+					</tr>
+					<tr>
+						<td><?php echo $form->country->renderLabel() ?></td>
+						<td class="countryHelper"><?php echo $form->country->renderViewHelper() ?></td>
+						<td><?php echo $form->website->renderLabel() ?></td>
+						<td><?php echo $form->website->renderViewHelper()?></td>
+					</tr>
+					<tr>
+						<td><?php echo $form->phone_1->renderLabel() ?></td>
+						<td>
+							<?php echo $form->phone_1->renderViewHelper()?>
+						</td>
+						<td valign="top" style="padding-top: 10px;">
+							<?php echo $this->translate('Office Timings')?>
+						</td>
+						<td rowspan="5" valign="top">
+							<div class="logo-box" style="width:450px; height: 170px; padding: 5px 15px;">
+							<table class="timings">
+								<thead>
+									<tr>
+										<th width="50px">Order</th>
+										<th width="120px">Day</th>
+										<th width="80px">Open From</th>
+										<th width="80px">Open To</th>
+										<th width="120px" colspan="2">Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								if($this->timings){
+									$timings = $this->timings;
+									//creating object from timings data from database
+									$xml = simplexml_load_string($timings);
+									//adding the record in object to make sure edited data stays in object								
+								    
+									echo "<script type='text/javascript'>
+											window.createdXML =  [];	
+											window.createdXMLNew =  ".json_encode($xml).";	
+											if(window.createdXMLNew.record!=undefined){
+												if(window.createdXMLNew.record.length!=undefined){
+													for(x in window.createdXMLNew.record){
+														if(typeof window.createdXMLNew.record[x]=='object'){
+															window.createdXML.push(window.createdXMLNew.record[x]);
+														}
 													}
+												}else{
+													window.createdXML.push(window.createdXMLNew.record);
 												}
-											}else{
-												window.createdXML.push(window.createdXMLNew.record);
-											}
-										}										
-									</script>";
-								
-							} 
-							$i = 1;
-							//NOTE: class for TR starts from 1
-							//		class edit delete a tags start from 0
-							if(is_object($xml)){
-								foreach ($xml as $key=>$record){
-									echo "<tr class=row{$i}>
-											<td class='order' style='text-align:center'>{$record->order}</td>
-											<td class='day' style='text-align:center'>{$record->day}</td>
-											<td class='from' style='text-align:center'>{$record->from}</td>
-											<td class='to' style='text-align:center'>{$record->to}</td>
-											<td><a class='edit-timings-{$i}'>Edit</a></td>
-											<td><a class='delete-timings-{$i}'>Delete</a></td>
-										</tr>";
-									$i++;
+											}										
+										</script>";
+									
+								} 
+								$i = 1;
+								//NOTE: class for TR starts from 1
+								//		class edit delete a tags start from 0
+								if(isset($xml) && is_object($xml)){
+									foreach ($xml as $key=>$record){
+										echo "<tr class=row{$i}>
+												<td class='order' style='text-align:center'>{$record->order}</td>
+												<td class='day' style='text-align:center'>{$record->day}</td>
+												<td class='from' style='text-align:center'>{$record->from}</td>
+												<td class='to' style='text-align:center'>{$record->to}</td>
+												<td><a class='edit-timings-{$i}'>Edit</a></td>
+												<td><a class='delete-timings-{$i}'>Delete</a></td>
+											</tr>";
+										$i++;
+									}
 								}
-							}
-							?>
-							</tbody>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td class="colon2"><a class="open-office-timings greay button-grid">Add</a></td>
-				</tr>
-				<tr>
-					<td><?php echo $form->country->renderLabel() ?></td>
-					<td class="countryHelper"><?php echo $form->country->renderViewHelper() ?></td>
-					<td class="colon2"><?php echo $form->website->renderLabel() ?></td>
-					<td><?php echo $form->website->renderViewHelper()?></td>
-				</tr>
-				<tr>
-					<td><?php echo $form->city->renderLabel(); ?></td>
-					<td><?php echo $form->city->renderViewHelper(); ?></td>
-					<td class="colon2"><?php echo $form->fax->renderLabel() ?></td>
-					<td><?php echo $form->fax->renderViewHelper()?></td>
-				</tr>
-				<tr>
-					<td><?php echo $form->plz->renderLabel(); ?></td>
-					<td><?php echo $form->plz->renderViewHelper(); ?></td>
-					<td class="colon2"><label for="logo"><?php echo $this->translate('Logo')?></label></td>
-					<td>
-						<input id="logo" type="file" name="logo" /> <input id="logo_path" type="hidden" name="logo_path" value="<?php echo $this->logo_path; ?>" />
-						<img class="logoImage" alt="" src="<?php echo $this->image_thumb ?>">
-						<?php if($this->edit){ ?><a class="deleteLogo greay button-grid">Delete Logo</a><?php } ?>
-					</td>
-				</tr>
-				<tr>
-					<td><?php echo $form->phone_1->renderLabel() ?></td>
-					<td><?php echo $form->phone_1->renderViewHelper()?></td>
-					<td class="colon2" rowspan="8"><?php echo $form->information->renderLabel(); ?></td>
-					<td rowspan="8"><?php echo $form->information->renderViewHelper(); ?></td>
-				</tr>
-				<tr>
-					<td class="hiddenphone_1" style="display: none"><?php echo $form->phone_2->renderLabel() ?></td>
-					<td class="hiddenphone_1" style="display: none"><?php echo $form->phone_2->renderViewHelper()?></td>
-				</tr>
-				<tr  class="hiddenphone_2" style="display: none">
-					<td><?php echo $form->phone_3->renderLabel() ?></td>
-					<td><?php echo $form->phone_3->renderViewHelper()?></td>
-				</tr>
-				<tr>
-					<td colspan="2"><input type="button" class="addMore" id="addBtnPhone"
-						 onclick="addPhone();" /></td>
-				</tr>
-				<tr>
-					<td><?php echo $form->email_1->renderLabel() ?></td>
-					<td><?php echo $form->email_1->renderViewHelper()?></td>
-				</tr>
-				<tr class="hiddenemail_1" style="display: none">
-					<td><?php echo $form->email_2->renderLabel() ?></td>
-					<td><?php echo $form->email_2->renderViewHelper()?></td>
-				</tr>
-				<tr class="hiddenemail_2" style="display: none">
-					<td><?php echo $form->email_3->renderLabel() ?></td>
-					<td><?php echo $form->email_3->renderViewHelper()?></td>
-				</tr>
-				<tr>
-					<td><input type="button" class="addMore" id="addBtnEmail"
-						 onclick="addEmail();" />
-					</td>
-				</tr>
-				<tr>
-					<td><?php echo $form->status->renderLabel() ?></td>
-					<td><?php echo $form->status->renderViewHelper()?></td>
-				</tr>
-			</tbody>
-		</table>
-		<table>
-				<tr>
-					<td colspan="2"><input type="checkbox" checked="checked" name="mark-fixed"
-							id="mark-fixed" /> <label for="mark-fixed"><?php echo $this->translate('Auto Locate')?> </label>
-					</td>
-					<td style="width:500px">&nbsp;</td>
-				</tr>
-				<tr>
-					<td rowspan="4" colspan="4"><div id="gMap"></div></td>
-					<td class="colon2">
-						<?php echo $form->location->renderLabel() ?>
-						<?php echo $form->location->renderViewHelper()?>
-					</td>
-				</tr>
-				<tr>
-					<td class="colon2" colspan='2'>
-						<?php echo $form->latitude->renderLabel() ?>
-						<?php echo $form->latitude->renderViewHelper()?>
-					</td>
-				</tr>
-				<tr>
-					<td class="colon2" colspan="2">
-						<?php echo $form->longitude->renderLabel() ?>
-						<?php echo $form->longitude->renderViewHelper()?>
-					</td>
-				</tr>
-		</table>
-		<table style="width: 100%">
-			<tr>
-				<td align="center">
-		        <?php echo $form->submit->renderViewHelper() ?>&nbsp;
-				<?php echo $form->reset->renderViewHelper()?>
-				</td>
-			</tr>
-		</table>
+								?>
+								</tbody>
+							</table>
+							<div style="margin-top: 10px;"><a class="open-office-timings greay button-grid">Add</a></div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td><?php echo $form->phone_2->renderLabel() ?></td>
+						<td>
+							<?php echo $form->phone_2->renderViewHelper()?>
+						</td>
+					</tr>
+					<tr>
+						<td><?php echo $form->phone_3->renderLabel() ?></td>
+						<td>
+							<?php echo $form->phone_3->renderViewHelper()?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<?php echo $form->email_1->renderLabel() ?>
+						</td>
+						<td>
+							<?php echo $form->email_1->renderViewHelper()?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<?php echo $form->email_2->renderLabel() ?>
+						</td>
+						<td>
+							<?php echo $form->email_2->renderViewHelper()?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<?php echo $form->email_3->renderLabel() ?>
+						</td>
+						<td>
+							<?php echo $form->email_3->renderViewHelper()?>
+						</td>
+						<td><label for="logo"><?php echo $this->translate('Logo')?></label></td>
+						<td>
+							<div class="logo-box" style="width:450px; padding: 5px 15px;">
+								<input id="logo" type="file" name="logo" /> <input id="logo_path" type="hidden" name="logo_path" value="<?php echo $this->logo_path; ?>" />
+								<?php if($this->edit && $this->image_thumb != ""){ ?>
+									<img class="logoImage" alt="" width="40" src="<?php echo $this->image_thumb ?>">
+									<a class="deleteLogo greay button-grid">Delete Logo</a>
+								<?php } ?>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td><?php echo $form->fax->renderLabel() ?></td>
+						<td><?php echo $form->fax->renderViewHelper()?></td>
+						<td><?php echo $form->status->renderLabel() ?></td>
+						<td><?php echo $form->status->renderViewHelper()?></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<div class="logo-box" style="width:98%; padding: 0 1%;">
+				<table width="100%">
+						<tr>
+							<td>
+								<?php echo $form->latitude->renderLabel() ?>
+								<?php echo $form->latitude->renderViewHelper()?>
+							</td>
+							<td>
+								<?php echo $form->longitude->renderLabel() ?>
+								<?php echo $form->longitude->renderViewHelper()?>
+							</td>
+							<td><input type="checkbox" checked="checked" name="mark-fixed"
+									id="mark-fixed" /> <label for="mark-fixed"><?php echo $this->translate('Auto Locate')?> </label>
+							</td>
+						</tr>
+						<tr>
+							<td rowspan="3" colspan="4"><div id="gMap"></div></td>
+						</tr>
+				</table>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+	        <?php echo $form->submit->renderViewHelper() ?>&nbsp;
+			<?php echo $form->reset->renderViewHelper()?>
+			</td>
+		</tr>
+	</table>
 	</form>
 </div>
 <!-- timing form popup --> 
@@ -366,7 +395,7 @@ $(document).ready(function() {
 						'order': $('input[name=order]').attr("value"),
 						'day': $('input[name=day]').attr("value"),
 						'from':$('input[name=from]').attr("value"),
-						'to' : $('input[name=to]').attr("value"),
+						'to' : $('input[name=to]').attr("value")
 				};
 				
 			} else {
@@ -521,8 +550,8 @@ $(document).ready(function() {
         options:{
         	center:[0, 0],
         	mapTypeId: google.maps.MapTypeId.SATELLITE,
-        	zoom: 1,
-        	scrollwheel: false,
+        	zoom: 2,
+        	scrollwheel: false
         },
         callback: function(){
             
@@ -607,11 +636,11 @@ $(document).ready(function() {
         });
     }
     // Callback to auto set marker based on address
-    $("#address").on("blur",function(){
+    $("#address, #city, #plz, #country").on("blur",function(){
     	if($("#mark-fixed").attr("checked")!="checked") return;
     	$('#gMap').gmap3({
     		action:'getAddress',
-    		address:$("#address").attr("value"),
+    		address:($("#address").attr("value")+ " " + $("#plz").attr("value")+ " " + $("#city").attr("value")+ " " + $("#country").attr("value")),
     		callback:function(results){
     			if (!results) return;
     			var item = results[0];

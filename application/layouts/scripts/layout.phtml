@@ -89,6 +89,9 @@ window.dataTableLangUrl = "<?php echo $this->baseUrl("libs/DataTables/lang/".$ac
     	if($this->addlink) {
     ?>
     	<div id="addlink">
+    		<?php if($this->bulkupload) { ?>
+    			<a id="hrefBlukUpload" href="<?php echo $this->bulkupload; ?>"><?php echo $this->translate('Bulk Upload');?></a><span></span>
+    		<?php }?>
 			<?php if($this->addcategory) { ?>
     			<a href="<?php echo $this->addcategory; ?>"><?php echo $this->translate('Categories');?></a><span></span>
     		<?php }?>    	

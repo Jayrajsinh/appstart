@@ -73,6 +73,7 @@ $(document).ready(function() {
 					 ],
 		id : $('#dataGrid'),
 		filterForm : $('#frmFilter'),
+		charLimit : [45,0],
 		sAjaxSource: "<?php echo $this->url(array("module"=>"admin","controller"=>"translation","action"=>"grid"));?>"
 	});
     $(document).on("submit","#frmFilter",function(){

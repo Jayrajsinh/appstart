@@ -289,8 +289,11 @@ class ModuleCms_IndexController extends Zend_Controller_Action {
 										'1' => $this->view->translate ( 'Active' ),
 										'0' => $this->view->translate ( 'Inactive' ) 
 								) 
-						) 
-				) 
+						)
+				),
+			  'search_type' => array(
+			  		'c.parent_id'=>"="
+			  ) 
 		), "customer_id=" . Standard_Functions::getCurrentUser ()->customer_id, $select );
 		$mapper = new Admin_Model_Mapper_CustomerLanguage ();
 		$select = $mapper->getDbTable ()->select ( false )->setIntegrityCheck ( false )->from ( array (
@@ -322,10 +325,16 @@ class ModuleCms_IndexController extends Zend_Controller_Action {
 			$mapper = new ModuleCms_Model_Mapper_ModuleCms();
 			if($row[4]["c.parent_id"] == 0){
 				$childs = $mapper->countAll("parent_id =".$row [4] ["c.module_cms_id"]);
-				$response['aaData'][$rowId][0] = '<span class="child" id="'.$row [4] ["c.module_cms_id"].'">'.$row[0]." Child(s) ".$childs.'</span>';
+				if($childs>0)
+					$response['aaData'][$rowId][0] = '<span class="child" id="'.$row [4] ["c.module_cms_id"].'">'.$row[0]." Child(s) ".$childs.'</span>';
+				else
+					$response['aaData'][$rowId][0] = $row[0];
 			}else{
 				$childs = $mapper->countAll("parent_id =".$row [4] ["c.module_cms_id"]);
-				$response['aaData'][$rowId][0] = '<span class="child" id="'.$row [4] ["c.module_cms_id"].'">'.$row[0]." Child(s) ".$childs.'</span>';
+				if($childs>0)
+					$response['aaData'][$rowId][0] = '<span class="child" id="'.$row [4] ["c.module_cms_id"].'">'.$row[0]." Child(s) ".$childs.'</span>';
+				else
+					$response['aaData'][$rowId][0] = $row[0];
 			}
 			
 			if ($languages) {
@@ -498,10 +507,11 @@ class ModuleCms_IndexController extends Zend_Controller_Action {
 				'text' => 'mcd.title' 
 		) );
 		if($getOnlyParents){
-			$select = $select->where("mc.module_cms_id IN (SELECT distinct(parent_id) FROM module_cms )OR parent_id = 0  AND mc.customer_id=" . $customer_id);
+			$select = $select->where("mc.module_cms_id IN (SELECT distinct(parent_id) FROM module_cms where mc.customer_id=" . $customer_id.")");
 		} else {
 			$select = $select->where ( 'mc.customer_id = ' . $customer_id );
 		}
+		
 		$data = $moduleCmsMapper->getDbTable ()->fetchAll ( $select );
 		return Zend_Json::encode ( $data->toArray () );
 	}

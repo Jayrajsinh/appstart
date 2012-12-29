@@ -45,5 +45,39 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 		$AppConfig= $this->getOption('AppConfig');
 		Zend_Registry::set('AppConfig', $AppConfig);
 	}
+	protected function _initDebug() {
+		// SoundCloud API
+		// Client ID: e9d49c642a93447a3469437bfc92df02
+		// Client Secret: e534ca88d9bf7378b0f0a28de4101e6c
+		
+		//$soundCloud = new Standard_Plugin_Music_Soundcloud("e9d49c642a93447a3469437bfc92df02","e534ca88d9bf7378b0f0a28de4101e6c");
+		//$soundCloud->accessToken("baaea756baca2499d1c04035723bc024");
+		//$response = $soundCloud->get("tracks",array("q"=>"life","limit"=>10,"offset"=>11));
+		//var_dump($soundCloud->getAuthorizeUrl());
+		//foreach ($response->tracks->track as $track)
+		//	var_dump($track);
+		//die;
+		
+		// Beatport
+		/*$response = Standard_Plugin_Music_Beatport::search("lady gaga");
+		foreach ($response->response->result as $result)
+		{
+			foreach($result as $track){
+				var_dump($track->image);
+				print "\n============================\n\n";
+			}
+		}
+		die;*/
+		//$response = Standard_Plugin_Music_iTunes::search("life",array("media"=>"music","country"=>"US","entity"=>"song","limit"=>20,"offset"=>5));
+		//foreach ($response->response->searchResults->searchResult as $result) {
+		//var_dump($response);
+		//}
+		
+		//$response = Standard_Plugin_Music_SevenDigital::search("life","US");
+		//foreach ($response->response->searchResults->searchResult as $result) {
+			//var_dump($response->response->searchResults->searchResult[0]->track->{"@attributes"}->id);
+		//}
+		//die;
+	}
 }
 

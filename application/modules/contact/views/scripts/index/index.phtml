@@ -61,6 +61,7 @@ $(document).ready(function() {
 						{ "sName": "actions","bSortable": false}
 					 ],
 		id : $('#dataGrid'),
+		charLimit : [25,25,0,0,12],
 		filterForm : $('#frmFilter'),
 		sAjaxSource: "<?php echo $this->url(array("module"=>"contact","controller"=>"index","action"=>"grid"));?>"
 	});

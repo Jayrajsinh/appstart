@@ -128,7 +128,7 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 		} else {
 			// Insert the new record
 			unset ( $modelData [$primaryKey] );
-			$insert_id = $this->getDbTable ()->insert ( $modelData );	
+			$insert_id = $this->getDbTable ()->insert ( $modelData );
 			$model->set ( $primaryKey, $insert_id );
 		}
 		// Reset the updated vars
@@ -365,6 +365,11 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 		if (isset ( $options ["column"] ) && isset ( $options ["column"] ["replace"] )) {
 			$replaceColumns = array_keys ( $options ["column"] ["replace"] );
 		}
+		// Check for replace Search type before setting data to data grid
+		$searchTypeColumns = false;
+		if (isset ( $options ["search_type"] )) {
+			$searchTypeColumns = array_keys ( $options ["search_type"] );
+		}
 		// var_dump($replaceColumns);
 		// Searching
 		if (! empty ( $searchParams )) {
@@ -401,7 +406,15 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 					if (! empty ( $searchArray )) {
 						$where .= "( ( ";
 						foreach ( $searchArray as $key => $value ) {
-							$where .= $searchColumn . " LIKE '%" . $key . "%' OR ";
+							if (is_array($searchColumn) && in_array ( $searchColumn, $searchTypeColumns )) {
+								if ($options ['search_type'] [$searchColumn] == "=") {
+									$where .= $searchColumn . " = '" . $searchValue . "' AND ";
+								} else if ($options ['search_type'] [$searchColumn] == "LIKE") {
+									$where .= $searchColumn . " LIKE '%" . $searchValue . "%' AND ";
+								}
+							} else {
+								$where .= $searchColumn . " LIKE '%" . $searchValue . "%' AND ";
+							}
 						}
 						$where = substr_replace ( $where, "", - 3 );
 						$where .= " ) OR " . $searchColumn . " LIKE '%" . $searchValue . "%' ) AND ";
@@ -409,14 +422,22 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 						$where .= $searchColumn . " LIKE '%" . $searchValue . "%' AND ";
 					}
 				} else {
-					$where .= $searchColumn . " LIKE '%" . $searchValue . "%' AND ";
+					if (is_array($searchColumn) && in_array ( $searchColumn, $searchTypeColumns )) {
+						if ($options ['search_type'] [$searchColumn] == "=") {
+							$where .= $searchColumn . " = '" . $searchValue . "' AND ";
+						} else if ($options ['search_type'] [$searchColumn] == "LIKE") {
+							$where .= $searchColumn . " LIKE '%" . $searchValue . "%' AND ";
+						}
+					} else {
+						$where .= $searchColumn . " LIKE '%" . $searchValue . "%' AND ";
+					}
 				}
 			}
 			
 			$where = substr_replace ( $where, "", - 4 );
 			$where .= ") ";
 		}
-
+		
 		// print_r($searchParams);
 		// die;
 		$where = $where == "" ? "1=1" : $where;

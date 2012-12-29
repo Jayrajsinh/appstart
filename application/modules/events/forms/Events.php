@@ -138,7 +138,37 @@ class Events_Form_Events extends Standard_Form {
 				)
 		);
 		$this->addElement($notes);
-		//checkbox
+		
+		//Recurrence
+		$this->addElement('select','recurrence',array(
+				'label'		 => 'Recurrence:',
+				'MultiOptions' => $this->_getRecurrence(),
+				'validators'	=>	array(
+						'NotEmpty'
+				),
+				'Required'	=>	true
+		));
+		
+		// stop_by
+		$this->addElement('select','stop_by',array(
+				'label'		 => 'Stop By:',
+				'MultiOptions' => $this->_getStopBy(),
+				'validators'	=>	array(
+						'NotEmpty'
+				),
+				'Required'	=>	true
+		));
+		
+		// Stop At
+		$stop_at = $this->createElement ( "hidden", "stop_at", array (
+				'value' => '1',
+				'filters' => array (
+						'StringTrim' 
+				) 
+		) );
+		$this->addElement ( $stop_at);
+		
+		// Status
 		$this->addElement('checkbox', 'status', array(
 				'label'      => 'Active',
 				'value'      => '1'
@@ -159,5 +189,23 @@ class Events_Form_Events extends Standard_Form {
 				$submit,
 				$reset
 		) );
+	}
+	
+	private function _getRecurrence() {
+		$options = array(
+						"Daily"=>"Daily",
+						"Weekly"=>"Weekly",
+						"Fortnightly"=>"Fortnightly",
+						"Monthly"=>"Monthly",
+						"Quarterly"=>"Quarterly",
+						"Half Yearly"=>"Half Yearly",
+						"Yearly"=>"Yearly");
+		return $options;
+	}
+	private function _getStopBy() {
+		$options = array(
+				"1"=>"Ocurrence",
+				"2"=>"Day");
+		return $options;
 	}
 }

@@ -343,54 +343,59 @@ class Music_IndexController extends Zend_Controller_Action
     	$request = $this->getRequest ();
     	
     	if (($musicId = $request->getParam ( "id", "" )) != "") {
-    		$music = new Music_Model_ModuleMusic();
-    		$music->populate($musicId);
-    		if($music) {
-    			$mapper = new Music_Model_Mapper_ModuleMusic();
-    			$mapper->getDbTable()->getAdapter()->beginTransaction();
-    			try {
-    				$detailsMapper = new Music_Model_Mapper_ModuleMusicDetail();
-    				$details = $detailsMapper->fetchAll("module_music_id=".$music->getModuleMusicId());
-    				if(is_array($details)) {
-    					foreach($details as $eventDetail) {
-    						$eventDetail->delete();
-    					}
-    				}
-    	
-    				$deletedRows = $music->delete ();
-    	
-    				// set is pulish to false
-    				$customerId = Standard_Functions::getCurrentUser ()->customer_id;
-    				$customermoduleMapper = new Admin_Model_Mapper_CustomerModule();
-    				$customermodule = $customermoduleMapper->fetchAll("customer_id=".$customerId." AND module_id=".$this->_module_id);
-    				if(is_array($customermodule)) {
-    					$customermodule = $customermodule[0];
-    					$customermodule->setIsPublish("NO");
-    					$customermodule->save();
-    				}
-    	
-    				$mapper->getDbTable()->getAdapter()->commit();
-    	
-    				$response = array (
-    						"success" => array (
-    								"deleted_rows" => $deletedRows
-    						)
-    				);
-    	
-    			} catch (Exception $ex) {
-    				$mapper->getDbTable()->getAdapter()->rollBack();
-    				$response = array (
-    						"errors" => array (
-    								"message" => $ex->getMessage ()
-    						)
-    				);
-    			}
-    		} else {
-    			$response = array (
-    					"errors" => array (
-    							"message" => "No track to delete."
-    					)
-    			);
+    		$id = str_ireplace("track_id=", "", $musicId);
+    		$id = explode("&",$id);
+    		foreach($id  as $musicId)
+    		{
+	    		$music = new Music_Model_ModuleMusic();
+	    		$music->populate($musicId);
+	    		if($music) {
+	    			$mapper = new Music_Model_Mapper_ModuleMusic();
+	    			$mapper->getDbTable()->getAdapter()->beginTransaction();
+	    			try {
+	    				$detailsMapper = new Music_Model_Mapper_ModuleMusicDetail();
+	    				$details = $detailsMapper->fetchAll("module_music_id=".$music->getModuleMusicId());
+	    				if(is_array($details)) {
+	    					foreach($details as $eventDetail) {
+	    						$eventDetail->delete();
+	    					}
+	    				}
+	    	
+	    				$deletedRows = $music->delete ();
+	    	
+	    				// set is pulish to false
+	    				$customerId = Standard_Functions::getCurrentUser ()->customer_id;
+	    				$customermoduleMapper = new Admin_Model_Mapper_CustomerModule();
+	    				$customermodule = $customermoduleMapper->fetchAll("customer_id=".$customerId." AND module_id=".$this->_module_id);
+	    				if(is_array($customermodule)) {
+	    					$customermodule = $customermodule[0];
+	    					$customermodule->setIsPublish("NO");
+	    					$customermodule->save();
+	    				}
+	    	
+	    				$mapper->getDbTable()->getAdapter()->commit();
+	    	
+	    				$response = array (
+	    						"success" => array (
+	    								"deleted_rows" => $deletedRows
+	    						)
+	    				);
+	    	
+	    			} catch (Exception $ex) {
+	    				$mapper->getDbTable()->getAdapter()->rollBack();
+	    				$response = array (
+	    						"errors" => array (
+	    								"message" => $ex->getMessage ()
+	    						)
+	    				);
+	    			}
+	    		} else {
+	    			$response = array (
+	    					"errors" => array (
+	    							"message" => "No track to delete."
+	    					)
+	    			);
+	    		}
     		}
     	} else {
     		$this->_redirect ( '/' );
@@ -424,6 +429,8 @@ class Music_IndexController extends Zend_Controller_Action
     									"md.title" => "title",
     									"md.album" => "album",
     									"md.artist" => "artist",
+    									"md.track_url" => "track_url",
+    									"md.preview_url" => "preview_url"
     					))->
     					where("m.customer_id=".$customer_id)->order("m.order");
 		$response = $mapper->getGridData ( array (
@@ -452,20 +459,21 @@ class Music_IndexController extends Zend_Controller_Action
     											array ("cl.customer_id") )->
     							where("cl.customer_id=".Standard_Functions::getCurrentUser ()->customer_id);
     	$languages = $mapper->getDbTable ()->fetchAll($select)->toArray();
-    	
+    	$i=1;
     	$rows = $response ['aaData'];
     	foreach ( $rows as $rowId => $row ) {
     		$edit = array();
-    		if($row [5] ["md.module_music_detail_id"]=="") {
+    		if($row [8] ["md.module_music_detail_id"]=="") {
     			$mapper = new Music_Model_Mapper_ModuleMusicDetail();
-    			$details = $mapper->fetchAll("module_music_id=".$row [5] ["m.module_music_id"]." AND language_id=".$default_lang_id);
+    			$details = $mapper->fetchAll("module_music_id=".$row [8] ["m.module_music_id"]." AND language_id=".$default_lang_id);
     			if(is_array($details)) {
     				$details = $details[0];
-    				$row [5] ["md.title"] = $row[0] = $details->getTitle();
-    				$row [5] ["md.album"] = $row[1] = $details->getAlbum();
-    				$row [5] ["md.artist"] = $row[2] = $details->getArtist();
+    				$row [8] ["md.title"] = $row[3] = $details->getTitle();
+    				$row [8] ["md.album"] = $row[4] = $details->getAlbum();
+    				$row [8] ["md.artist"] = $row[5] = $details->getArtist();
     			}
     		}
+    		/* <img src="<?php echo $this->baseUrl('images/beatport.png'); ?>" alt="" height="25" />*/
     		
     		$response ['aaData'] [$rowId] = $row;
     		if($languages) {
@@ -474,7 +482,7 @@ class Music_IndexController extends Zend_Controller_Action
     					"module" => "music",
     					"controller" => "index",
     					"action" => "edit",
-    					"id" => $row [5] ["m.module_music_id"],
+    					"id" => $row [8] ["m.module_music_id"],
     					"lang" => $lang["l.language_id"]
     				), "default", true );
     				$edit[] = '<a href="'. $editUrl .'"><img src="images/lang/'.$lang["logo"].'" alt="'.$lang["l.title"].'" /></a>';
@@ -484,13 +492,48 @@ class Music_IndexController extends Zend_Controller_Action
     						"module" => "music",
     						"controller" => "index",
     						"action" => "delete",
-    						"id" => $row [5] ["m.module_music_id"]
+    						"id" => $row [8] ["m.module_music_id"]
     					), "default", true );
     		$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
 			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
        		$sap = '';
-    	
-    		$response ['aaData'] [$rowId] [5] = $defaultEdit. $sap .$delete;
+    		$logo = "";
+    		$ext = "mp3";
+    		if(stripos($row [8] ["md.track_url"], "itunes") !== false ) {
+    			$logo = '<img src="images/itunes.png" alt="" height="25" />';
+    			$ext = "m4a";
+    		} else if(stripos($row [8] ["md.track_url"], "7digital") !== false ) {
+    			$logo = '<img src="images/7digital.png" alt="" height="25" />';
+    		} else if(stripos($row [8] ["md.track_url"], "soundcloud") !== false ) {
+    			$logo = '<img src="images/soundcloud.png" alt="" height="25" />';
+    		} else if(stripos($row [8] ["md.track_url"], "beatport") !== false ) {
+    			$logo = '<img src="images/beatport.png" alt="" height="25" />';
+    		} else {
+    			$row [8] ["md.preview_url"] = $this->view->baseUrl("resource/music/tracks/".$row [8] ["md.preview_url"]);
+    		}
+    		
+    		$option = "<div class='ext'>".$ext."</div><div class='path'>".$row [8] ["md.preview_url"]."</div>";
+    		$player = $option.'<div id="jquery_jplayer_'.($i).'" class="cp-jplayer"></div>'.
+    					'<div id="cp_container_'.($i++).'" class="cp-container">
+							<div class="cp-buffer-holder">
+								<div class="cp-buffer-1"></div>
+								<div class="cp-buffer-2"></div>
+							</div>
+							<div class="cp-progress-holder"> 
+								<div class="cp-progress-1"></div>
+								<div class="cp-progress-2"></div>
+							</div>
+							<div class="cp-circle-control"></div>
+							<ul class="cp-controls">
+								<li><a class="cp-play">play</a></li>
+								<li><a class="cp-pause" style="display:none;">pause</a></li>
+							</ul>
+						</div>';
+    		 
+    		$response ['aaData'] [$rowId] [0] = "<input type='checkbox' name='track_id' class='track_id' value='".$row [8] ["m.module_music_id"]."' />";
+    		$response ['aaData'] [$rowId] [1] = $player;
+    		$response ['aaData'] [$rowId] [2] = $logo;
+    		$response ['aaData'] [$rowId] [8] = $defaultEdit. $sap .$delete;
     	}
     	$jsonGrid = Zend_Json::encode ( $response );
     	$this->_response->appendBody ( $jsonGrid );

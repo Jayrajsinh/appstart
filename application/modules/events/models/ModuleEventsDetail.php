@@ -9,6 +9,9 @@ class Events_Model_ModuleEventsDetail extends Standard_Model {
 	private $_end_date_time;
 	private $_image;
 	private $_notes;
+	private $_recurrence;
+	private $_stop_by;
+	private $_stop_at;
 	private $_last_updated_by;
 	private $_last_updated_at;
 	private $_created_by;
