@@ -218,14 +218,10 @@ class Standard_Plugin_Music_Soundcloud
      *
      * @access public
      */
-    function __construct($clientId, $clientSecret, $redirectUri = null, $development = false)
+    function __construct($redirectUri = null, $development = false)
     {
-        if (empty($clientId)) {
-            throw new Standard_Plugin_Music_Soundcloud_Missing_Client_Id_Exception();
-        }
-
-        $this->_clientId = $clientId;
-        $this->_clientSecret = $clientSecret;
+        $this->_clientId = "e9d49c642a93447a3469437bfc92df02";
+        $this->_clientSecret = "e534ca88d9bf7378b0f0a28de4101e6c";
         $this->_redirectUri = $redirectUri;
         $this->_development = $development;
         $this->_responseFormat = self::$_responseFormats['json'];

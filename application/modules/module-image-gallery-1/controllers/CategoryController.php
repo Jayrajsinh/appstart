@@ -66,8 +66,9 @@ class ModuleImageGallery1_CategoryController extends Zend_Controller_Action {
 			$data = $mapper->find($module_image_gallery_category_1_id)->toArray();
 			$form->populate ( $data );
 			$datadetails = array ();
+
 			$detailsMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryCategoryDetail1 ();
-			if ($detailsMapper->countAll ( "module_image_gallery_category_1_id = " . $module_image_gallery_category_1_id . " AND language_id = " . $language_id ) > 0) {
+			if ($detailsMapper->countAll ("module_image_gallery_category_1_id = " . $module_image_gallery_category_1_id . " AND language_id = " . $language_id ) > 0) {
 				$dataDetails = $detailsMapper->getDbTable ()->fetchAll ( "module_image_gallery_category_1_id = " . $module_image_gallery_category_1_id . " AND language_id = " . $language_id )->toArray ();
 			}
 			else {
@@ -272,7 +273,7 @@ class ModuleImageGallery1_CategoryController extends Zend_Controller_Action {
 								'actions'
 						),
 						'replace' => array (
-								'c.status' => array (
+								'migc.status' => array (
 										'1' => $this->view->translate ( 'Active' ),
 										'0' => $this->view->translate ( 'Inactive' )
 								)

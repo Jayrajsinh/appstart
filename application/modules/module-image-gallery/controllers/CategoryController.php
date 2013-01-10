@@ -273,7 +273,7 @@ class ModuleImageGallery_CategoryController extends Zend_Controller_Action {
 								'actions'
 						),
 						'replace' => array (
-								'c.status' => array (
+								'migc.status' => array (
 										'1' => $this->view->translate ( 'Active' ),
 										'0' => $this->view->translate ( 'Inactive' )
 								)

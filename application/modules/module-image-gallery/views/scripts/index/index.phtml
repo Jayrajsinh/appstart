@@ -34,11 +34,13 @@
 		</table>
 	</div>
 </form>
+<a class="togglefilter"></a>
 <table style="border-spacing: 0; border-collapse: collapse; width: 100%"
 	class="pattern-style-b" id="dataGrid">
 	<thead>
 		<tr>
 			<th scope="col"><?php echo $this->translate('Title'); ?></th>
+            <th scope="col"><?php echo $this->translate('Category'); ?></th>
 			<th scope="col"><?php echo $this->translate('Image'); ?></th>
 			<th scope="col"><?php echo $this->translate('Status'); ?></th>
 			<th scope="col"><?php echo $this->translate('Order'); ?></th>
@@ -56,9 +58,10 @@ var grid ="";
 $(document).ready(function() {
 
 	grid = dataTable({
-		aaSorting: [[ 3, "asc" ]],
+		aaSorting: [[ 4, "asc" ]],
 		"aoColumns": [
 						{ "sName": "migd.title" },
+                        { "sName": "migcd.title" },
 						{ "sName": "migd.image_path" ,"bSortable": false},
 						{ "sName": "mig.status" },
 						{ "sName": "mig.order" },
@@ -142,5 +145,10 @@ $(document).ready(function() {
     		sAjaxSource: "<?php echo $this->url(array("module"=>"module-image-gallery","controller"=>"index","action"=>"grid"));?>/id/"+ selId
     	});
     });
+    $('.togglefilter').on("click",function(){
+		$('#filterBox').toggle();
+		$('#content > a').toggleClass('flip-vertical');
+	});
+	$('#filterBox').hide();
 });
 </script>

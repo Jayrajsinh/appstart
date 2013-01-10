@@ -24,10 +24,11 @@ class Admin_Plugin_Acl extends Zend_Acl {
 			 ->addResource(new Zend_Acl_Resource('translation'))
 			 ->addResource(new Zend_Acl_Resource('dashboard'))
 			 ->addResource(new Zend_Acl_Resource('settings'))
+			 ->addResource(new Zend_Acl_Resource('version'))
 			 ->addResource(new Zend_Acl_Resource('email-template'));
 		
 		// Set Permissions
-		$this->allow('admin',array('user','business_type','template','translation','dashboard','settings','email-template'))
+		$this->allow('admin',array('user','business_type','template','translation','dashboard','settings','email-template','version'))
 			 ->allow(array('admin','user'),'customer');
 		$this->deny("user",array('user','business_type','template','translation','settings','email-template'));
 	}

@@ -44,23 +44,40 @@ class Default_UserController extends Zend_Controller_Action {
 		), null, $select );
 		$rows = $response ['aaData'];
 		$customerId = Standard_Functions::getCurrentUser ()->customer_id;
+		$mapper = new Admin_Model_Mapper_CustomerLanguage();
+		$select = $mapper->getDbTable ()->
+    							select ( false )->
+    							setIntegrityCheck ( false )->
+    							from ( array ("l" => "language"), array (
+    									"l.language_id" => "language_id",
+    									"l.title" => "title",
+    									"logo" => "logo") )->
+    							joinLeft ( array ("cl" => "customer_language"), "l.language_id = cl.language_id",
+    											array ("cl.customer_id") )->
+    											where("cl.customer_id=".Standard_Functions::getCurrentUser ()->customer_id);
+    	$languages = $mapper->getDbTable ()->fetchAll($select)->toArray();
 		foreach ( $rows as $rowId => $row ) {
-			$editUrl = $this->view->url ( array (
-					"module" => "default",
-					"controller" => "user",
-					"action" => "edit",
-					"id" => $row [6] ["u.user_id"] 
-			), "default", true );
-			
+			if($languages){
+				foreach ($languages as $lang) {
+						$editUrl = $this->view->url ( array (
+						"module" => "default",
+						"controller" => "user",
+						"action" => "edit",
+						"id" => $row [6] ["u.user_id"] 
+					), "default", true );
+					$edit[] = '<a href="'. $editUrl .'"><img src="images/lang/'.$lang["logo"].'" alt="'.$lang["l.title"].'" /></a>';	
+				}
+			}
 			$deleteUrl = $this->view->url ( array (
 					"module" => "default",
 					"controller" => "user",
 					"action" => "delete",
 					"id" => $row [6] ["u.user_id"] 
 			), "default", true );
-			$edit = '<a href="' . $editUrl . '" class="button-grid greay grid_edit" >'.$this->view->translate('Edit').'</a>';
+			$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
 			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
-			$response ['aaData'] [$rowId] [6] = $edit . "&nbsp;|&nbsp;" . $delete;
+			$sap = '';
+			$response ['aaData'] [$rowId] [6] = $defaultEdit.$sap.$delete;
 		}
 		$this->_helper->json ( $response );
 	}

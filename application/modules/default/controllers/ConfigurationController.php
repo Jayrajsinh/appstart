@@ -110,7 +110,7 @@ class Default_ConfigurationController extends Zend_Controller_Action {
 				"d_language_id" => "d.language_id",
 				"d_screen_name" => "d.screen_name",
 				"d_background_image" => "d.background_image" 
-		) )->where ( "m.status=1 AND cm.status=1 AND cm.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
+		) )->where ( "m.status=1 AND cm.status=1 AND cm.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id )->order ( "cm.order_number" );
 		
 		$response = $mapper->getGridData ( array (
 				'column' => array (
@@ -290,6 +290,8 @@ class Default_ConfigurationController extends Zend_Controller_Action {
 		$this->_response->appendBody ( $jsonGrid );
 	}
 	public function uploadAction() {
+		echo 'hello';
+		die();
 		$this->_helper->layout ()->disableLayout ();
 		$this->_helper->viewRenderer->setNoRender ();
 		

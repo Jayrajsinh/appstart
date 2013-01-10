@@ -97,6 +97,9 @@ class Events_Form_Events extends Standard_Form {
 		//Address
 		$address = $this->createElement('textarea', 'address',array(
 				'label' => 'Address',
+				'cols' => '150',
+				'rows' => '15',
+				'value' => '{{addressValue}}',
 				'filters' => array(
 						'StringTrim'
 						)
@@ -108,6 +111,7 @@ class Events_Form_Events extends Standard_Form {
 		//Plz
 		$plz = $this->createElement('text', 'plz',array(
 				'label' => 'Plz',
+				'value' => '{{plzValue}}',
 				'filters' => array(
 						'StringTrim'
 						)
@@ -119,6 +123,7 @@ class Events_Form_Events extends Standard_Form {
 		//City
 		$city = $this->createElement('text', 'city',array(
 				'label' => 'City',
+				'value' => '{{cityValue}}',
 				'filters' => array(
 						'StringTrim'
 						)
@@ -126,6 +131,60 @@ class Events_Form_Events extends Standard_Form {
 		);
 		$city->setIsArray(true);
 		$this->addElement($city);
+
+		//Country
+		$countryandcontinents =  Zend_Locale::getTranslationList('Territory','en');
+		asort($countryandcontinents);
+		$countries[""]="Select Country";
+		foreach($countryandcontinents as $key=>$value){
+			if(is_numeric($key)) continue;
+			$countries[$value] = $value;
+		}
+		//array_unshift($countries, array("Select Country"=>"Select Country"));
+		$country = $this->createElement('select','country',array(
+				'label' => 'Country',
+				'value' => '{{countryValue}}',
+				'multiple' => false,
+				'Multioptions' => $countries
+		));
+		$country->setIsArray(true);
+		$this->addElement($country);
+		
+		//Location
+		$location = $this->createElement('text', 'location',array(
+				'label' => 'Location',
+				'value' => '{{locationValue}}',
+				'filters' => array(
+						'StringTrim'
+						)
+				)
+		);
+		$location->setIsArray(true);
+		$this->addElement($location);
+
+		//Latitude
+		$latitude = $this->createElement('text', 'latitude',array(
+				'label' => 'Latitude',
+				'value' => '{{latitudeValue}}',
+				'filters' => array(
+						'StringTrim'
+						)
+				)
+		);
+		$latitude->setIsArray(true);
+		$this->addElement($latitude);
+
+		//Longitude
+		$longitude = $this->createElement('text', 'longitude',array(
+				'label' => 'Longitude',
+				'value' => '{{longitudeValue}}',
+				'filters' => array(
+						'StringTrim'
+						)
+				)
+		);
+		$longitude->setIsArray(true);
+		$this->addElement($longitude);
 
 		//notes
 		$notes = $this->createElement("textarea", 'notes',array(

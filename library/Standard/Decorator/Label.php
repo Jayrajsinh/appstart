@@ -6,10 +6,9 @@ class Standard_Decorator_Label extends Zend_Form_Decorator_Abstract
 	public function render($content)
 	{
 		$element = $this->getElement();
-		$name    = $element->getFullyQualifiedName();
 		$label   = $element->getLabel();
-		$id      = $element->getId();
-		$value   = $element->getValue();
+		$id      = htmlentities($element->getId());
+		 
 		$markup  = sprintf($this->_format, $id, $label);
 		return $markup;
 	}

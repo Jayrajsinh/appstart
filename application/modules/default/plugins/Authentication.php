@@ -59,19 +59,40 @@ class Default_Plugin_Authentication extends Zend_Controller_Plugin_Abstract {
 				}
 			}
 		}
-		/* $configArray = $config->toArray();
+		$configArray = $config->toArray();
 		
+		$modules = array();
+		$icons = array();
+		$moduleName = array();
+		$mapper = new Admin_Model_Mapper_Module();
+		$model = $mapper->fetchAll();
+		foreach ($model as $module) {
+			$modules[$module->getName()] = $module->getDescription();
+			$moduleName[$module->getModuleId()] = $module->getName();
+		}
 		$mapper = new Admin_Model_Mapper_CustomerModule();
 		$model = $mapper->fetchAll("customer_id=".Standard_Functions::getCurrentUser()->customer_id);
-		$modules = array();
 		$active_lang_id = Standard_Functions::getCurrentUser ()->active_language_id;
 		foreach ($model as $customerModule) {
+			$icons[$moduleName[$customerModule->getModuleId()]] = $customerModule->getIcon();
+			
 			$mapperDetail = new Admin_Model_Mapper_CustomerModuleDetail();
 			$modelDetail = $mapperDetail->fetchAll("customer_module_id = ".$customerModule->get("customer_module_id"). " AND language_id=".$active_lang_id);
-			
-		} */
-		//var_dump($c["Modules"]["pages"]);die;
-		//die;
+			if(is_array($modelDetail) && is_object($modelDetail[0])) {
+				$modules[$moduleName[$customerModule->getModuleId()]] = $modelDetail[0]->getScreenName();
+			}
+		}
+		$modules = array_filter($modules,function($element){
+			return ($element != "");
+		});
+		foreach($configArray["Modules"]["pages"] as $key=>$page) {
+			$configArray["Modules"]["pages"][$key]["MM_description"] = $configArray["Modules"]["pages"][$key]["label"];
+			if(key_exists($page["module"], $modules))
+				$configArray["Modules"]["pages"][$key]["label"] = $modules[$page["module"]];
+			if(key_exists($page["module"], $icons))
+				$configArray["Modules"]["pages"][$key]["MM_icon"] = $icons[$page["module"]];
+		}
+		$config = new Zend_Config( $configArray, true);
 		$navigation = new Zend_Navigation ( $config );
 		$view->navigation ( $navigation )->setAcl ( $this->_acl )->setRole ( $this->_auth->getStorage ()->read ()->group_id );
 	}

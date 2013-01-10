@@ -77,6 +77,17 @@ class PushMessage_Form_PushMessage extends Standard_Form{
 				'value'      => '1'
 		));
 		
+
+		//message time
+		$message = $this->createElement ( "text", "message_date", array (
+				'label' => 'Message Date-Time:',
+				'size' => '30',
+				'filters' => array (
+						'StringTrim'
+				)
+		) );
+		$this->addElement ($message);
+
 		// Submit button
 		$submit = $this->addElement ( 'submit', 'submit', array (
 				'ignore' => true,

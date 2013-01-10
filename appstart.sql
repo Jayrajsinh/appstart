@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2012-12-24 19:59:10
+Date: 2013-01-10 20:44:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -199,8 +199,8 @@ INSERT INTO `customer_module` VALUES ('2', '2', '1', '2', '1', '1', '', '', '000
 INSERT INTO `customer_module` VALUES ('9', '1', '5', '1', '0', '1', '', '', '0000-00-00 00:00:00', 'NO');
 INSERT INTO `customer_module` VALUES ('10', '2', '5', '2', '0', '1', '', '', '0000-00-00 00:00:00', '');
 INSERT INTO `customer_module` VALUES ('11', '3', '5', '3', '0', '1', '', '', '0000-00-00 00:00:00', '');
-INSERT INTO `customer_module` VALUES ('36', '3', '1', '3', '1', '1', '', '', '0000-00-00 00:00:00', 'NO');
-INSERT INTO `customer_module` VALUES ('37', '3', '1', '3', '1', '1', '', '', '0000-00-00 00:00:00', 'NO');
+INSERT INTO `customer_module` VALUES ('36', '3', '1', '3', '1', '1', '', '', '2013-01-03 16:18:12', 'NO');
+INSERT INTO `customer_module` VALUES ('37', '3', '1', '3', '1', '1', '', '', '2013-01-03 16:17:59', 'YES');
 INSERT INTO `customer_module` VALUES ('38', '2', '1', '2', '1', '1', '', '', '0000-00-00 00:00:00', 'NO');
 INSERT INTO `customer_module` VALUES ('39', '5', '1', '5', '1', '1', '', '', '2012-10-15 18:51:20', 'NO');
 INSERT INTO `customer_module` VALUES ('52', '4', '1', '4', '1', '1', '', '', '2012-10-15 19:15:41', 'NO');
@@ -354,7 +354,7 @@ INSERT INTO `customer_module` VALUES ('331', '11', '31', '11', '0', '1', null, n
 INSERT INTO `customer_module` VALUES ('332', '12', '31', '12', '0', '1', null, null, null, 'NO');
 INSERT INTO `customer_module` VALUES ('333', '13', '18', '13', '0', '1', null, null, null, null);
 INSERT INTO `customer_module` VALUES ('334', '13', '21', '13', '0', '1', null, null, null, null);
-INSERT INTO `customer_module` VALUES ('335', '13', '1', '13', '0', '1', null, null, '2012-12-24 13:42:04', 'YES');
+INSERT INTO `customer_module` VALUES ('335', '13', '1', '13', '0', '1', null, 'Winter.jpg', '2012-12-24 13:42:04', 'YES');
 INSERT INTO `customer_module` VALUES ('336', '13', '5', '13', '0', '1', null, null, null, null);
 INSERT INTO `customer_module` VALUES ('337', '13', '8', '13', '0', '1', null, null, null, null);
 INSERT INTO `customer_module` VALUES ('338', '13', '17', '13', '0', '1', null, null, null, null);
@@ -459,7 +459,7 @@ CREATE TABLE `customer_module_detail` (
   KEY `fk_cmd_lang` (`language_id`),
   CONSTRAINT `fk_cmd_cm` FOREIGN KEY (`customer_module_id`) REFERENCES `customer_module` (`customer_module_id`),
   CONSTRAINT `fk_cmd_lang` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=883 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=884 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of customer_module_detail
@@ -992,6 +992,7 @@ INSERT INTO `customer_module_detail` VALUES ('879', '462', '1', 'Music', null);
 INSERT INTO `customer_module_detail` VALUES ('880', '462', '2', 'Music', null);
 INSERT INTO `customer_module_detail` VALUES ('881', '462', '3', 'Music', null);
 INSERT INTO `customer_module_detail` VALUES ('882', '462', '4', 'Music', null);
+INSERT INTO `customer_module_detail` VALUES ('883', '335', '1', 'birju', '121');
 
 -- ----------------------------
 -- Table structure for `customer_payment`
@@ -1266,7 +1267,7 @@ CREATE TABLE `module_contact` (
   CONSTRAINT `fk_contact_created` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`),
   CONSTRAINT `fk_contact_update` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`user_id`),
   CONSTRAINT `fk_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_contact
@@ -1278,7 +1279,9 @@ INSERT INTO `module_contact` VALUES ('32', '21', '1', '1', '11', '2012-11-21 17:
 INSERT INTO `module_contact` VALUES ('49', '1', '1', '3', '2', '2012-12-19 18:26:30', '2', '2012-12-19 18:23:30');
 INSERT INTO `module_contact` VALUES ('71', '1', '1', '4', '2', '2012-12-21 18:19:06', '2', '2012-12-21 18:17:36');
 INSERT INTO `module_contact` VALUES ('72', '1', '1', '5', '2', '2012-12-21 18:22:15', '2', '2012-12-21 18:22:15');
-INSERT INTO `module_contact` VALUES ('73', '1', '1', '6', '2', '2012-12-24 12:51:14', '2', '2012-12-21 18:28:27');
+INSERT INTO `module_contact` VALUES ('73', '1', '1', '6', '2', '2013-01-04 18:09:15', '2', '2012-12-21 18:28:27');
+INSERT INTO `module_contact` VALUES ('74', '1', '1', '7', '2', '2013-01-04 18:47:29', '2', '2013-01-04 18:11:09');
+INSERT INTO `module_contact` VALUES ('75', '1', '1', '8', '2', '2013-01-08 18:31:53', '2', '2013-01-04 18:48:10');
 
 -- ----------------------------
 -- Table structure for `module_contact_detail`
@@ -1319,7 +1322,7 @@ CREATE TABLE `module_contact_detail` (
   CONSTRAINT `fk_cd_language` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`),
   CONSTRAINT `fk_cd_updated` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`user_id`),
   CONSTRAINT `fk_contact` FOREIGN KEY (`contact_id`) REFERENCES `module_contact` (`contact_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=167 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_contact_detail
@@ -1341,8 +1344,12 @@ INSERT INTO `module_contact_detail` VALUES ('157', '71', '1', 'asdfgh', '', '', 
 INSERT INTO `module_contact_detail` VALUES ('158', '71', '2', 'asdfgh', '', '', '', '0', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', 'Sunset.jpg', '', '2', '2012-12-21 18:17:36', '2', '2012-12-21 18:17:36');
 INSERT INTO `module_contact_detail` VALUES ('159', '72', '1', 'hdfghff', '', '', 'birju', '2', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-21 18:22:15', '2', '2012-12-21 18:22:15');
 INSERT INTO `module_contact_detail` VALUES ('160', '72', '2', 'hdfghff', '', '', 'birju', '2', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-21 18:22:15', '2', '2012-12-21 18:22:15');
-INSERT INTO `module_contact_detail` VALUES ('161', '73', '1', '123', '', '380052', 'ahmedabadEdited', 'Angola', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-24 12:51:14', '2', '2012-12-24 12:51:14');
+INSERT INTO `module_contact_detail` VALUES ('161', '73', '1', '123', '', '380052', 'ahmedabadEdited', 'Angola', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node><record><order>1</order><day>2</day><from>03:18</from><to>03:18</to></record><record><order>2</order><day>3</day><from>06:21</from><to>07:22</to></record></node>', '', '', '2', '2013-01-04 18:09:15', '2', '2013-01-04 18:09:15');
 INSERT INTO `module_contact_detail` VALUES ('162', '73', '2', '123', '', '', 'ahmedabad', 'Angola', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2012-12-21 18:28:27', '2', '2012-12-21 18:28:27');
+INSERT INTO `module_contact_detail` VALUES ('163', '74', '1', 'Just a entry', '', '', '', '0', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2013-01-04 18:47:29', '2', '2013-01-04 18:47:29');
+INSERT INTO `module_contact_detail` VALUES ('164', '74', '2', 'Just a entry', '', '', '', 'Afghanistan', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2013-01-04 18:11:09', '2', '2013-01-04 18:11:09');
+INSERT INTO `module_contact_detail` VALUES ('165', '75', '1', 'Just another entry', '', '', '', 'Bahamas', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', '', '', '2', '2013-01-08 18:31:53', '2', '2013-01-08 18:31:53');
+INSERT INTO `module_contact_detail` VALUES ('166', '75', '2', 'Just another entry', '', '', '', '0', '', '', '', '', '22.299999', '73.199997', '', '', '', '', '<node></node>', 'delete.png', '', '2', '2013-01-04 18:48:10', '2', '2013-01-04 18:48:10');
 
 -- ----------------------------
 -- Table structure for `module_document`
@@ -1465,14 +1472,18 @@ CREATE TABLE `module_events` (
   PRIMARY KEY (`module_events_id`),
   KEY `event_customer` (`customer_id`),
   CONSTRAINT `event_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_events
 -- ----------------------------
-INSERT INTO `module_events` VALUES ('1', '1', '1', '2', '1', '2012-10-16 17:32:51', '1', '2012-10-08 17:25:36');
+INSERT INTO `module_events` VALUES ('1', '1', '1', '2', '2', '2012-12-31 10:43:09', '1', '2012-10-08 17:25:36');
 INSERT INTO `module_events` VALUES ('2', '1', '1', '1', '1', '2012-10-16 17:32:51', '1', '2012-10-08 17:35:44');
 INSERT INTO `module_events` VALUES ('11', '21', '1', '1', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events` VALUES ('14', '1', '1', '3', '2', '2013-01-03 13:26:37', '2', '2013-01-03 13:01:43');
+INSERT INTO `module_events` VALUES ('15', '1', '1', '4', '2', '2013-01-04 13:09:09', '2', '2013-01-04 12:34:57');
+INSERT INTO `module_events` VALUES ('18', '1', '1', '5', '2', '2013-01-08 20:49:32', '2', '2013-01-04 12:42:57');
+INSERT INTO `module_events` VALUES ('19', '1', '1', '6', '2', '2013-01-09 18:10:56', '2', '2013-01-09 18:10:23');
 
 -- ----------------------------
 -- Table structure for `module_events_detail`
@@ -1488,6 +1499,9 @@ CREATE TABLE `module_events_detail` (
   `description` text,
   `image` varchar(128) DEFAULT NULL,
   `notes` text,
+  `recurrence` varchar(15) DEFAULT NULL,
+  `stop_by` tinyint(4) DEFAULT NULL,
+  `stop_at` varchar(15) DEFAULT NULL,
   `last_updated_by` int(11) DEFAULT NULL,
   `last_updated_at` datetime DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
@@ -1497,35 +1511,58 @@ CREATE TABLE `module_events_detail` (
   KEY `fk_event_lang` (`language_id`),
   CONSTRAINT `fk_events` FOREIGN KEY (`module_events_id`) REFERENCES `module_events` (`module_events_id`),
   CONSTRAINT `fk_event_lang` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_events_detail
 -- ----------------------------
-INSERT INTO `module_events_detail` VALUES ('1', '1', '1', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In English', 'Test Event In English', 'appstart-logo.png', null, '1', '2012-10-08 17:33:27', '1', '2012-10-08 17:33:27');
-INSERT INTO `module_events_detail` VALUES ('2', '1', '2', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In French', 'Test Event In French', 'appstart-logo.png', null, '1', '2012-10-08 17:34:10', '1', '2012-10-08 17:34:10');
-INSERT INTO `module_events_detail` VALUES ('3', '2', '1', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In English', 'Test Event 2 In English', 'appstart-admin.png', null, '1', '2012-10-08 17:36:52', '1', '2012-10-08 17:36:52');
-INSERT INTO `module_events_detail` VALUES ('4', '2', '2', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In French', 'Test Event 2 In French', 'appstart-admin.png', null, '1', '2012-10-08 17:35:44', '1', '2012-10-08 17:35:44');
-INSERT INTO `module_events_detail` VALUES ('37', '11', '1', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
-INSERT INTO `module_events_detail` VALUES ('38', '11', '2', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
-INSERT INTO `module_events_detail` VALUES ('39', '11', '3', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
-INSERT INTO `module_events_detail` VALUES ('40', '11', '4', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('1', '1', '1', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In English', '<p>Test Event In English</p>', 'appstart-logo.png', '', 'Daily', '1', '', '2', '2012-12-31 10:43:09', '1', '2012-10-08 17:33:27');
+INSERT INTO `module_events_detail` VALUES ('2', '1', '2', '2012-10-08 08:00:00', '2012-10-15 08:00:00', 'Test Event In French', 'Test Event In French', 'appstart-logo.png', null, null, null, null, '1', '2012-10-08 17:34:10', '1', '2012-10-08 17:34:10');
+INSERT INTO `module_events_detail` VALUES ('3', '2', '1', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In English', 'Test Event 2 In English', 'appstart-admin.png', null, null, null, null, '1', '2012-10-08 17:36:52', '1', '2012-10-08 17:36:52');
+INSERT INTO `module_events_detail` VALUES ('4', '2', '2', '2012-10-08 23:00:00', '2012-10-15 23:00:00', 'Test Event 2 In French', 'Test Event 2 In French', 'appstart-admin.png', null, null, null, null, '1', '2012-10-08 17:35:44', '1', '2012-10-08 17:35:44');
+INSERT INTO `module_events_detail` VALUES ('37', '11', '1', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', null, null, null, '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('38', '11', '2', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', null, null, null, '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('39', '11', '3', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', null, null, null, '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('40', '11', '4', '2012-11-21 00:00:00', '2012-11-22 00:00:00', 'asd', '', null, '', null, null, null, '11', '2012-11-21 17:50:30', '11', '2012-11-21 17:50:30');
+INSERT INTO `module_events_detail` VALUES ('45', '14', '1', '2013-01-30 00:00:00', '2013-01-31 00:00:00', 'qwe', '', null, '', 'Daily', '1', '1', '2', '2013-01-03 13:26:37', '2', '2013-01-03 13:01:43');
+INSERT INTO `module_events_detail` VALUES ('46', '14', '2', null, null, 'qwe', '', null, '', 'Daily', '1', '1', '2', '2013-01-03 13:01:43', '2', '2013-01-03 13:01:43');
+INSERT INTO `module_events_detail` VALUES ('47', '15', '1', '2013-01-25 00:00:00', '2013-01-31 00:00:00', 'what is this', '', null, '', 'Daily', '1', '1', '2', '2013-01-04 13:09:09', '2', '2013-01-04 12:34:57');
+INSERT INTO `module_events_detail` VALUES ('48', '15', '2', null, null, 'what is this', '', null, '', 'Daily', '1', '1', '2', '2013-01-04 12:34:57', '2', '2013-01-04 12:34:57');
+INSERT INTO `module_events_detail` VALUES ('50', '18', '1', null, null, 'I really don\'t understand', '', null, '', 'Daily', '1', '1', '2', '2013-01-08 20:49:32', '2', '2013-01-04 12:42:57');
+INSERT INTO `module_events_detail` VALUES ('51', '18', '2', null, null, 'I really don\'t understand', '', null, '', 'Daily', '1', '1', '2', '2013-01-04 12:42:57', '2', '2013-01-04 12:42:57');
+INSERT INTO `module_events_detail` VALUES ('52', '19', '1', '2013-01-09 10:00:00', '2013-01-09 08:20:00', 'Nirav', '', null, '', 'Daily', '1', '1', '2', '2013-01-09 18:10:56', '2', '2013-01-09 18:10:23');
+INSERT INTO `module_events_detail` VALUES ('53', '19', '2', '2013-01-10 00:00:00', '2013-01-25 00:00:00', 'Nirav', '', null, '', 'Daily', '1', '1', '2', '2013-01-09 18:10:23', '2', '2013-01-09 18:10:23');
 
 -- ----------------------------
 -- Table structure for `module_events_location`
 -- ----------------------------
 DROP TABLE IF EXISTS `module_events_location`;
 CREATE TABLE `module_events_location` (
-  `module_events_detail_id` int(11) NOT NULL,
+  `module_events_location_id` int(11) NOT NULL AUTO_INCREMENT,
+  `module_events_detail_id` int(11) DEFAULT NULL,
   `address` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `plz` varchar(25) CHARACTER SET utf8 DEFAULT NULL,
+  `city` varchar(25) CHARACTER SET utf8 DEFAULT NULL,
   `country` varchar(25) CHARACTER SET utf8 DEFAULT NULL,
-  PRIMARY KEY (`module_events_detail_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `location` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `latitude` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
+  `longitude` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`module_events_location_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of module_events_location
 -- ----------------------------
+INSERT INTO `module_events_location` VALUES ('7', '1', 'Test Location 1', '', '', null, null, null, null);
+INSERT INTO `module_events_location` VALUES ('8', '1', 'b-10', '', '', null, null, null, null);
+INSERT INTO `module_events_location` VALUES ('14', '46', '', '', '', null, null, null, null);
+INSERT INTO `module_events_location` VALUES ('20', '45', '', '', '', null, null, null, null);
+INSERT INTO `module_events_location` VALUES ('22', '48', '', '', '', null, null, null, null);
+INSERT INTO `module_events_location` VALUES ('24', '51', '', '', '', null, null, null, null);
+INSERT INTO `module_events_location` VALUES ('31', '47', '', '', '', null, null, null, null);
+INSERT INTO `module_events_location` VALUES ('71', '50', '', '', '', '', '', '22.299999', '73.199997');
+INSERT INTO `module_events_location` VALUES ('73', '53', '', '', '', '', '', '', '');
+INSERT INTO `module_events_location` VALUES ('74', '52', '', '', '', '', '', '', '');
 
 -- ----------------------------
 -- Table structure for `module_home_wallpaper`
@@ -1759,15 +1796,35 @@ CREATE TABLE `module_image_gallery` (
   CONSTRAINT `fk_img_updated` FOREIGN KEY (`last_updated_by`) REFERENCES `user` (`user_id`),
   CONSTRAINT `fk_mig_category` FOREIGN KEY (`module_image_gallery_category_id`) REFERENCES `module_image_gallery_category` (`module_image_gallery_category_id`),
   CONSTRAINT `fk_mig_created` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_image_gallery
 -- ----------------------------
 INSERT INTO `module_image_gallery` VALUES ('3', '5', '31', '1', '2', '20', '2012-12-10 19:15:24', '20', '2012-12-10 19:15:24');
 INSERT INTO `module_image_gallery` VALUES ('4', '5', '31', '1', '3', '20', '2012-12-10 19:15:24', '20', '2012-12-10 19:15:24');
-INSERT INTO `module_image_gallery` VALUES ('5', '7', '1', '1', '1', '2', '2012-12-11 15:21:13', '2', '2012-12-11 15:21:13');
+INSERT INTO `module_image_gallery` VALUES ('5', '7', '1', '1', '1', '2', '2013-01-04 11:22:31', '2', '2012-12-11 15:21:13');
 INSERT INTO `module_image_gallery` VALUES ('6', '7', '1', '1', '2', '2', '2012-12-11 15:21:13', '2', '2012-12-11 15:21:13');
+INSERT INTO `module_image_gallery` VALUES ('11', '7', '1', '1', '4', '2', '2013-01-02 11:54:20', '2', '2013-01-01 16:10:52');
+INSERT INTO `module_image_gallery` VALUES ('12', '7', '1', '1', '5', '2', '2013-01-01 19:13:18', '2', '2013-01-01 16:10:52');
+INSERT INTO `module_image_gallery` VALUES ('17', '7', '1', '1', '6', '2', '2013-01-01 18:58:46', '2', '2013-01-01 18:58:46');
+INSERT INTO `module_image_gallery` VALUES ('18', '7', '1', '1', '7', '2', '2013-01-01 19:06:56', '2', '2013-01-01 19:06:56');
+INSERT INTO `module_image_gallery` VALUES ('19', '7', '1', '1', '8', '2', '2013-01-01 19:21:40', '2', '2013-01-01 19:20:52');
+INSERT INTO `module_image_gallery` VALUES ('20', '7', '1', '1', '9', '2', '2013-01-02 11:53:25', '2', '2013-01-01 19:30:14');
+INSERT INTO `module_image_gallery` VALUES ('21', '7', '1', '1', '10', '2', '2013-01-02 11:56:36', '2', '2013-01-02 11:55:15');
+INSERT INTO `module_image_gallery` VALUES ('22', '7', '1', '1', '11', '2', '2013-01-02 11:55:15', '2', '2013-01-02 11:55:15');
+INSERT INTO `module_image_gallery` VALUES ('23', '7', '1', '1', '12', '2', '2013-01-02 11:55:15', '2', '2013-01-02 11:55:15');
+INSERT INTO `module_image_gallery` VALUES ('24', '7', '1', '1', '13', '2', '2013-01-02 12:03:45', '2', '2013-01-02 12:03:45');
+INSERT INTO `module_image_gallery` VALUES ('25', '7', '1', '1', '14', '2', '2013-01-02 12:03:45', '2', '2013-01-02 12:03:45');
+INSERT INTO `module_image_gallery` VALUES ('26', '7', '1', '1', '15', '2', '2013-01-02 12:03:45', '2', '2013-01-02 12:03:45');
+INSERT INTO `module_image_gallery` VALUES ('27', '7', '1', '1', '16', '2', '2013-01-02 12:10:24', '2', '2013-01-02 12:10:24');
+INSERT INTO `module_image_gallery` VALUES ('28', '7', '1', '1', '17', '2', '2013-01-02 12:10:24', '2', '2013-01-02 12:10:24');
+INSERT INTO `module_image_gallery` VALUES ('29', '7', '1', '1', '18', '2', '2013-01-02 12:11:56', '2', '2013-01-02 12:11:56');
+INSERT INTO `module_image_gallery` VALUES ('30', '7', '1', '1', '19', '2', '2013-01-02 12:11:56', '2', '2013-01-02 12:11:56');
+INSERT INTO `module_image_gallery` VALUES ('31', '7', '1', '1', '20', '2', '2013-01-02 12:13:12', '2', '2013-01-02 12:13:12');
+INSERT INTO `module_image_gallery` VALUES ('32', '7', '1', '1', '21', '2', '2013-01-02 12:13:12', '2', '2013-01-02 12:13:12');
+INSERT INTO `module_image_gallery` VALUES ('33', '7', '1', '1', '22', '2', '2013-01-04 11:31:29', '2', '2013-01-04 11:30:39');
+INSERT INTO `module_image_gallery` VALUES ('34', '7', '1', '1', '23', '2', '2013-01-04 11:31:48', '2', '2013-01-04 11:31:48');
 
 -- ----------------------------
 -- Table structure for `module_image_gallery_1`
@@ -1794,8 +1851,8 @@ CREATE TABLE `module_image_gallery_1` (
 -- ----------------------------
 -- Records of module_image_gallery_1
 -- ----------------------------
-INSERT INTO `module_image_gallery_1` VALUES ('11', '13', '1', '1', '2', '2', '2012-12-05 14:43:48', '2', '2012-12-05 14:39:20');
-INSERT INTO `module_image_gallery_1` VALUES ('12', '13', '1', '1', '1', '2', '2012-12-05 14:43:48', '2', '2012-12-05 14:39:21');
+INSERT INTO `module_image_gallery_1` VALUES ('11', '13', '1', '1', '2', '2', '2013-01-04 11:20:43', '2', '2012-12-05 14:39:20');
+INSERT INTO `module_image_gallery_1` VALUES ('12', '13', '1', '1', '1', '2', '2013-01-04 11:21:03', '2', '2012-12-05 14:39:21');
 INSERT INTO `module_image_gallery_1` VALUES ('13', '13', '31', '1', '3', '20', '2012-12-10 19:48:00', '20', '2012-12-10 19:48:00');
 
 -- ----------------------------
@@ -1843,12 +1900,13 @@ CREATE TABLE `module_image_gallery_category_1` (
   KEY `fk_migc_created` (`created_by`),
   KEY `fk_migc_customer` (`customer_id`),
   KEY `fk_migc_updated` (`last_updated_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_image_gallery_category_1
 -- ----------------------------
 INSERT INTO `module_image_gallery_category_1` VALUES ('13', '1', '1', '1', '2', '2012-12-05 13:01:30', '2', '2012-12-05 13:01:30');
+INSERT INTO `module_image_gallery_category_1` VALUES ('15', '1', '1', '2', '2', '2013-01-03 18:09:44', '2', '2013-01-03 18:09:44');
 
 -- ----------------------------
 -- Table structure for `module_image_gallery_category_detail`
@@ -1900,13 +1958,15 @@ CREATE TABLE `module_image_gallery_category_detail_1` (
   KEY `fk_migcd_language` (`language_id`),
   KEY `fk_migcd_updated` (`last_updated_by`),
   CONSTRAINT `module_image_gallery_category_detail_1_ibfk_1` FOREIGN KEY (`module_image_gallery_category_1_id`) REFERENCES `module_image_gallery_category_1` (`module_image_gallery_category_1_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_image_gallery_category_detail_1
 -- ----------------------------
 INSERT INTO `module_image_gallery_category_detail_1` VALUES ('23', '13', '1', 'twitter:edited', '2', '2012-12-05 13:01:30', '2', '2012-12-05 13:01:30');
 INSERT INTO `module_image_gallery_category_detail_1` VALUES ('24', '13', '2', 'twitter', '2', '2012-12-05 13:01:30', '2', '2012-12-05 13:01:30');
+INSERT INTO `module_image_gallery_category_detail_1` VALUES ('28', '15', '1', 'birju category:edited', '2', '2013-01-03 18:09:44', '2', '2013-01-03 18:09:44');
+INSERT INTO `module_image_gallery_category_detail_1` VALUES ('29', '15', '2', 'birju category:edited', '2', '2013-01-03 18:09:44', '2', '2013-01-03 18:09:44');
 
 -- ----------------------------
 -- Table structure for `module_image_gallery_detail`
@@ -1924,17 +1984,57 @@ CREATE TABLE `module_image_gallery_detail` (
   PRIMARY KEY (`module_image_gallery_detail_id`),
   KEY `fk_migd_id` (`module_image_gallery_id`),
   CONSTRAINT `fk_migd_id` FOREIGN KEY (`module_image_gallery_id`) REFERENCES `module_image_gallery` (`module_image_gallery_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_image_gallery_detail
 -- ----------------------------
 INSERT INTO `module_image_gallery_detail` VALUES ('2', '3', '1', 'wer', '', 'Winter_1.jpg', null, null);
 INSERT INTO `module_image_gallery_detail` VALUES ('3', '4', '1', 'wer', '', 'Blue hills.jpg', null, null);
-INSERT INTO `module_image_gallery_detail` VALUES ('4', '5', '1', 'dream of it', '<p>xcvb</p>', 'Blue hills_11.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('4', '5', '1', 'dream of it', '<p>xcvb</p>', 'Winter_4.jpg', 'wer', null);
 INSERT INTO `module_image_gallery_detail` VALUES ('5', '5', '2', 'dream of it', '<p>xcvb</p>', 'Blue hills_11.jpg', null, null);
 INSERT INTO `module_image_gallery_detail` VALUES ('6', '6', '1', 'do whatever', '<p>zvcx</p>', 'Blue hills_12.jpg', null, null);
 INSERT INTO `module_image_gallery_detail` VALUES ('7', '6', '2', 'do whatever', '<p>zvcx</p>', 'Blue hills_12.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('16', '11', '1', '2', '', 'Blue hills.jpg', 'qwe', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('17', '11', '2', '2', '', 'Blue hills.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('18', '12', '1', '3', '', 'Sunset_1.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('19', '12', '2', '3', '', 'Sunset_1.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('28', '17', '1', 'qwe', '', '', 'birju,shah', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('29', '17', '2', 'qwe', '', '', 'birju,shah', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('30', '18', '1', 'dfh', '', '', 'qwe', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('31', '18', '2', 'dfh', '', '', 'qwe', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('32', '19', '1', 'asd', '', 'Sunset_2.jpg', 'qwe,zxc', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('33', '19', '2', 'asd', '', 'Sunset_2.jpg', 'qwe,zxc', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('34', '20', '1', 'tired', '', '', '', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('35', '20', '2', 'tired', '', '', 'qwe,zxc', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('36', '21', '1', 'birju 1', '', 'Water lilies_2.jpg', '', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('37', '21', '2', 'birju 1', '', 'Water lilies_2.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('38', '22', '1', 'birju 2', '', 'Blue hills_1.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('39', '22', '2', 'birju 2', '', 'Blue hills_1.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('40', '23', '1', 'birju 3', '', 'Sunset_3.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('41', '23', '2', 'birju 3', '', 'Sunset_3.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('42', '24', '1', null, null, 'Water lilies_3.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('43', '24', '2', null, null, 'Water lilies_3.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('44', '25', '1', null, null, 'Blue hills_2.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('45', '25', '2', null, null, 'Blue hills_2.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('46', '26', '1', null, null, 'Sunset_4.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('47', '26', '2', null, null, 'Sunset_4.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('48', '27', '1', null, null, 'Water lilies_4.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('49', '27', '2', null, null, 'Water lilies_4.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('50', '28', '1', null, null, 'Sunset_5.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('51', '28', '2', null, null, 'Sunset_5.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('52', '29', '1', null, null, 'Water lilies_5.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('53', '29', '2', null, null, 'Water lilies_5.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('54', '30', '1', null, null, 'Winter_2.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('55', '30', '2', null, null, 'Winter_2.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('56', '31', '1', null, null, 'Water lilies_6.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('57', '31', '2', null, null, 'Water lilies_6.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('58', '32', '1', null, null, 'Winter_3.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('59', '32', '2', null, null, 'Winter_3.jpg', null, null);
+INSERT INTO `module_image_gallery_detail` VALUES ('60', '33', '1', 'qwe', '<p>asd</p>', 'Water lilies_7.jpg', '', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('61', '33', '2', 'qwe', '<p>asd</p>', 'Water lilies_7.jpg', 'qwe,zxc', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('62', '34', '1', 'fafaf', '', '', '', null);
+INSERT INTO `module_image_gallery_detail` VALUES ('63', '34', '2', 'fafaf', '', '', '', null);
 
 -- ----------------------------
 -- Table structure for `module_image_gallery_detail_1`
@@ -2024,7 +2124,7 @@ CREATE TABLE `module_push_message` (
   PRIMARY KEY (`push_message_id`),
   KEY `fk_pm_customer` (`customer_id`),
   CONSTRAINT `fk_pm_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_push_message
@@ -2035,12 +2135,18 @@ INSERT INTO `module_push_message` VALUES ('18', '5', '1', '3', '6', '2012-09-27 
 INSERT INTO `module_push_message` VALUES ('21', '5', '1', '8', '6', '2012-09-27 19:56:20', '6', '2012-09-27 19:56:20');
 INSERT INTO `module_push_message` VALUES ('22', '5', '1', '9', '6', '2012-09-28 20:34:13', '6', '2012-09-28 20:34:13');
 INSERT INTO `module_push_message` VALUES ('23', '5', '1', '10', '6', '2012-09-28 20:38:19', '6', '2012-09-28 20:36:59');
-INSERT INTO `module_push_message` VALUES ('31', '1', '1', '3', '1', '2012-10-04 15:33:02', '1', '2012-10-04 15:13:54');
+INSERT INTO `module_push_message` VALUES ('31', '1', '1', '3', '2', '2013-01-03 15:59:50', '1', '2012-10-04 15:13:54');
 INSERT INTO `module_push_message` VALUES ('32', '1', '1', '2', '1', '2012-10-04 15:33:02', '1', '2012-10-04 15:16:31');
 INSERT INTO `module_push_message` VALUES ('33', '1', '1', '1', '1', '2012-10-04 15:33:02', '1', '2012-10-04 15:16:55');
 INSERT INTO `module_push_message` VALUES ('36', '8', '1', '2', '9', '2012-10-31 11:50:15', '9', '2012-10-10 11:36:26');
 INSERT INTO `module_push_message` VALUES ('37', '8', '1', '1', '9', '2012-10-31 11:50:15', '9', '2012-10-10 11:37:04');
 INSERT INTO `module_push_message` VALUES ('38', '8', '1', '3', '9', '2012-10-31 11:50:15', '9', '2012-10-10 11:37:37');
+INSERT INTO `module_push_message` VALUES ('44', '1', null, '8', '2', null, '2', '2013-01-03 11:29:47');
+INSERT INTO `module_push_message` VALUES ('45', '1', null, '9', '2', null, '2', '2013-01-03 11:30:38');
+INSERT INTO `module_push_message` VALUES ('46', '1', null, '10', '2', '2013-01-03 11:37:12', '2', '2013-01-03 11:37:12');
+INSERT INTO `module_push_message` VALUES ('47', '1', null, '11', '2', '2013-01-03 11:42:36', '2', '2013-01-03 11:42:36');
+INSERT INTO `module_push_message` VALUES ('62', '1', '1', '12', '2', '2013-01-03 15:59:25', '2', '2013-01-03 12:44:04');
+INSERT INTO `module_push_message` VALUES ('63', '1', '1', '13', '2', '2013-01-03 16:27:46', '2', '2013-01-03 16:00:10');
 
 -- ----------------------------
 -- Table structure for `module_push_message_detail`
@@ -2056,7 +2162,7 @@ CREATE TABLE `module_push_message_detail` (
   PRIMARY KEY (`push_message_detail_id`),
   KEY `fk_pmd_message` (`push_message_id`),
   CONSTRAINT `fk_pmd_message` FOREIGN KEY (`push_message_id`) REFERENCES `module_push_message` (`push_message_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of module_push_message_detail
@@ -2090,6 +2196,18 @@ INSERT INTO `module_push_message_detail` VALUES ('58', '38', '1', 'lat one', 'ju
 INSERT INTO `module_push_message_detail` VALUES ('59', '38', '2', 'lat one', 'just to check if reorder works properly', '2012-10-10 11:37:37');
 INSERT INTO `module_push_message_detail` VALUES ('60', '38', '3', 'lat one', 'just to check if reorder works properly', '2012-10-10 11:37:37');
 INSERT INTO `module_push_message_detail` VALUES ('61', '38', '4', 'lat one', 'just to check if reorder works properly', '2012-10-10 11:37:37');
+INSERT INTO `module_push_message_detail` VALUES ('72', '44', '1', 'time pass', 'Morning Time pass', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('73', '44', '2', 'time pass', 'Morning Time pass', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('74', '45', '1', '234', 'sdf`', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('75', '45', '2', '234', 'sdf`', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('76', '46', '1', 'ad', 'erer', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('77', '46', '2', 'ad', 'erer', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('78', '47', '1', 'qwert', 'asdzcvsfr', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('79', '47', '2', 'qwert', 'asdzcvsfr', '0000-00-00 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('108', '62', '1', 'qwe', 'czv', '2013-01-11 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('109', '62', '2', 'qwe', 'czv', null);
+INSERT INTO `module_push_message_detail` VALUES ('110', '63', '1', 'qwesdf', 'as', '2013-01-31 00:00:00');
+INSERT INTO `module_push_message_detail` VALUES ('111', '63', '2', 'qwe', 'asd', null);
 
 -- ----------------------------
 -- Table structure for `module_social_media`
@@ -2878,3 +2996,47 @@ INSERT INTO `user_group_module` VALUES ('484', '42', '10', '1', '27', '2012-12-1
 INSERT INTO `user_group_module` VALUES ('485', '42', '11', '1', '27', '2012-12-13 15:39:00', '27', '2012-12-13 15:39:00');
 INSERT INTO `user_group_module` VALUES ('486', '42', '12', '1', '27', '2012-12-13 15:39:00', '27', '2012-12-13 15:39:00');
 INSERT INTO `user_group_module` VALUES ('487', '42', '13', '1', '27', '2012-12-13 15:39:00', '27', '2012-12-13 15:39:00');
+
+-- ----------------------------
+-- Table structure for `version`
+-- ----------------------------
+DROP TABLE IF EXISTS `version`;
+CREATE TABLE `version` (
+  `version_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `status` tinyint(4) DEFAULT NULL,
+  `last_updated_by` int(11) DEFAULT NULL,
+  `last_updated_at` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`version_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of version
+-- ----------------------------
+INSERT INTO `version` VALUES ('34', '1', '1', '2013-01-10 20:18:26', '1', '2013-01-22 00:00:00');
+
+-- ----------------------------
+-- Table structure for `version_detail`
+-- ----------------------------
+DROP TABLE IF EXISTS `version_detail`;
+CREATE TABLE `version_detail` (
+  `version_detail_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `version_id` int(11) DEFAULT NULL,
+  `language_id` int(11) DEFAULT NULL,
+  `version_number` varchar(25) DEFAULT NULL,
+  `title` varchar(35) CHARACTER SET utf8 DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `category` varchar(100) CHARACTER SET utf8 DEFAULT NULL,
+  `last_updated_by` int(11) DEFAULT NULL,
+  `last_updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`version_detail_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of version_detail
+-- ----------------------------
+INSERT INTO `version_detail` VALUES ('130', '34', '1', '1.0', 'first post', '', '', null, null);
+INSERT INTO `version_detail` VALUES ('131', '34', '2', '1.0', 'first post', '', '', null, null);
+INSERT INTO `version_detail` VALUES ('132', '34', '3', '1.0', 'first post', '', '', null, null);
+INSERT INTO `version_detail` VALUES ('133', '34', '4', '1.0', 'first post', '', '', null, null);

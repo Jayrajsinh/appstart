@@ -21,6 +21,7 @@
 		</table>
 	</div>
 </form>
+<a class="togglefilter"></a>
 <table style="border-spacing: 0; border-collapse: collapse; width: 100%"
 	class="pattern-style-b" id="dataGrid">
 	<thead>
@@ -29,7 +30,7 @@
 			<th scope="col"><?php echo $this->translate('Group Name')?></th>
 			<th scope="col"><?php echo $this->translate('Total Modules')?></th>
 			<th scope="col"><?php echo $this->translate('Total Users')?></th>
-			<th scope="col"><?php echo $this->translate('Actions')?></th>
+			<th scope="col" class="action"><?php echo $this->translate('Actions')?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -110,5 +111,10 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
+    $('.togglefilter').on("click",function(){
+		$('#filterBox').toggle();
+		$(this).toggleClass('flip-vertical');
+	});
+	$('#filterBox').hide();
 });
 </script>

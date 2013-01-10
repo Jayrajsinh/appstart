@@ -165,7 +165,7 @@ div.logo-box td {
 							<?php echo $this->translate('Office Timings')?>
 						</td>
 						<td rowspan="5" valign="top">
-							<div class="logo-box" style="width:450px; height: 170px; padding: 5px 15px;">
+							<div class="logo-box" style="width:450px; min-height: 170px; padding: 5px 15px;">
 							<table class="timings">
 								<thead>
 									<tr>
@@ -262,9 +262,9 @@ div.logo-box td {
 						<td><label for="logo"><?php echo $this->translate('Logo')?></label></td>
 						<td>
 							<div class="logo-box" style="width:450px; padding: 5px 15px;">
-								<input id="logo" type="file" name="logo" /> <input id="logo_path" type="hidden" name="logo_path" value="<?php echo $this->logo_path; ?>" />
-								<?php if($this->edit && $this->image_thumb != ""){ ?>
-									<img class="logoImage" alt="" width="40" src="<?php echo $this->image_thumb ?>">
+								<input id="logo" type="file" name="logo" /> <input id="logo_path" type="hidden" name="logo_path" value="" />
+								<?php if($this->edit && $this->logo_display != ""){ ?>
+									<img class="logoImage" alt="" width="40" src="<?php echo $this->logo_display ?>">
 									<a class="deleteLogo greay button-grid">Delete Logo</a>
 								<?php } ?>
 							</div>

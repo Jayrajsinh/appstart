@@ -8,6 +8,7 @@
 			<action>index</action>
             <order>-1000</order>
             <resource>index</resource>
+            <MM_title>Welcome to AppStart!</MM_title>
     	</Dashboard>
     	<Settings>
     		<label>Settings</label>
@@ -15,6 +16,7 @@
     		<order>1000</order>
     		<resource>index</resource>
     		<controller></controller>
+    		<dropdown>1columns</dropdown>
     		<pages>
     			<user>
     				<label>User Profile</label>
@@ -49,5 +51,8 @@
 		    	</Configuration>
     		</pages>
     	</Settings>
+    	<Modules>
+    		<dropdown>3columns</dropdown>
+    	</Modules>
 	</nav>
 </config>

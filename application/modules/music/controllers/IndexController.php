@@ -506,6 +506,7 @@ class Music_IndexController extends Zend_Controller_Action
     			$logo = '<img src="images/7digital.png" alt="" height="25" />';
     		} else if(stripos($row [8] ["md.track_url"], "soundcloud") !== false ) {
     			$logo = '<img src="images/soundcloud.png" alt="" height="25" />';
+    			$row [8] ["md.preview_url"] = $row [8] ["md.preview_url"]."";
     		} else if(stripos($row [8] ["md.track_url"], "beatport") !== false ) {
     			$logo = '<img src="images/beatport.png" alt="" height="25" />';
     		} else {
@@ -727,7 +728,7 @@ class Music_IndexController extends Zend_Controller_Action
 	
 		$keyword = $this->_request->getParam("keyword",null);
 		
-		$soundCloud = new Standard_Plugin_Music_Soundcloud("e9d49c642a93447a3469437bfc92df02","e534ca88d9bf7378b0f0a28de4101e6c");
+		$soundCloud = new Standard_Plugin_Music_Soundcloud();
 		$response = $soundCloud->get("tracks",array("q" => $keyword,"limit" => 50));
 		
 		if(count($response)==0) {

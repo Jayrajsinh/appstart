@@ -4,7 +4,7 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 	public function init() {
 		/* Initialize Action Controller Here.. */
 		$modulesMapper = new Admin_Model_Mapper_Module();
-		$module = $modulesMapper->fetchAll("name ='home-wallpaper'");
+		$module = $modulesMapper->fetchAll("name ='push-message'");
 		if(is_array($module)) {
 			$this->_module_id = $module[0]->getModuleId();
 		}
@@ -212,13 +212,13 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 			if ($pushMessageDetailMapper->countAll ( "push_message_id = " . $push_message_id . " AND language_id = " . $language_id ) > 0) {
 				// Record For Language Found
 				$dataDetails = $pushMessageDetailMapper->getDbTable ()->fetchAll ( "push_message_id = " . $push_message_id . " AND language_id = " . $language_id )->toArray ();
-				$dataDetails[0]['message_date'] = Standard_Functions::getCurrentDateTime ();
+				//$dataDetails[0]['message_date'] = Standard_Functions::getCurrentDateTime ();
 			} else {
 				// Record For Language Not Found
 				$dataDetails = $pushMessageDetailMapper->getDbTable ()->fetchAll ( "push_message_id = " . $push_message_id . " AND language_id = " . $default_lang_id )->toArray ();
 				$dataDetails [0] ["push_message_detail_id"] = "";
 				$dataDetails [0] ["language_id"] = $language_id;
-				$dataDetails[0]['message_date'] = Standard_Functions::getCurrentDateTime ();
+				//$dataDetails[0]['message_date'] = Standard_Functions::getCurrentDateTime ();
 				
 			}
 			if (isset ( $dataDetails [0] ) && is_array ( $dataDetails [0] )) {
@@ -247,13 +247,21 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 		if ($this->_request->isPost ()) {
 			if ($form->isValid ( $this->_request->getParams () )) {
 				try {
-					$allFormValues = $form->getValues ();
 					$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 					$user_id = Standard_Functions::getCurrentUser ()->user_id;
 					$date_time = Standard_Functions::getCurrentDateTime ();
 					$pushMessageMapper = new PushMessage_Model_Mapper_PushMessage ();
 					$pushMessageMapper->getDbTable ()->getAdapter ()->beginTransaction ();
+					$allFormValues = $form->getValues ();
 					$pushMessageModel = new PushMessage_Model_PushMessage ( $allFormValues );
+					if($allFormValues["message_date"] != ""){
+	                        $message_date = DateTime::createFromFormat ( "d/m/Y H:i", $allFormValues["message_date"] );
+	                        if($message_date){
+	                        	$allFormValues["message_date"] = $message_date->format ( "Y-m-d H:i:s" ) ;
+	                        }
+	                }else{
+	                    unset($allFormValues["message_date"]);
+	                }
 					if ($request->getParam ( "push_message_id", "" ) == "") {
 						// save push message
 						$maxOrder = $pushMessageMapper->getNextOrder ( $customer_id );
@@ -273,7 +281,7 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 							foreach ( $customerLanguageModel as $languages ) {
 								$pushMessageDetailModel = new PushMessage_Model_PushMessageDetail ( $allFormValues );
 								$pushMessageDetailModel->setPushMessageId ( $push_message_id );
-								$pushMessageDetailModel->setMessageDate ( $date_time );
+								//$pushMessageDetailModel->setMessageDate ( $date_time );
 								$pushMessageDetailModel->setLanguageId ( $languages->getLanguageId () );
 								$pushMessageDetailModel = $pushMessageDetailModel->save ();
 							}
@@ -284,7 +292,7 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 						$pushMessageModel = $pushMessageModel->save ();
 						
 						$pushMessageDetailModel = new PushMessage_Model_PushMessageDetail ( $allFormValues );
-						$pushMessageDetailModel->setMessageDate($date_time);
+						//$pushMessageDetailModel->setMessageDate($date_time);
 						$pushMessageDetailModel = $pushMessageDetailModel->save ();
 					}
 					$customermoduleMapper = new Admin_Model_Mapper_CustomerModule();
@@ -294,7 +302,6 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 						$customermodule->setIsPublish("NO");
 						$customermodule->save();
 					}
-					
 					$pushMessageMapper->getDbTable ()->getAdapter ()->commit ();
 					
 					$response = array (
@@ -335,7 +342,6 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 					}
 					
 					$deletedRows = $pushMessageModel->delete ();
-					
 					$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 					$customermoduleMapper = new Admin_Model_Mapper_CustomerModule();
 					$customermodule = $customermoduleMapper->fetchAll("customer_id=". $customer_id ." AND module_id=".$this->_module_id);

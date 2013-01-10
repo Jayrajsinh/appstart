@@ -262,15 +262,14 @@ table a:hover {
 	border-bottom:1px solid #e0e0e0;
 
 	background: rgb(255,255,255); /* Old browsers */
-background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(225,226,235,1) 99%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(99%,rgba(225,226,235,1))); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* IE10+ */
-background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e1e2eb',GradientType=0 ); /* IE6-9 */
-color:#66676b;
-
+	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(225,226,235,1) 99%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(99%,rgba(225,226,235,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(225,226,235,1) 99%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e1e2eb',GradientType=0 ); /* IE6-9 */
+	color:#66676b;
 }
 
 
@@ -663,7 +662,7 @@ div.showing {font-family:  arial, sans-serif; /*12px*/ text-align: left; float: 
 	clear: both;
 }
 #dataGrid {clear:both;}
-#dataGrid_info {width:30% !important;}
+#dataGrid_info {width:40% !important;}
 .dataTables_filter {display:none !important;}
 .dataTables_length {/*display:none !important;*/float:right !important; margin: 10px 0; width:auto !important;}
 .dataTables_length select{min-width:auto !important;}
@@ -1146,7 +1145,6 @@ div.logo-box td.desc{
 	background-color: #FFFFFF;
     border: 1px solid #DCDDE2;
     border-radius: 6px 6px 6px 6px;
-    text-align: center;
     width: auto;
     overflow-x:hidden;
     overflow-y:visible;
@@ -1155,7 +1153,7 @@ div.logo-box td.desc{
 #locationContainer a, div.deleteLocation,.deleteText{
 	cursor:pointer;
 	text-decoration: none;
-	color:#000;
+	color:#DF0D0D;
 }
 div.deleteText:hover{
 	text-decoration: underline;
@@ -1164,23 +1162,17 @@ div.footer{
 	padding-bottom: 10px;
 }
 .locationBox{
-	width:500px;
-	padding-top: 15px 0 15px 0;
+	width:541px;
 }
 
 div.deleteLocation{
-	background-image: url("../images/grid_error.png");
+	float: right;
+	background-image: url("../images/delete.png");
 	background-repeat: no-repeat;
-	width: 22px;
-	display: block;
-	background-position: center;
-}
-.deleteText{
-	color:RED;
-	text-align: left;
-}
-textarea[name='address']{
-	margin-left:20px;
+	background-position: 7px top;
+	height:40px;
+	margin-top:-33px;
+	padding-top: 16px;
 }
 
 hr.eventHrStyle {
@@ -1190,4 +1182,13 @@ hr.eventHrStyle {
     background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
     background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
     background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
+}
+
+div.details textarea{
+	resize:vertical;
+}
+
+.locationInput select[name="country[]"]{
+	width: 172px;
+	height:27px;
 }

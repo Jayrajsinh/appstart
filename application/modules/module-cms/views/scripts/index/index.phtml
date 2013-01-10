@@ -49,6 +49,7 @@
 		</table>
 	</div>
 </form>
+<a class="togglefilter"></a>
 <table style="border-spacing: 0; border-collapse: collapse; width: 100%"
 	class="pattern-style-b" id="dataGrid">
 	<thead>
@@ -172,6 +173,11 @@ $(document).ready(function() {
 		charLimit : [0,0,0,0],
 		sAjaxSource: "<?php echo $this->url(array("module"=>"module-cms","controller"=>"index","action"=>"grid"));?>",
 	});
+    $('.togglefilter').on("click",function(){
+		$('#filterBox').toggle();
+		$('#content > a').toggleClass('flip-vertical');
+	});
+	$('#filterBox').hide();
 });
 //getting the reorder link
 //var reorderLink = $("#hrefReorder").attr("href");

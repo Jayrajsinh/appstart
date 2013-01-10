@@ -151,8 +151,9 @@ class Contact_IndexController extends Zend_Controller_Action {
 				$logoname = $dataDetails [0] ["logo"];
 				$image_uri = "resource/contact/images/";
 				$this->view->logo_path = $logoname;
-				$this->view->image_thumb = $this->view->baseUrl($image_uri ."/" . $logoname);
-				
+				if($logoname != ""){
+					$this->view->logo_display = $this->view->baseUrl($image_uri.$logoname);
+				}
 				$this->view->edit = $edit;
 				$this->view->timings = $timings;
 			}
@@ -240,17 +241,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 								$modelDetails->setContactId ( $contact_id );
 								$modelDetails->setLanguageId ( $languages->getLanguageId () );
 								$modelDetails->setTimings ( $timings );
-								$logo_path = $request->getParam("logo_path");
-								if (! is_dir ( $upload_dir )) {
-									mkdir ( $upload_dir, 755 );
-								}
-								if (!$is_uploaded_image && $logo_path != "") {
-									$filename = $this->moveUploadFile ( $source_dir, $upload_dir, $logo_path );
-									$modelDetails->setLogo ($filename);
-									$is_uploaded_image = true;
-								} else if($request->getParam ( "logo_path" ,null) !== null) {
-									$modelDetails->setLogo ($filename);
-								}
+								$modelDetails->setLogo($logo_path);
 								$modelDetails->setCreatedBy ( $user_id );
 								$modelDetails->setCreatedAt ( $date_time );
 								$modelDetails->setLastUpdatedBy ( $user_id );
@@ -273,9 +264,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 							$modelDetails->setLogo ("");
 						}
 						if ($logo_path != "" && $logo_path != "deleted" && $logo_path != "/appstart/public/") {
-							$filename = $this->moveUploadFile ( $source_dir, $upload_dir, $logo_path );
-							$modelDetails->setLogo ($filename);
-							$is_uploaded_image = true;
+							$modelDetails->setLogo ($logo_path);
 						}
 						$modelDetails->setTimings ( $timings );
 						$modelDetails->setCreatedBy ( $user_id );
@@ -472,85 +461,5 @@ class Contact_IndexController extends Zend_Controller_Action {
 		
 		$jsonGrid = Zend_Json::encode ( $response );
 		$this->_response->appendBody ( $jsonGrid );
-	}
-
-	private function moveUploadFile($source_dir, $dest_dir, $filename) {
-		$source_file_name = $filename;
-		$expension = array_pop ( explode ( ".", $filename ) );
-		try {
-			$i = 1;
-			while ( file_exists ( $dest_dir . $filename ) ) {
-				$filename = str_replace ( "." . $expension, "_" . $i ++ . "." . $expension, $source_file_name );
-			}
-			if (! is_dir ( $dest_dir )) {
-				mkdir ( $dest_dir, 755 );
-			}
-			while(!file_exists($source_dir . $source_file_name)) {
-			}
-				
-			if (copy ( $source_dir . $source_file_name, $dest_dir . $filename )) {
-				
-			}
-			$thumbname = str_replace ( "." . $expension, "_thumb." . $expension, $filename );
-			$this->generateThumb ( $dest_dir . $filename, $dest_dir . $thumbname, 0, 75 );
-
-		} catch ( Exception $ex ) {
-				
-		}
-		return $filename;
-	}
-	
-	public function generateThumb($src, $dest, $destWidth = 0, $destHeight = 0) {
-		/* read the source image */
-		$stype = array_pop ( explode ( ".", $src ) );
-		switch ($stype) {
-			case 'gif' :
-				$source_image = imagecreatefromgif ( $src );
-				break;
-			case 'jpg' :
-			case 'jpeg' :
-				$source_image = imagecreatefromjpeg ( $src );
-				break;
-			case 'png' :
-				$source_image = imagecreatefrompng ( $src );
-				break;
-		}
-	
-		$width = imagesx ( $source_image );
-		$height = imagesy ( $source_image );
-	
-		$desired_height = 0;
-		$desired_width = 0;
-		if ($destWidth == 0) {
-			$desired_height = $destHeight;
-			$desired_width = floor ( $width * ($destHeight / $height) );
-		} else {
-			$desired_height = floor ( $destHeight * ($destWidth / $width) );
-			$desired_width = $destWidth;
-		}
-	
-		/* create a new, "virtual" image */
-		$virtual_image = imagecreatetruecolor ( $desired_width, $desired_height );
-		
-		imagealphablending($virtual_image, false);
-		imagesavealpha($virtual_image, true);
-		
-		imagealphablending($source_image, true);
-		/* copy source image at a resized size */
-		imagecopyresampled ( $virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height );
-	
-		/* create the physical thumbnail image to its destination */
-		switch ($stype) {
-			case 'gif' :
-				imagegif ( $virtual_image, $dest );
-				break;
-			case 'jpg' :
-			case 'jpeg' :
-				imagejpeg ( $virtual_image, $dest );
-				break;
-			case 'png' :
-				imagepng ( $virtual_image, $dest,0 );
-				break;
-		}
 	}
 }

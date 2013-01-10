@@ -168,6 +168,7 @@ class ModuleImageGallery_Form_ModuleImageGallery extends Standard_Form{
 		
 	}
 	public function _getCategories() {
+		$active_lang_id = Standard_Functions::getCurrentUser ()->active_language_id;
 		$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 		$options = array (
 				"" => 'Select Category'
@@ -177,7 +178,7 @@ class ModuleImageGallery_Form_ModuleImageGallery extends Standard_Form{
 		if($models){
 			foreach($models as $key=>$records){
 				$detailMapper = new ModuleImageGallery_Model_Mapper_ModuleImageGalleryCategoryDetail();
-				$detailModels = $detailMapper->fetchAll("module_image_gallery_category_id =" .$records->getModuleImageGalleryCategoryId());
+				$detailModels = $detailMapper->fetchAll("language_id ='".$active_lang_id."' AND module_image_gallery_category_id =" .$records->getModuleImageGalleryCategoryId());
 				foreach($detailModels as $categories){
 					$options[$categories->getModuleImageGalleryCategoryId()] = $categories->getTitle();
 				}

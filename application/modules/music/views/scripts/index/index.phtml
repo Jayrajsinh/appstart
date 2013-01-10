@@ -102,6 +102,9 @@ a.import-link:hover {
 </form>
 <table style="border-spacing:0;border-collapse:collapse;width:100%; margin-top: 10px !important;">
 	<tr>
+		<td align="left" valign="top">
+			<a class="togglefilter"></a>
+		</td>
 		<td align="right">
 			<div class="import-box">
 				<!-- <input type="button" name="import-itunes" id="import-itunes" class="button" value="<?php echo $this->translate('Import from iTunes'); ?>" /> -->
@@ -877,6 +880,11 @@ $(document).ready(function() {
 			next();
   		});
     });
+    $('.togglefilter').on("click",function(){
+		$('#filterBox').toggle();
+		$(this).toggleClass('flip-vertical');
+	});
+	$('#filterBox').hide();
 });
 function selectAll() {
 	if($("#chkSelectAll").attr("checked") == "checked") {

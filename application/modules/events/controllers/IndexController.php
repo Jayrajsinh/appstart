@@ -177,16 +177,14 @@ class Events_IndexController extends Zend_Controller_Action
                     $temp = array(
                         'address' => $locations['address'],
                         'plz' => $locations['plz'],
-                        'city' => $locations['city']
+                        'city' => $locations['city'],
+                        'country' => $locations['country'],
+                        'location' => $locations['location'],
+                        'latitude' => $locations['latitude'],
+                        'longitude' => $locations['longitude']
                     );
                     array_push($location, $temp);
                 }
-    			$dateTime = new DateTime($dataDetails[0]["start_date_time"]);
-    			$dataDetails[0]["start_date_time"] = $dateTime->format("d/m/Y H:i");
-    			
-    			$dateTime = new DateTime($dataDetails[0]["end_date_time"]);
-    			$dataDetails[0]["end_date_time"] = $dateTime->format("d/m/Y H:i");
-    			
     			$form->populate ( $dataDetails[0] );
     			$this->view->location = json_encode($location);
                 $this->view->image_path=$dataDetails[0]["image"];
@@ -251,18 +249,27 @@ class Events_IndexController extends Zend_Controller_Action
     			
     			try {
     				$arrFormValues = $form->getValues();
-                    if($arrFormValues["start_date_time"] != "" && $arrFormValues["start_date_time"] != ""){
+                    if($arrFormValues["start_date_time"] != ""){
                         $start_date = DateTime::createFromFormat ( "d/m/Y H:i", $arrFormValues["start_date_time"] );
-                        $arrFormValues["start_date_time"] = $start_date->format ( "Y-m-d H:i:s" ) ;
+                        if($start_date){
+                            $arrFormValues["start_date_time"] = $start_date->format ( "Y-m-d H:i:s" );
+                        }
+                    }else{
+                        unset($arrFormValues["start_date_time"]);
+                    }
+                    if($arrFormValues["end_date_time"] != ""){    
                         $end_date = DateTime::createFromFormat ( "d/m/Y H:i", $arrFormValues["end_date_time"] );
-                        $arrFormValues["end_date_time"] = $end_date->format ( "Y-m-d H:i:s" ) ;
+                        if($end_date){
+                            $arrFormValues["end_date_time"] = $end_date->format ( "Y-m-d H:i:s" ) ;
+                        }
+                    }else{ 
+                        unset($arrFormValues["end_date_time"]);
                     }   
                     $customer_id = Standard_Functions::getCurrentUser ()->customer_id;
     				$user_id = Standard_Functions::getCurrentUser ()->user_id;
     				$date_time = Standard_Functions::getCurrentDateTime ();
     				$image_path = $request->getParam ("image_path", "");
     				$model = new Events_Model_ModuleEvents($arrFormValues);
-    				
     				if($request->getParam ( "module_events_id", "" ) == "") {
     					// Add New Event
     					$maxOrder = $mapper->getNextOrder($customer_id);
@@ -301,9 +308,13 @@ class Events_IndexController extends Zend_Controller_Action
                                 $location = array();
                                 for($i=0;$i<count($arrFormValues[address]);$i++){
                                     $tempLocationArray = array(
+                                            'location' => $arrFormValues[location][$i],
                                             'address' => $arrFormValues[address][$i],
                                             'plz' => $arrFormValues[plz][$i],
                                             'city' => $arrFormValues[city][$i],
+                                            'country' => $arrFormValues[country][$i],
+                                            'latitude' => $arrFormValues[latitude][$i],
+                                            'longitude' => $arrFormValues[longitude][$i]
                                         );
                                         array_push($location,$tempLocationArray);
                                 }
@@ -312,7 +323,11 @@ class Events_IndexController extends Zend_Controller_Action
                                     $modelLocation->setModuleEventsDetailId($detail_id);
                                     $modelLocation->setAddress($location['address']);
                                     $modelLocation->setPlz($location['plz']);
-                                    $modelLocation->setCity($location['city']);   
+                                    $modelLocation->setCity($location['city']);
+                                    $modelLocation->setCountry($location['country']);
+                                    $modelLocation->setLocation($location['location']);
+                                    $modelLocation->setLatitude($location['latitude']);
+                                    $modelLocation->setLongitude($location['longitude']);   
                                     $modelLocation->save();
                                 }
     						}
@@ -349,9 +364,13 @@ class Events_IndexController extends Zend_Controller_Action
                         $location = array();
                         for($i=0;$i<count($arrFormValues[address]);$i++){
                             $tempLocationArray = array(
+                                    'location' => $arrFormValues[location][$i],
                                     'address' => $arrFormValues[address][$i],
                                     'plz' => $arrFormValues[plz][$i],
                                     'city' => $arrFormValues[city][$i],
+                                    'country' => $arrFormValues[country][$i],
+                                    'latitude' => $arrFormValues[latitude][$i],
+                                    'longitude' => $arrFormValues[longitude][$i]
                                 );
                                 array_push($location,$tempLocationArray);
                         }
@@ -360,7 +379,11 @@ class Events_IndexController extends Zend_Controller_Action
                             $modelLocation->setModuleEventsDetailId($detail_id);
                             $modelLocation->setAddress($location['address']);
                             $modelLocation->setPlz($location['plz']);
-                            $modelLocation->setCity($location['city']);   
+                            $modelLocation->setCity($location['city']);
+                            $modelLocation->setCountry($location['country']);
+                            $modelLocation->setLocation($location['location']);
+                            $modelLocation->setLatitude($location['latitude']);
+                            $modelLocation->setLongitude($location['longitude']);   
                             $modelLocation->save();
                         }
 				    }
@@ -416,7 +439,6 @@ class Events_IndexController extends Zend_Controller_Action
     			$mapper = new Events_Model_Mapper_ModuleEvents();
     			$mapper->getDbTable()->getAdapter()->beginTransaction();
     			try {
-    				
                     $detailsMapper = new Events_Model_Mapper_ModuleEventsDetail();
     				$locationMapper = new Events_Model_Mapper_ModuleEventsLocation();
                     $details = $detailsMapper->fetchAll("module_events_id=".$events->getModuleEventsId());
@@ -516,8 +538,7 @@ class Events_IndexController extends Zend_Controller_Action
     									)
     							),"customer_id=".Standard_Functions::getCurrentUser ()->customer_id, $select );
     	$records = $response['aaData'];
-    	$mapper = new Admin_Model_Mapper_CustomerLanguage();
-    							 
+    	$mapper = new Admin_Model_Mapper_CustomerLanguage();							 
     	$select = $mapper->getDbTable ()->
     							select ( false )->
     							setIntegrityCheck ( false )->
@@ -543,12 +564,14 @@ class Events_IndexController extends Zend_Controller_Action
     				$row [5] ["ed.end_date_time"] = $row[2] = $details->getEndDateTime();
     			}
     		}
-    		$dateTime = new DateTime($row [5] ["ed.start_date_time"]);
-    		$row [5] ["ed.start_date_time"] = $row[1] = $dateTime->format("d/m/Y H:i");
-    		
-    		$dateTime = new DateTime($row [5] ["ed.end_date_time"]);
-    		$row [5] ["ed.end_date_time"] = $row[2] = $dateTime->format("d/m/Y H:i");
-    		    		
+            if($row [5] ["ed.start_date_time"] != ""){
+                $dateTime = new DateTime($row [5] ["ed.start_date_time"]);
+                $row [5] ["ed.start_date_time"] = $row[1] = $dateTime->format("d/m/Y H:i");
+            }
+            if($row [5] ["ed.end_date_time"] != ""){
+                $dateTime = new DateTime($row [5] ["ed.end_date_time"]);
+                $row [5] ["ed.end_date_time"] = $row[2] = $dateTime->format("d/m/Y H:i");
+            }   		
     		$response ['aaData'] [$rowId] = $row;
     		if($languages) {
     			foreach ($languages as $lang) {
@@ -588,9 +611,13 @@ class Events_IndexController extends Zend_Controller_Action
         $output .= '<tr>';
         $output .= '<th></th>';
         $output .= '<th>Select All<br/><input type="checkbox" id="chkSelectAll" onclick="selectAll();" /></th>';
+        $output .= '<th>Location</th>';
         $output .= '<th>Address</th>';
         $output .= '<th>City</th>';
+        $output .= '<th>Country</th>';
         $output .= '<th>Plz</th>';
+        $output .= '<th>Latitude</th>';
+        $output .= '<th>Longitude</th>';
         $output .= '</tr>';
         if ($data) {
             $i = 0;
@@ -600,7 +627,11 @@ class Events_IndexController extends Zend_Controller_Action
                     $fetchedContacts[$key] = $value;
                     $record[$i]['address'] = $fetchedContacts[$key]->getAddress();
                     $record[$i]['city'] = $fetchedContacts[$key]->getCity();
+                    $record[$i]['country'] = $fetchedContacts[$key]->getCountry();
                     $record[$i]['plz'] = $fetchedContacts[$key]->getPlz();
+                    $record[$i]['location'] = $fetchedContacts[$key]->getLocation();
+                    $record[$i]['latitude'] = $fetchedContacts[$key]->getLatitude();
+                    $record[$i]['longitude'] = $fetchedContacts[$key]->getLongitude();
                 }
                 $i++;
             }
@@ -610,13 +641,25 @@ class Events_IndexController extends Zend_Controller_Action
                 $output .= '<td>'.$i.'</td>';
                 $output .= '<td><input type="checkbox" name="contact[]" class="contact" value="1"/></td>';
                 $output .= '<td>';
+                $output .= $record['location'];
+                $output .= '</td>';
+                $output .= '<td>';
                 $output .= $record['address'];
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= $record['city'];
                 $output .= '</td>';
                 $output .= '<td>';
+                $output .= $record['country'];
+                $output .= '</td>';
+                $output .= '<td>';
                 $output .= $record['plz'];
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $record['latitude'];
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $record['longitude'];
                 $output .= '</td>';
                 $output .= '</tr>';
                 $i++;
@@ -627,7 +670,7 @@ class Events_IndexController extends Zend_Controller_Action
             die();
         }else{
             $output .= '<tr>';
-            $output .= '<td collspan="5">No track found</td>';
+            $output .= '<td collspan="5">No locations found</td>';
             $output .= '</tr>';
             $output .= '</table>';
             echo $output;

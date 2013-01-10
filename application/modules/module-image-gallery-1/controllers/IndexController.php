@@ -288,13 +288,13 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 					try {
 						$allFormValues = $form->getValues ();
 						$tag = "";
-						$arrTags = $data[arrtag];
+						$arrTags = $data ["arrtag"];
 						if ($arrTags != "") {
 							foreach ( $arrTags as $tags ) {
 								$tag .= ($tag != "" ? "," : "") . $tags;
 							}
-							$keywords = $tag;
 						}
+						$keywords = $tag;
 						$category_id = $data['module_image_gallery_category_1_id'];;
 						$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 						$user_id = Standard_Functions::getCurrentUser ()->user_id;
@@ -483,7 +483,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 								'actions' 
 						),
 						'replace' => array (
-								'c.status' => array (
+								'mig.status' => array (
 										'1' => $this->view->translate ( 'Active' ),
 										'0' => $this->view->translate ( 'Inactive' ) 
 								) 
@@ -626,6 +626,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 		}
 	}
 	public function _getCategories($customer_id) {
+		$active_lang_id = Standard_Functions::getCurrentUser ()->active_language_id;
 		$options = array (
 				"" => 'Select Category' 
 		);
@@ -634,7 +635,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 		if (is_array ( $models )) {
 			foreach ( $models as $key => $records ) {
 				$detailMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryCategoryDetail1 ();
-				$detailModels = $detailMapper->fetchAll ( "module_image_gallery_category_1_id =" . $records->getModuleImageGalleryCategory1Id () );
+				$detailModels = $detailMapper->fetchAll ( "language_id ='".$active_lang_id."' AND module_image_gallery_category_1_id =" . $records->getModuleImageGalleryCategory1Id () );
 				foreach ( $detailModels as $categories ) {
 					$options [$categories->getModuleImageGalleryCategory1Id ()] = $categories->getTitle ();
 				}
@@ -645,6 +646,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 	public function reorderAction() {
 		$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 		$categories = $this->_getCategories ($customer_id);
+		$this->view->categories = $categories;
 		$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 		$language_id = Standard_Functions::getCurrentUser ()->active_language_id;
 		$request = $this->getRequest ();

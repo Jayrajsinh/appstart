@@ -31,6 +31,11 @@ class Document_IndexController extends Zend_Controller_Action
     			"controller" => "category",
     			"action" => "index"
     	), "default", true);
+    	$this->view->explorer = $this->view->url(array (
+    			"module" => "document",
+    			"controller" => "explorer",
+    			"action" => "index"
+    	), "default", true);
     }
     
     public function addAction()

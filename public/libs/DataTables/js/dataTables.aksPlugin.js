@@ -68,26 +68,27 @@ function dataTable(params){
 			if(charWidth != undefined) {
 				for(i=0;i<charWidth.length;i++) {
 					if(charWidth[i]<=0) continue;
-					
-					var content = $(element + " tbody tr td:nth-child("+(i+1)+")").html();
-					if(content!= undefined && content.length > charWidth[i])
-					{
-						var exerpt = content.substr(0,charWidth[i]);
-						$(element + " tbody tr td:nth-child("+(i+1)+")").html('<div class="tip"><div class="less">'+exerpt+ ' ...</div><div class="more">' + content + '</div></div>');
-						$(element + " .more").hide();
-						$(this).find(".less").css("display","inline");
-						$(element + " .tip").on("mouseover",function(){
-							$(this).find(".more").css("position","absolute");
-							$(this).find(".more").css("backgroundColor","#fdf9d8");
-							$(this).find(".more").css("border","1px double #f59507");
-							$(this).find(".more").css("padding","5px");
-							$(this).find(".more").css("color","#000");
-						    $(this).find(".more").show();
-						});
-						$(element + " .tip").on("mouseout",function(){
-						    $(this).find(".more").hide();
-						});
-					}
+					$(element + " tbody tr").each(function(){
+						var content = $(this).find("td:nth-child("+(i+1)+")").html();
+						if(content!= undefined && content.length > charWidth[i])
+						{
+							var exerpt = content.substr(0,charWidth[i]);
+							$(this).find("td:nth-child("+(i+1)+")").html('<div class="tip"><div class="less">'+exerpt+ ' ...</div><div class="more">' + content + '</div></div>');
+						}
+					});
+					$(element + " .tip").on("mouseover",function(){
+						$(this).find(".more").css("position","absolute");
+						$(this).find(".more").css("backgroundColor","#fdf9d8");
+						$(this).find(".more").css("border","1px double #f59507");
+						$(this).find(".more").css("padding","5px");
+						$(this).find(".more").css("color","#000");
+					    $(this).find(".more").show();
+					});
+					$(element + " .tip").on("mouseout",function(){
+					    $(this).find(".more").hide();
+					});
+					$(element + " .more").hide();
+					$(this).find(".less").css("display","inline");
 				}
 			}
 			blockElement.unblock({

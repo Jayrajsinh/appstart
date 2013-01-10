@@ -29,6 +29,10 @@
 				</td>
 			</tr>
 			<tr>
+				<td><?php echo $form->message_date->renderLabel() ?></td>
+				<td><?php echo $form->message_date->renderViewHelper() ?></td>
+			</tr>
+			<tr>
 		    	<td><?php echo $form->status->renderLabel() ?></td>
 		        <td>
 		        	<?php echo $form->status->renderViewHelper()?>
@@ -50,6 +54,15 @@
 $(document).ready(function() {
 	$("#description").on("keydown",function(){
 		if($("#description").attr("value").length>=255) return false;
+	});
+	$('#message_date').datetimepicker({ 
+		showOn: "both",
+		buttonImage: "<?php echo $this->baseUrl("images/calander.png");?>",
+		buttonImageOnly: true,
+		dateFormat: 'dd/mm/yy', 
+		showSecond: false,
+		timeFormat: 'hh:mm',
+		firstDay:1
 	});
 	$("#frmAddEditPushMessage").validator().submit(function(e){
 		var form = $(this);

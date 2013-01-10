@@ -30,7 +30,20 @@ class Default_UserGroupController extends Zend_Controller_Action {
 				) 
 		), null, $select );
 		$rows = $response ['aaData'];
+		$mapper = new Admin_Model_Mapper_CustomerLanguage();
+		$select = $mapper->getDbTable ()->
+    							select ( false )->
+    							setIntegrityCheck ( false )->
+    							from ( array ("l" => "language"), array (
+    									"l.language_id" => "language_id",
+    									"l.title" => "title",
+    									"logo" => "logo") )->
+    							joinLeft ( array ("cl" => "customer_language"), "l.language_id = cl.language_id",
+    											array ("cl.customer_id") )->
+    											where("cl.customer_id=".Standard_Functions::getCurrentUser ()->customer_id);
+    	$languages = $mapper->getDbTable ()->fetchAll($select)->toArray();
 		foreach ( $rows as $rowId => $row ) {
+			$edit = array();
 			$userMapper = new Default_Model_Mapper_User ();
 			$totalUsers = $userMapper->countAll ( "user_group_id=" . $row [4] ["user_group_id"] );
 			$userGroupModuleMapper = new Default_Model_Mapper_UserGroupModule ();
@@ -39,22 +52,27 @@ class Default_UserGroupController extends Zend_Controller_Action {
 			$response ['aaData'] [$rowId] [2] = $totalModules;
 			$response ['aaData'] [$rowId] [3] = $totalUsers;
 			
-			$editUrl = $this->view->url ( array (
+			if($languages){
+				foreach ($languages as $lang) {
+					$editUrl = $this->view->url ( array (
 					"module" => "default",
 					"controller" => "user-group",
 					"action" => "edit",
 					"id" => $row [4] ["user_group_id"] 
-			), "default", true );
-			
+					), "default", true );
+					$edit[] = '<a href="'. $editUrl .'"><img src="images/lang/'.$lang["logo"].'" alt="'.$lang["l.title"].'" /></a>';
+				}
+			}
 			$deleteUrl = $this->view->url ( array (
 					"module" => "default",
 					"controller" => "user-group",
 					"action" => "delete",
 					"id" => $row [4] ["user_group_id"] 
 			), "default", true );
-			$edit = '<a href="' . $editUrl . '" class="button-grid greay grid_edit" >'.$this->view->translate('Edit').'</a>';
+    		$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
 			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
-			$response ['aaData'] [$rowId] [4] = $edit . "&nbsp;|&nbsp;" . $delete;
+			$sap = '';
+			$response ['aaData'] [$rowId] [4] = $defaultEdit.$sap.$delete;
 		}
 		echo $this->_helper->json ( $response );
 	}

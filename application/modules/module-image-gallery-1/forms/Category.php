@@ -4,6 +4,23 @@ class ModuleImageGallery1_Form_Category extends Standard_Form{
 		$this->setMethod('POST');
 		$notEmptyValidator = new Zend_Validate_NotEmpty ();
 		$notEmptyValidator->setMessage ( 'Enter Valid Value For The Field.' );
+		
+		//Image_gallery_category_id
+		$image_gallery_category_id = $this->createElement ( "hidden", "module_image_gallery_category_1_id", array (
+				'filters' => array (
+						'StringTrim'
+				)
+		) );
+		$this->addElement ( $image_gallery_category_id);
+
+		//Image_gallery_category_detail_id
+		$image_gallery_category_detail_id = $this->createElement ( "hidden", "module_image_gallery_category_detail_1_id", array (
+				'filters' => array (
+						'StringTrim'
+				)
+		) );
+		$this->addElement ( $image_gallery_category_detail_id);
+
 		// Image Title
 		$title = $this->createElement ( "text", "title", array (
 				'label' => 'Category Title:',

@@ -13,7 +13,8 @@
 			->appendStylesheet($this->baseUrl('libs/jqueryui/css/ui.multiselect.css'))
 			->appendStylesheet($this->baseUrl('libs/jqueryui/css/jqueryui.smoothness.custom.css'))
 			->appendStylesheet($this->baseUrl('libs/jqwidget/css/jqx.base.css'))
-			->appendStylesheet($this->baseUrl('libs/timepicker/jquery-ui-timepicker-addon.css'));
+			->appendStylesheet($this->baseUrl('libs/timepicker/jquery-ui-timepicker-addon.css'))
+			->appendStylesheet($this->baseUrl('css/menu.css'));
 	
 	echo $this->headScript()
 				->appendFile("http://maps.google.com/maps/api/js?sensor=false")
@@ -92,6 +93,9 @@ window.dataTableLangUrl = "<?php echo $this->baseUrl("libs/DataTables/lang/".$ac
     		<?php if($this->bulkupload) { ?>
     			<a id="hrefBlukUpload" href="<?php echo $this->bulkupload; ?>"><?php echo $this->translate('Bulk Upload');?></a><span></span>
     		<?php }?>
+    		<?php if($this->explorer) { ?>
+    			<a id="hrefExplorer" href="<?php echo $this->explorer; ?>"><?php echo $this->translate('Explorer View');?></a><span></span>
+    		<?php }?>
 			<?php if($this->addcategory) { ?>
     			<a href="<?php echo $this->addcategory; ?>"><?php echo $this->translate('Categories');?></a><span></span>
     		<?php }?>    	
@@ -111,7 +115,7 @@ window.dataTableLangUrl = "<?php echo $this->baseUrl("libs/DataTables/lang/".$ac
   </div>
   <!-- #content-->
   
-  <footer id="footer"> <?php echo $this->translate('Powered by:')?> <a href = "http://prostart.ch">Prostart Consulting gmbh</a></footer>
+  <footer id="footer"> <?php echo $this->translate('Powered by:')?> <a href = "http://prostart.ch">prostart consulting gmbh</a></footer>
   <!-- #footer --> 
   
 </div>

@@ -56,8 +56,16 @@ class Events_RestController extends Standard_Rest_Controller {
 							$eventDetailMapper = new Events_Model_Mapper_ModuleEventsDetail();
 							$eventDetailModel = $eventDetailMapper->fetchAll("module_events_id=".$event->getModuleEventsId());
 							if($eventDetailModel) {
+								$eventLocationMapper = new Events_Model_Mapper_ModuleEventsLocation();
 								foreach($eventDetailModel as $event_detail) {
 									$details = $event_detail->toArray();
+									$locationDetails = $eventLocationMapper->fetchAll("module_events_detail_id =".$details['module_events_detail_id']);
+									if($locationDetails){
+										foreach ($locationDetails as $locationDetail) {
+											$locationEntry = $locationDetail->toArray();
+											$location[] = $locationEntry;
+										}
+									}
 									if(isset($details["image"])) {
 										$details["image"] = "resource/event/images/".$details["image"];
 									}
@@ -65,7 +73,7 @@ class Events_RestController extends Standard_Rest_Controller {
 								}
 							}
 							
-							$response["data"][] = array("tbl_module_events"=>$event->toArray(),"tbl_module_events_detail"=>$eventDetails);
+							$response["data"][] = array("tbl_module_events"=>$event->toArray(),"tbl_module_events_detail"=>$eventDetails,"tbl_module_events_location"=>$location);
 						}
 					}
 					$data["status"] = "success";

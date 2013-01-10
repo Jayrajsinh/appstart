@@ -284,6 +284,8 @@ class ModuleImageGallery_IndexController extends Zend_Controller_Action {
 			$form->removeElement ( "image" );
 			$datas = $this->_request->getParam ( 'data' );
 			foreach ( $datas as $data ) {
+				//print_r($data);
+				//die();
 				if ($form->isValid ( $data )) {
 					try {
 						$allFormValues = $form->getValues ();
@@ -293,10 +295,9 @@ class ModuleImageGallery_IndexController extends Zend_Controller_Action {
 							foreach ( $arrTags as $tags ) {
 								$tag .= ($tag != "" ? "," : "") . $tags;
 							}
-							$keywords = $tag;
 						}
+						$keywords = $tag;
 						$category_id = $data ['module_image_gallery_category_id'];
-						;
 						$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 						$user_id = Standard_Functions::getCurrentUser ()->user_id;
 						$date_time = Standard_Functions::getCurrentDateTime ();
@@ -324,9 +325,7 @@ class ModuleImageGallery_IndexController extends Zend_Controller_Action {
 								$is_uploaded_image = false;
 								foreach ( $modelLanguages as $languages ) {
 									$modelDetails = new ModuleImageGallery_Model_ModuleImageGalleryDetail ( $data );
-									if ($keywords != "") {
-										$modelDetails->setKeywords ( $keywords );
-									}
+									$modelDetails->setKeywords ( $keywords );
 									$modelDetails->setModuleImageGalleryId ( $module_image_gallery_id );
 									$modelDetails->setLanguageId ( $languages->getLanguageId () );
 									if (! is_dir ( $upload_dir )) {
@@ -358,9 +357,7 @@ class ModuleImageGallery_IndexController extends Zend_Controller_Action {
 								$modelDetails->setImagePath ( $filename );
 								$is_uploaded_image = true;
 							}
-							if ($keywords != "") {
-								$modelDetails->setKeywords ( $keywords );
-							}
+							$modelDetails->setKeywords ( $keywords );
 							$modelDetails = $modelDetails->save ();
 						}
 						$customermoduleMapper = new Admin_Model_Mapper_CustomerModule ();
@@ -468,13 +465,17 @@ class ModuleImageGallery_IndexController extends Zend_Controller_Action {
 				"mig.order" => "order" 
 		) )->joinLeft ( array (
 				"migd" => "module_image_gallery_detail" 
-		), "migd.module_image_gallery_id = mig.module_image_gallery_id AND migd.language_id = " . $active_lang_id, array (
+		), 		"migd.module_image_gallery_id = mig.module_image_gallery_id AND migd.language_id = " . $active_lang_id, array (
 				"migd.module_image_gallery_detail_id" => "module_image_gallery_detail_id",
 				"migd.title" => "title",
 				"migd.image_path" => "image_path" 
+		) )->joinLeft ( array (
+				"migcd" => "module_image_gallery_category_detail" 
+		), 		"migcd.module_image_gallery_category_id ='".$category_id."' AND migcd.language_id = " . $active_lang_id, array (
+				"migcd.title" => "title", 
 		) );
 		if ($category_id != "") {
-			$select = $select->where ( "mig.module_image_gallery_category_id ='" . $category_id . "' AND mig.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
+			$select = $select->where ( "mig.module_image_gallery_category_id =".$category_id." AND mig.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
 		} else {
 			$select = $select->where ( "	mig.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
 		}

@@ -77,19 +77,15 @@ class Contact_Form_Contact extends Standard_Form {
 		//country
 		$countryandcontinents =  Zend_Locale::getTranslationList('Territory','en');
 		asort($countryandcontinents);
+		$countries[""]="Select Country";
 		foreach($countryandcontinents as $key=>$value){
 			if(is_numeric($key)) continue;
 			$countries[$value] = $value;
 		}
+		//array_unshift($countries, array("Select Country");
 		$country = $this->createElement('select','country',array(
 				'label' => 'Country',
 				'Multioptions' => $countries,
-				'validators' => array(
-						array(
-								$notEmptyValidator,
-								true
-							)
-						)
 		));
 		$this->addElement($country);
 

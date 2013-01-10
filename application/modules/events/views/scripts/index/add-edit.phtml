@@ -17,8 +17,15 @@
 	margin-top: 5px;
 }
 .textareaContent *{
-	vertical-align: middle !important;
+	vertical-align: top;
 	resize:none;
+	margin-top: 3px;
+}
+
+div.textareaContent textarea{
+	margin-left: 20px;
+	width:410px;
+	height: 45px;
 }
 
 .locationLabel{
@@ -37,7 +44,20 @@
 #load-locations{
 	display: none;
 }
+
+#gMap {
+	margin: auto;
+	border: 1px solid #DCDDE2;
+	width: 100%;
+	height: 190px;
+}
+.singleEntry{
+	display: block;
+	clear: both;
+	padding: 20px 0px 0px 244px;
+}
 </style>
+<script type="text/javascript" src="<?php echo $this->baseUrl("libs/mustache/mustache.js") ?>"></script>
 <script type="text/javascript" src="<?php echo $this->baseUrl("libs/tinymce/js/tiny_mce.js"); ?>"></script>
 <script type="text/javascript">
 tinyMCE.init({
@@ -148,8 +168,8 @@ tinyMCE.init({
 				<td>
 					<div id="mainContainer">
 						<div class="footer" style="clear:both">
-							<a class="button-grid greay addEventLocation">Add Event</a>
-							<a class="button-grid greay loadEventLocation">Get Events</a>
+							<a class="button-grid greay addEventLocation">Add Location</a>
+							<a class="button-grid greay loadEventLocation">Get Location</a>
 						</div>
 						<div id="locationContainer">
 						</div>
@@ -198,41 +218,23 @@ tinyMCE.init({
 </form>
 </div>
 <div id="hiddenPopup" style="display:none">
-	<div class="textareaContent">
-		<label for="textarea" style="vertical-align:top">Address</label>
-		<textarea class="reqCheck" name="popupTextarea" style="margin-left:20px" id="textarea"></textarea>
-	</div>
-	<div class="popupLabel">
-		<label>City</label>
-	</div>
-	<div class="popupInput">
-		<input class="reqCheck" type="text" name="popupCity">
-	</div>
-	<div class="popupLabel">
-		<label>Plz</label>
-	</div>
-	<div class="popupInput">
-		<input class="reqCheck" type="text" name="popupPlz">
-	</div>
-	<div class="popupSubmit">
-		<input type="button" class="submitLocation" value="submit">
+	<div id="gMap">&nbsp;</div>
+	<div>
+		<input type="checkbox" checked="checked" name="mark-fixed" id="mark-fixed" />
+		<label for="mark-fixed"><?php echo $this->translate('Auto Locate')?> </label>
 	</div>
 </div>
 <script type="text/template" id="locationTemplate">
-	<div class="locationBox" id="record-">
-		<div class="textareaContent" style="float:left">
-			<?php echo $form->address->renderLabel() ;?>
-			<?php echo $form->address->renderViewHelper() ;?>
-		</div>
-		<div style="float:right">
-			<div class="locationLabel"> 
-				<?php echo $form->city->renderLabel() ;?>
+	<div class="locationBox" id="record-{{id}}">
+		<div style="float:left">
+			<div class="locationLabel">
+				<?php echo $form->location->renderLabel() ;?>
 			</div>
 			<div class="locationInput">
-				<?php echo $form->city->renderViewHelper() ;?>
+				<?php echo $form->location->renderViewHelper() ;?>
 			</div>
 		</div>
-		<div style="float:right">
+		<div>
 			<div class="locationLabel">
 				<?php echo $form->plz->renderLabel() ;?>
 			</div>
@@ -240,11 +242,47 @@ tinyMCE.init({
 				<?php echo $form->plz->renderViewHelper() ;?>
 			</div>
 		</div>
-		<div style="float:right;padding-right:7px" id="delete-">
-			<div class="deleteLocation" style="float: left;">&nbsp;</div>
-			<div class="deleteText" style="float:right">Delete Location</div>
+		<div class="deleteLocation delete-{{id}}">
+			<a class='deleteLink'>Delete</a>
 		</div>
-		<div style="clear:both; padding: 16px 0px"><hr class="eventHrStyle"></div>
+		<div style="float:left">
+			<div class="locationLabel">
+				<?php echo $form->country->renderLabel() ;?>
+			</div>
+			<div class="locationInput">
+				<?php echo $form->country->renderViewHelper() ;?>
+			</div>
+		</div>
+		<div>
+			<div class="locationLabel">
+				<?php echo $form->latitude->renderLabel() ;?>
+			</div>
+			<div class="locationInput">
+				<?php echo $form->latitude->renderViewHelper() ;?>
+			</div>
+		</div>
+		<div style="float:left">
+			<div class="locationLabel"> 
+				<?php echo $form->city->renderLabel() ;?>
+			</div>
+			<div class="locationInput">
+				<?php echo $form->city->renderViewHelper() ;?>
+			</div>
+		</div>
+		<div>
+			<div class="locationLabel">
+				<?php echo $form->longitude->renderLabel() ;?>
+			</div>
+			<div class="locationInput">
+				<?php echo $form->longitude->renderViewHelper() ;?>
+			</div>
+		</div>
+
+		<div class="textareaContent" style="float:left">
+			<?php echo $form->address->renderLabel() ;?>
+			<?php echo $form->address->renderViewHelper() ;?>
+		</div>
+		<div class="hrRepeat" style="clear:both; padding: 16px 0px"><hr class="eventHrStyle"></div>
 	</div>
 </script>
 <script type="text/javascript">
@@ -359,63 +397,211 @@ $(document).ready(function() {
 		}
 	});
 	$(".addEventLocation").on("click",function(){
-		$('.reqCheck').each(function(){
-			$(this).val("");
-		});
 		$("#hiddenPopup").dialog({
 			modal:true,
-			width:300,
+			width:600,
 			resizable:false,
 			title:"Add Location"
 		});
-	});
-	$(".submitLocation").on("click",function(){ 
-		var valid = true
-		$('.reqCheck').each(function(){
-			if($(this).attr("value").length == 0){
-				valid = false;		
+		if(!window.appended){
+			var template = $('#locationTemplate').html();
+			var data = {
+				plzValue: null,
+				cityValue: null,
+				countryValue: null,
+				addressValue: null,
+				locationValue: null,
+				latitudeValue: null,
+				longitudeValue: null,
+				id: window.rowNumber
 			}
+			var output = Mustache.render(template,data);
+			$('#hiddenPopup').append(output);
+			$('#hiddenPopup').find('.hrRepeat').remove();
+			$('#hiddenPopup').find('.deleteLocation').remove();
+			$('#hiddenPopup .locationInput').find("input[name='plz[]']").attr('id','map_plz');
+			$('#hiddenPopup .locationInput').find("input[name='location[]']").attr('id','map_location');
+			$('#hiddenPopup .locationInput').find("select[name='country[]']").attr('id','map_country');
+			$('#hiddenPopup .locationInput').find("input[name='city[]']").attr('id','map_city');
+			$('#hiddenPopup .locationInput').find("input[name='latitude[]']").attr('id','map_latitude');
+			$('#hiddenPopup .locationInput').find("input[name='longitude[]']").attr('id','map_longitude');
+			$('#hiddenPopup .locationBox').find("textarea[name='address[]']").attr('id','map_address');
+			$('#hiddenPopup').append("<div class='singleEntry'>"+"<input type='button' value='submit' name='singleEntry' />"+"</div>");
+			window.appended = true;
+		$('#gMap').gmap3({
+	    	action: 'init',
+	        options:{
+	        	center:[0, 0],
+	        	mapTypeId: google.maps.MapTypeId.SATELLITE,
+	        	zoom: 2,
+	        	scrollwheel: false
+	        },
+	        callback: function(){
+	            
+	        }
+	    });
+	    // Set current geo-loaction on Map
+	    if($("#map_latitude").attr("value")=="" && $("#map_longitude").attr("value")=="")
+	    {
+	    	var url = "http://www.geoplugin.net/json.gp?jsoncallback=?";
+
+	    	$(document).queue(function(next){
+
+	    		if(navigator.geolocation) {
+	        		var locationMarker = null;
+	        		navigator.geolocation.getCurrentPosition(function(position) {
+	            		if(locationMarker) {
+	    					return;
+	            		}
+	            		$('#gMap').gmap3('setDefault', {init:{center:[ position.coords.latitude,position.coords.longitude ]}});
+	               		$("#map_latitude").attr("value",position.coords.latitude);
+	           			$("#map_longitude").attr("value",position.coords.longitude);
+
+	           			next();
+	        		}, function() {
+	        			
+	        		});
+	        	} 
+	        	
+	        	if($("#map_latitude").attr("value")=="" && $("#map_longitude").attr("value")=="") {
+
+	        		$.getJSON(url, function(data){
+	                	if(data['geoplugin_status'] == 200){
+	            	        // Do something with the data
+	            	    	$('#gMap').gmap3('setDefault', {init:{center:[ data["geoplugin_latitude"],data["geoplugin_longitude"] ]}});
+	        				//$('#gMap').gmap3({action: 'setCenter', args:[ data["geoplugin_latitude"],data["geoplugin_longitude"] ]});
+	                   		$("#map_latitude").attr("value",data["geoplugin_latitude"]);
+	               			$("#map_longitude").attr("value",data["geoplugin_longitude"]);
+	            	    }
+	            	    else
+	            	    {
+	            	    	$('#gMap').gmap3('setDefault', {init:{center:[ 0,0 ]}});
+	                   		$("#map_latitude").attr("value",0);
+	               			$("#map_longitude").attr("value",0);
+	            	    }
+	            	}).complete(next);
+	        	}
+	    	}).queue(function(next){
+	    
+
+	    // Set Marker to the current geo-location
+	   	$('#gMap').gmap3({ 
+	        action: 'addMarker',
+	        latLng:[$("#map_latitude").attr("value"),$("#map_longitude").attr("value")],
+			options:{
+	        	draggable: true,
+	            animation: google.maps.Animation.DROP
+	        },
+	        events:{
+	        	drag: function(marker, event, data) {
+	        		var pos = marker.getPosition();
+	            	$("#map_latitude").attr("value",pos.lat());
+	            	$("#map_longitude").attr("value",pos.lng());
+	        	}
+	        }
+	    });
+		next();
+	    });    	
+	    } else {
+	    	// Set Marker to the current geo-location
+	    	$("#mark-fixed").removeAttr("checked");
+	       	$('#gMap').gmap3({ 
+	            action: 'addMarker',
+	            latLng:[$("#map_latitude").attr("value"),$("#map_longitude").attr("value")],
+				options:{
+	            	draggable: true,
+	                animation: google.maps.Animation.DROP
+	            },
+	            events:{
+	            	drag: function(marker, event, data) {
+	            		var pos = marker.getPosition();
+	                	$("#map_latitude").attr("value",pos.lat());
+	                	$("#map_longitude").attr("value",pos.lng());
+	            	}
+	            }
+	        });
+	    }
+	    // Callback to auto set marker based on address
+	    $("#map_address, #map_city, #map_plz, #map_country").on("blur",function(){
+	    	if($("#mark-fixed").attr("checked")!="checked") return;
+	    	$('#gMap').gmap3({
+	    		action:'getAddress',
+	    		address:($("#map_address").attr("value")+ " " + $("#map_plz").attr("value")+ " " + $("#map_city").attr("value")+ " " + $("#map_country").attr("value")),
+	    		callback:function(results){
+	    			if (!results) return;
+	    			var item = results[0];
+	    			$("#gMap").gmap3(
+	    	    		{action:'clear', name:'marker'},
+	    				{
+	        				action:'addMarker',
+	    					latLng:item.geometry.location,
+	    					map: {center:true, zoom:17},
+	    					options:{
+	  				        	draggable: true,
+	  				        	animation: google.maps.Animation.DROP
+	  				        },
+	  				        events:{
+	  				        	drag: function(marker, event, data) {
+	  				        		var pos = marker.getPosition();
+	  				            	$("#map_latitude").attr("value",pos.lat());
+	  				            	$("#map_longitude").attr("value",pos.lng());
+	  				        	}
+	  				        }
+	    				}
+	        		);
+	    			var pos = item.geometry.location;
+	            	$("#map_latitude").attr("value",pos.lat());
+	            	$("#map_longitude").attr("value",pos.lng());
+	    		}
+	    	});
 		});
-		if(valid){
-			window.rowNumber =  window.rowNumber ? window.rowNumber :  $('#locationContainer .locationBox').length;
-			if(!$("#record").length){
-				var clonedLocationBox = $($("#locationTemplate").html());
-				clonedLocationBox = clonedLocationBox.attr("id","record-" + rowNumber);
-				clonedLocationBox.find("#delete-").attr("id","delete-"+rowNumber);
-			} else {
-				var clonedLocationBox = $("#record").clone().attr("id","record-" + rowNumber);
-			}
-			clonedLocationBox
-			.find('input[name^=city]')
-			.attr("value",$("input[name=popupCity]").attr("value"));
-			
-			clonedLocationBox
-			.find('input[name^=plz]')
-			.attr("value",$("input[name=popupPlz]").attr("value"));
-			
-			clonedLocationBox
-			.find('textarea[name^=address]')
-			.attr("value",$("textarea[name=popupTextarea]").attr("value"));
-
-			clonedLocationBox
-			.find('.locationDelete')
-			.attr("id","delete-" + rowNumber);
-
-			$('#locationContainer').append(clonedLocationBox);
-			window.rowNumber++;
-			$("#hiddenPopup").dialog("close");
-		}else{
-			promptus = new prompt({
-	           	reference : self,
-	            element : "#hiddenPopup",
-	            beforeShow : function(){
-	                this.alternateMessage = this.showErrorMessage("Incomplete Data!");
-                } 
-			});
-			setTimeout(function(){
-	  	        promptus.close();
-	  		}, 1000);
+		
+	    // Callback to auto set marker based on latitude and longitude
+	    $("#map_latitude,#map_longitude").on("blur",function(){
+	    	if($("#mark-fixed").attr("checked")!="checked") return;
+	        $("#gMap").gmap3(
+				{action:'clear', name:'marker'},
+				{
+	    			action:'addMarker',
+					latLng:[$("#map_latitude").attr("value"),$("#map_longitude").attr("value")],
+					map: {center:true, zoom:10},
+					options:{
+						draggable: true,
+						animation: google.maps.Animation.DROP
+					},
+					events:{
+						drag: function(marker, event, data) {
+					    	var pos = marker.getPosition();
+					        $("#map_latitude").attr("value",pos.lat());
+					        $("#map_longitude").attr("value",pos.lng());
+						}
+					}
+				}
+			);
+		});
 		}
+		$("#hiddenPopup input,#hiddenPopup select,#hiddenPopup textarea").not($("#hiddenPopup input[name='singleEntry'],#hiddenPopup input[type='checkbox']")).each(function(){
+			$(this).val("");
+		});
+	});
+	$(".singleEntry").live("click",function(){
+		window.rowNumber =  window.rowNumber ? window.rowNumber :  $('#locationContainer .locationBox').length;
+		var data = {
+			locationValue: $("#map_location").attr("value"),
+			latitudeValue: $("#map_latitude").attr("value"),
+			longitudeValue: $("#map_longitude").attr("value"),
+			plzValue: $("#map_plz").attr("value"),
+			cityValue: $("#map_city").attr("value"),
+			addressValue: $("#map_address").attr("value"),
+			id: window.rowNumber
+		}
+		var template = $('#locationTemplate').html();
+		var output = Mustache.render(template,data);	
+
+		$('#locationContainer').append(output);
+		$("#locationContainer").find('*[id="country"]:last option[value="'+$('#map_country').val()+'"]').attr("selected","selected");
+		window.rowNumber++;
+		$("#hiddenPopup").dialog("close");
 	});
 
 	$(".loadEventLocation").on("click",function(){
@@ -438,7 +624,7 @@ $(document).ready(function() {
 	            success:function(data){
 	            	$("#gridDialog").html(data).dialog({
 						modal:true,
-						width:500,
+						width:700,
 						resizable:false,
 						title:"Add Locations"
 					});
@@ -452,35 +638,22 @@ $(document).ready(function() {
 				if(selectedElement.length != ""){
 					selectedElement.each(function(){
 					    window.rowNumber =  window.rowNumber ? window.rowNumber :  $('#locationContainer .locationBox').length;
-					    var tr = $(this).parents("tr")
-					    var address = tr.find("td:nth-child(3)").html();
-					    var city = tr.find("td:nth-child(4)").html();
-					    var plz = tr.find("td:nth-child(5)").html();
-					    if(!$("#record").length){
-							var clonedLocationBox = $($("#locationTemplate").html());
-							clonedLocationBox = clonedLocationBox.attr("id","record-" + rowNumber);
-							clonedLocationBox.find("#delete-").attr("id","delete-"+rowNumber);
-						} else {
-							var clonedLocationBox = $("#record").clone().attr("id","record-" + rowNumber);
+					    var tr = $(this).parents("tr");
+					    var data = {
+					    	locationValue: tr.find("td:nth-child(3)").html(),
+					    	addressValue: tr.find("td:nth-child(4)").html(),
+							cityValue: tr.find("td:nth-child(5)").html(),
+							countryValue: tr.find("td:nth-child(6)").html(),
+							plzValue: tr.find("td:nth-child(7)").html(),
+							latitudeValue: tr.find("td:nth-child(8)").html(),
+							longitudeValue: tr.find("td:nth-child(9)").html(),
+							id: window.rowNumber
 						}
-						clonedLocationBox
-						.find('input[name^=city]')
-						.attr("value",city);
-						
-						clonedLocationBox
-						.find('input[name^=plz]')
-						.attr("value",plz);
-						
-						clonedLocationBox
-						.find('textarea[name^=address]')
-						.attr("value",address);
-
-						clonedLocationBox
-						.find('.locationDelete')
-						.attr("id","delete-" + rowNumber);
-
-						$('#locationContainer').append(clonedLocationBox);
-						rowNumber++;
+						var template = $('#locationTemplate').html();
+					    var output = Mustache.render(template,data);
+					    $('#locationContainer').append(output);
+					    $("#locationContainer").find('*[id="country"]:last option[value="'+tr.find("td:nth-child(6)").html()+'"]').attr("selected","selected");
+						window.rowNumber++;
 						$("#gridDialog").dialog("close");
 					});
 				}else{
@@ -501,8 +674,9 @@ $(document).ready(function() {
   		});
 	});
 	
-	$('.deleteText').live("click",function(){
-		var deletedRow = $(this).parent().attr("id").replace("delete-",'');
+	$('.deleteLocation').live("click",function(){
+		$(this).removeClass("deleteLocation");
+		var deletedRow = $(this).attr("class").replace("delete-",'');
 		$("#record-"+deletedRow).remove();
 	});
 	
@@ -510,29 +684,23 @@ $(document).ready(function() {
 	window.rowNumber =  window.rowNumber ? window.rowNumber :  $('#locationContainer .locationBox').length;
 	for(x in data){
 		obj = data[x];
-
 		if(typeof(obj) == "object"){				
-					tmpTemplate = $($("#locationTemplate").html());
-					tmpTemplate = tmpTemplate.attr("id","record-" +window.rowNumber );
-					tmpTemplate.find("#delete-").attr("id","delete-"+rowNumber); 
-					tmpTemplate
-					.find('input[name^=city]')
-					.attr("value",obj.city);
-					
-					tmpTemplate
-					.find('input[name^=plz]')
-					.attr("value",obj.plz);
-					
-					tmpTemplate
-					.find('textarea[name^=address]')
-					.attr("value",obj.address);
-
-					tmpTemplate
-					.find('.locationDelete')
-					.attr("id","delete-" + window.rowNumber);
-
-					$('#locationContainer').append(tmpTemplate);
-					window.rowNumber++;
+			tmpTemplate = $("#locationTemplate").html();
+			 var dbData = {
+			plzValue: obj.plz,
+			cityValue: obj.city,
+			addressValue: obj.address,
+			locationValue: obj.location,
+			countryValue: obj.country,
+			latitudeValue: obj.latitude,
+			longitudeValue: obj.longitude,
+			id: window.rowNumber
+			}
+			console.log(obj.country);
+		    var output = Mustache.render(tmpTemplate,dbData);
+			$('#locationContainer').append(output);
+			$("#locationContainer").find('*[id="country"]:last option[value="'+obj.country+'"]').attr("selected","selected");
+			window.rowNumber++;
 		}	
 	}
 });

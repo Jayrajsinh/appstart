@@ -135,8 +135,33 @@
 		            <order>7</order>
 		            <resource>email-template</resource>
 		    	</EmailTemplates>
+		    	<Version>
+		    		<label>Version Release</label>
+					<module>admin</module>			
+					<controller>version</controller>
+					<action>index</action>
+		            <order>8</order>
+		            <resource>version</resource>
+		             <pages>
+						<add>
+							<label>Add Version</label>
+							<module>admin</module>			
+							<controller>version</controller>
+							<action>add</action>
+							<resource>version</resource>
+							<visible>false</visible>
+						</add>
+						<edit>
+							<label>Edit Version</label>
+							<module>admin</module>			
+							<controller>version</controller>
+							<action>edit</action>
+							<resource>version</resource>
+							<visible>false</visible>
+						</edit>
+					</pages>
+		    	</Version>
     		</pages>
     	</settings>
-    	
 	</nav>
 </config>
