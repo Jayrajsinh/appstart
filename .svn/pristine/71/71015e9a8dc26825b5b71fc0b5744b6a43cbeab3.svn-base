@@ -1,5 +1,0 @@
-<?php
-// French
-return array (
-	
-);
