@@ -67,6 +67,8 @@ class SocialMedia_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_module_social_media"=>$socialMedia->toArray(),"tbl_module_social_media_detail"=>$socialMediaDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_social_media"=>array(),"tbl_module_social_media_detail"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

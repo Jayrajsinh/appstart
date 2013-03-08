@@ -48,6 +48,25 @@ class ModuleImageGallery_RestController extends Standard_Rest_Controller {
 				$customer = $mapper->find($customer_id);
 				if($customer) {
 					$response = array();
+					$imageCategoryMapper = new ModuleImageGallery_Model_Mapper_ModuleImageGalleryCategory();
+					$categoryModel = $imageCategoryMapper->fetchAll("customer_id=".$customer_id);
+					if($categoryModel) {
+						foreach($categoryModel as $category) {
+							$categoryDetails = array();
+							$categoryDetailMapper = new ModuleImageGallery_Model_Mapper_ModuleImageGalleryCategoryDetail();
+							$categoryDetailModel = $categoryDetailMapper->fetchAll("module_image_gallery_category_id=".$category->getModuleImageGalleryCategoryId());
+							if($categoryDetailModel) {
+								foreach($categoryDetailModel as $category_detail) {
+									$details = $category_detail->toArray();
+									$categoryDetails[] = $details;
+								}
+							}
+							
+							$response["data"][] = array("tbl_module_image_gallery_category"=>$category->toArray(),"tbl_module_image_gallery_category_detail"=>$categoryDetails);
+						}
+					}else{
+						$response["data"][] = array("tbl_module_image_gallery_category"=>array(),"tbl_module_image_gallery_category_detail"=>array());
+					}
 					$imageMapper = new ModuleImageGallery_Model_Mapper_ModuleImageGallery();
 					$imageModel = $imageMapper->fetchAll("customer_id=".$customer_id);
 					if($imageModel) {
@@ -67,6 +86,8 @@ class ModuleImageGallery_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_module_image_gallery"=>$image->toArray(),"tbl_module_image_gallery_detail"=>$imageDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_image_gallery"=>array(),"tbl_module_image_gallery_detail"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

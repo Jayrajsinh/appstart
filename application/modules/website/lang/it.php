@@ -12,7 +12,7 @@ return array (
 	"Website saved successfully." => "Sito salvato con successo.",
 	//index
 	"Are you sure you want to delete this Website" => "Sei sicuro di voler eliminare questo Sito",
-	"Please wait while deleting Website.." => "Si prega di attendere durante l'eliminazione del sito web ..",
+	"Please wait while deleting Website.." => "Si prega di attendere durante l&#39;eliminazione del sito web ..",
 	"Website deleted successfully." => "Sito eliminato correttamente.",
 	"Unable to delete Website:" => "Impossibile eliminare il sito web:",
 	//reorder

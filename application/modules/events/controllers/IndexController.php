@@ -185,6 +185,8 @@ class Events_IndexController extends Zend_Controller_Action
                     );
                     array_push($location, $temp);
                 }
+                //print_r($dataDetails[0]);
+                //die();
     			$form->populate ( $dataDetails[0] );
     			$this->view->location = json_encode($location);
                 $this->view->image_path=$dataDetails[0]["image"];

@@ -193,7 +193,7 @@ class Document_CategoryController extends Zend_Controller_Action
 						$model->setLastUpdatedAt ( $date_time );
 						$model = $model->save ();
 						
-						$modelDetails = new Document_Model_ModuleDocumentDetail($arrFormValues);
+						$modelDetails = new Document_Model_ModuleDocumentCategoryDetail($arrFormValues);
 						if(!$modelDetails || $modelDetails->getModuleDocumentCategoryDetailId()=="") {
 							$modelDetails->setCreatedBy ( $user_id );
 							$modelDetails->setCreatedAt ( $date_time );
@@ -397,7 +397,7 @@ class Document_CategoryController extends Zend_Controller_Action
 					"id" => $row [3] ["dc.module_document_category_id"]
 			), "default", true );
 			$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
-			$delete = '<a href="' . $deleteUrl . '" class="grid_delete" >'.$this->view->translate('Delete').'</a>';
+			$delete = '<a href="' . $deleteUrl . '" class="grid_delete button-grid greay" >'.$this->view->translate('Delete').'</a>';
 			$sap = '';
 		
 			$response ['aaData'] [$rowId] [3] = $defaultEdit. $sap .$delete;

@@ -9,7 +9,7 @@
 	</table>
 </div>
 <div class="boxBorderBottom">
-	<form id="frmAddEditimageCategory" method="<?php echo $form->getMethod();?>"
+	<form id="frmAddEditimageCategory1" method="<?php echo $form->getMethod();?>"
 		action="<?php echo $form->getAction();?>" class="zend_form">
 	<table style="margin: 10px 0;">
 		<tbody>
@@ -46,7 +46,7 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
-	$("#frmAddEditimageCategory").validator().submit(function(e){
+	$("#frmAddEditimageCategory1").validator().submit(function(e){
 		var form = $(this);
 		if(!e.isDefaultPrevented()){
 			var promptus = false;

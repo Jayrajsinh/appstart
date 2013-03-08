@@ -1,5 +1,31 @@
 <?php header('Content-type: text/html; charset=utf-8'); ?>
 <?php echo $this->doctype('HTML5');?>
+<style>
+.versionTitle{
+  display:inline;
+  display:inline-block;
+  width: 86px;
+  padding: 5px;
+  vertical-align: top; 
+}
+
+.versionDescription{
+  display:inline;
+  display:inline-block;
+  width: 300px;
+  padding: 5px; 
+}
+#footer-version a:hover{
+  cursor: pointer;
+}
+.loadMoreVersion{
+  font-size: 11px;
+  float: right;
+}
+.loadMoreVersion:hover{
+  cursor: pointer;
+}
+</style>
 <html>
 <head>
 <?php echo $this->headTitle("AppStart");?>
@@ -29,7 +55,8 @@
 				->appendFile($this->baseUrl("libs/DataTables/js/dataTables.aksPlugin.js"))
 				->appendFile($this->baseUrl("libs/Prompt/js/prompt.js"))
 				->appendFile($this->baseUrl("libs/jqueryui/js/ui.multiselect.js"))
-				->appendFile($this->baseUrl("libs/timepicker/jquery-ui-timepicker-addon.js"));
+				->appendFile($this->baseUrl("libs/timepicker/jquery-ui-timepicker-addon.js"))
+        ->appendFile($this->baseUrl("libs/mustache/mustache.js"));
 
 $activeLang = Standard_Functions::getActiveLanguage();
 ?>
@@ -115,13 +142,70 @@ window.dataTableLangUrl = "<?php echo $this->baseUrl("libs/DataTables/lang/".$ac
   </div>
   <!-- #content-->
   
-  <footer id="footer"> <?php echo $this->translate('Powered by:')?> <a href = "http://prostart.ch">prostart consulting gmbh</a></footer>
+  <footer id="footer">
+  	<?php echo $this->translate('Powered by:')?> <a href = "http://prostart.ch">prostart consulting gmbh</a>
+    <div style="float:right" id="footer-version">
+      <a class="versionPopup">
+        <?php
+        $version = Standard_Functions::getVersion();
+        if(!empty($version)){
+          echo "Version Release".$version[0]["version_number"];
+        }
+        ?>
+      </a>
+    </div>
+    <div id="versionDetails" style="display:none">
+      <!-- Version will appended here -->
+    </div>
+  </footer>
   <!-- #footer --> 
-  
 </div>
 <!-- #wrapper -->
+<script type="text/template" id="versionLayout">
+<div style="float:left">
+  <div class="versionTitle">
+    <b>Version:</b>
+  </div>
+  <div class="versionDescription">
+    <span>{{version_number}}</span>
+  </div>
+</div>
+
+<div style="float:left">
+  <div class="versionTitle">
+    <b>Title:</b>
+  </div>
+  <div class="versionDescription">
+    <span>{{title}}</span>
+  </div>
+</div>
+
+<div style="float:left">
+  <div class="versionTitle">
+    <b>Description:</b>
+  </div>
+  <div class="versionDescription">
+    <span>{{{description}}}</span>
+  </div>
+</div>
+
+<div style="float:left">
+  <div class="versionTitle">
+    <b>Category:</b>
+  </div>
+  <div class="versionDescription">
+    <span>{{category}}</span>
+  </div>
+</div>
+<?php if(count($version) > 1){?>
+<div class="loadMoreVersion">
+  <a class="moreVersion"> <i>Show Previous Version</i> </a>
+</div>
+<?php } ?>
+</script>
 <script type="text/javascript">
 // <!--
+ window.baseUrl = '<?php echo $this->uploadimagelink; ?>';
 	function changeLocale(language_id) {
 		var promptus = false;
 		$(document).queue(function(next){
@@ -154,6 +238,60 @@ window.dataTableLangUrl = "<?php echo $this->baseUrl("libs/DataTables/lang/".$ac
 			next();
   		});
 	}
+  var template = $('#versionLayout').html();
+  var data = {
+        version_number:"<?php echo $version[0]['version_number'] ?>",
+        title:"<?php echo $version[0]['title'] ?>",
+        description:"<?php echo str_replace (array("\r\n", "\n", "\r"), ' ', $version[0]['description'])//echo $version[0]['description'] ?>",
+        category:"<?php echo $version[0][category] ?>"
+  }
+  var output = Mustache.render(template,data);
+  $("#versionDetails").append(output);
+  $(".versionPopup").on("click",function(){
+    $("#versionDetails").dialog({
+      modal:true,
+      width:450,
+      resizable:false,
+      title:"Version Details"
+    });
+  });
+  $(".moreVersion").on("click",function(){
+    $(document).queue(function(next){
+      promptus = new prompt({
+        element:'#versionDetails',
+        beforeShow : function(){
+           this.alternateMessage = this.showLoadingMessage("<?php echo $this->translate('Getting version history..')?>");
+        }
+      });
+      next();
+    }).queue(function(next){
+      $.ajax({
+        type:"POST",
+        dataType:"json",
+        cache:false,
+        url:'<?php echo $this->baseUrl('/default/index/get-version-details'); ?>',
+        success:function(data){
+          var template = $('#versionLayout').html();
+          $("#versionDetails").html("");
+          for(x in data){
+            obj = data[x];
+            var versionDetails = {
+              version_number:obj.version_number,
+              title:obj.title,
+              description:obj.description,
+              category:obj.category
+            };
+            var output = Mustache.render(template,versionDetails);
+            $("#versionDetails").append(output);
+          }
+          $("#versionDetails").find(".moreVersion").html("<hr>");
+          $(".loadMoreVersion").css("width","100%");
+          $("#versionDetails").css("height","250px");
+          $("#versionDetails").css("overflow-y","scroll");
+        }
+      });
+    });
+  });
 // -->
 </script>
 </body>

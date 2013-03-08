@@ -3,6 +3,7 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 	var $_module_id;
 	public function init() {
 		/* Initialize Action Controller Here.. */
+		define("GOOGLE_API_KEY", "AIzaSyD0gczBUI3hOQQ4PAyToRQ2VMcGhRim_3Q");
 		$modulesMapper = new Admin_Model_Mapper_Module();
 		$module = $modulesMapper->fetchAll("name ='push-message'");
 		if(is_array($module)) {
@@ -110,7 +111,8 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 		), "pmd.push_message_id = pm.push_message_id AND pmd.language_id=" . $active_lang_id, array (
 				"pmd.push_message_detail_id" => "push_message_detail_id",
 				"pmd.title" => "title",
-				"pmd.description" => "description" 
+				"pmd.description" => "description",
+				"pmd.message_date" => "message_date" 
 		) )->where ( "pm.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
 		
 		$response = $pushMessageMapper->getGridData ( array (
@@ -144,11 +146,11 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 			$edit = array ();
 			if($row[4]['pmd.push_message_detail_id'] == ""){
 				$mapper = new PushMessage_Model_Mapper_PushMessageDetail();
-				$details = $mapper->fetchAll("push_message_id=".$row[4]["pm.push_message_id"]." AND language_id=".$default_lang_id);
+				$details = $mapper->fetchAll("push_message_id=".$row[5]["pm.push_message_id"]." AND language_id=".$default_lang_id);
 				if(is_array($details)){
 					$details = $details[0];
-					$row[4][pmd.title] = $row[0] = $details->getTitle();
-					$row[4][pmd.description] = $row[1] = $details->getDescription();
+					$row[5][pmd.title] = $row[0] = $details->getTitle();
+					$row[5][pmd.description] = $row[1] = $details->getDescription();
 				}
 			}
 			$response['aaData'][$rowId] = $row;
@@ -158,7 +160,7 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 							"module" => "push-message",
 							"controller" => "index",
 							"action" => "edit",
-							"id" => $row [4] ["pm.push_message_id"],
+							"id" => $row [5] ["pm.push_message_id"],
 							"lang" => $lang ["l.language_id"] 
 					), "default", true );
 					$edit [] = '<a href="' . $editUrl . '" ><img src="images/lang/' . $lang ["logo"] . '" alt="' . $lang ["l.title"] . '" /></a>';
@@ -168,12 +170,12 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 					"module" => "push-message",
 					"controller" => "index",
 					"action" => "delete",
-					"id" => $row [4] ["pm.push_message_id"] 
+					"id" => $row [5] ["pm.push_message_id"] 
 			), "default", true );
 			$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
 			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
 			$sap = '';
-			$response ['aaData'] [$rowId] [4] = $defaultEdit . $sap . $delete;
+			$response ['aaData'] [$rowId] [5] = $defaultEdit . $sap . $delete;
 		}
 		$jsonGrid = Zend_Json::encode ( $response );
 		$this->_response->appendBody ( $jsonGrid );
@@ -286,6 +288,11 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 								$pushMessageDetailModel = $pushMessageDetailModel->save ();
 							}
 						}
+						//setting the message in variable only in add mode
+						//if($allFormValues["description"] != ""){
+							//$message = array();
+							//$message['message'] = $allFormValues["description"];
+						//}
 					} else {
 						$pushMessageModel->setLastUpdatedBy ( $user_id );
 						$pushMessageModel->setLastUpdatedAt ( $date_time );
@@ -303,7 +310,6 @@ class PushMessage_IndexController extends Zend_Controller_Action {
 						$customermodule->save();
 					}
 					$pushMessageMapper->getDbTable ()->getAdapter ()->commit ();
-					
 					$response = array (
 							"success" => $pushMessageModel->toArray () 
 					);

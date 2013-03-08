@@ -32,6 +32,7 @@
 		<tr>
 	        <th scope="col"><?php echo $this->translate('Title'); ?></th>
 		    <th scope="col"><?php echo $this->translate('Description'); ?></th>
+            <th scope="col"><?php echo $this->translate('Date/Time'); ?></th>
 		    <th scope="col"><?php echo $this->translate('Status'); ?></th>
 		    <th scope="col"><?php echo $this->translate('Order'); ?></th>
 		    <th scope="col" class="action"><?php echo $this->translate('Action'); ?></th>
@@ -53,6 +54,7 @@ $(document).ready(function() {
 		"aoColumns": [
 						{ "sName": "pmd.title" },
 						{ "sName": "pmd.description" },
+                        { "sName": "pmd.message_date" },
 						{ "sName": "pm.status" },
 						{ "sName": "pm.order" },						
 						{ "sName": "actions","bSortable": false}

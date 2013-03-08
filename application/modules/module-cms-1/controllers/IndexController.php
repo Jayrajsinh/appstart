@@ -25,7 +25,23 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 		$language_id = Standard_Functions::getCurrentUser ()->active_language_id;
 		$this->view->parentCategories = $this->_getModuleCmsTree ( $customer_id, $language_id, true);
 	}
-	
+	public function uploadimageAction(){
+		$this->_helper->layout ()->disableLayout ();
+		if ($this->_request->isPost ()) {
+			//@todo Change base_dir!
+			$base_dir = $this->view->baseUrl();
+			//@todo Change image location and naming (if needed)
+			$image = $_FILES["image"]["name"];
+			$adapter = new Zend_File_Transfer_Adapter_Http ();
+			$adapter->setDestination ( Standard_Functions::getResourcePath () . "module-cms-1/tinymce" );
+			$adapter->receive ();
+			//move_uploaded_file($_FILES["image"]["name"], $base_dir ."/resource/module-cms/tinymce");
+			//die;
+			$source_dir = "resource/module-cms-1/tinymce/";
+			//echo $this->view->baseurl( $source_dir.$image);die;
+			$this->view->imageSet = $this->view->baseurl( $source_dir.$image);
+		}		
+	}
 	public function reorderAction() {
 		$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
 		$language_id = Standard_Functions::getCurrentUser ()->active_language_id;
@@ -129,6 +145,11 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 				"controller" => "index",
 				"action" => "save" 
 		), "default", true );
+		$this->view->uploadimagelink = $this->view->url ( array (
+				"module" => "module-cms-1",
+				"controller" => "index",
+				"action" => "uploadimage"
+		), "default", true );
 		$form->setMethod ( 'POST' );
 		$form->setAction ( $action );
 		$this->view->form = $form;
@@ -175,10 +196,12 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 					$mapper = new ModuleCms1_Model_Mapper_ModuleCms1 ();
 					$mapper->getDbTable ()->getAdapter ()->beginTransaction ();
 					$model = new ModuleCms1_Model_ModuleCms1 ( $allFormValues );
+					if ($request->getParam ( "module_cms_1_id", "" ) == "" || $request->getParam("parent") == "changed") {
+						$maxOrder = $mapper->getNextOrder ( $parent_id,$customer_id );
+						$model->setOrder ( $maxOrder + 1 );
+					}
 					if ($request->getParam ( "module_cms_1_id", "" ) == "") {
 						// Add new cms
-						$maxOrder = $mapper->getNextOrder ( $parent_id );
-						$model->setOrder ( $maxOrder + 1 );
 						$model->setCustomerId ( $customer_id );
 						$model->setCreatedBy ( $user_id );
 						$model->setCreatedAt ( $date_time );
@@ -288,7 +311,10 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 										'0' => $this->view->translate ( 'Inactive' ) 
 								) 
 						) 
-				) 
+				),
+				 'search_type' => array(
+			  		'c.parent_id'=>"="
+			  ) 
 		), "customer_id=" . Standard_Functions::getCurrentUser ()->customer_id, $select );
 		$mapper = new Admin_Model_Mapper_CustomerLanguage ();
 		$select = $mapper->getDbTable ()->select ( false )->setIntegrityCheck ( false )->from ( array (
@@ -318,12 +344,19 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 			}
 			$response ['aaData'] [$rowId] = $row;
 			$mapper = new ModuleCms1_Model_Mapper_ModuleCms1();
-			if($row[4]["c.parent_id"] == 0){
-				$childs = $mapper->countAll("parent_id =".$row [4] ["c.module_cms_1_id"]);
-				$response['aaData'][$rowId][0] = '<span class="child" id="'.$row [4] ["c.module_cms_1_id"].'">'.$row[0]." Child(s) ".$childs.'</span>';
-			}else{
-				$childs = $mapper->countAll("parent_id =".$row [4] ["c.module_cms_1_id"]);
-				$response['aaData'][$rowId][0] = '<span class="child" id="'.$row [4] ["c.module_cms_1_id"].'">'.$row[0]." Child(s) ".$childs.'</span>';
+			if($row[4]["c.parent_id"] !== "" && $row[4]["c.parent_id"] !== null){
+				$select = $mapper->getDbTable()->select(false)
+				->setIntegrityCheck(false)
+				->from(array("mc" =>"module_cms_1"),
+					array("mc.parent_id"))
+				->joinLeft(array("mcd"=>"module_cms_detail_1")
+					,"mc.module_cms_1_id = mcd.module_cms_1_id",array("mcd.language_id"))
+				->where("mc.parent_id ='".$row [4] ['c.module_cms_1_id']."' AND mcd.language_id =".$active_lang_id);
+				$childs = $mapper->countAll($select);
+				if($childs>0)
+					$response['aaData'][$rowId][0] = '<span class="child" id="'.$row [4] ["c.module_cms_1_id"].'">'.$row[0]."<i style='color:#009606'> Child: ".$childs.'</i></span>';
+				else
+					$response['aaData'][$rowId][0] = $row[0];
 			}
 			
 			if ($languages) {
@@ -372,9 +405,10 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 			$languageMapper = new Admin_Model_Mapper_Language ();
 			$languageData = $languageMapper->find ( $language_id );
 			$this->view->language = $languageData->getTitle ();
-			$this->view->moduleCmsTree = $this->_getModuleCmsTree ( $customer_id, $language_id );
+			$this->view->moduleCmsTree = $this->_getModuleCmsTree ( $customer_id, $language_id,false,$module_cms_id );
 			$default_lang_id = Standard_Functions::getCurrentUser ()->default_language_id;
 			$data = $moduleCmsMapper->find($module_cms_id)->toArray ();
+			$this->view->orignalParent = $data['parent_id'];
 			$form->populate ( $data );
 			$datadetails = array ();
 			$moduleCmsDetailMapper = new ModuleCms1_Model_Mapper_ModuleCmsDetail1 ();
@@ -399,11 +433,15 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 				$this->view->image_thumb = $this->view->baseUrl($image_uri ."/" . $image_path);
 				
 				//sending the parent category title to view
-				$parentDetails = $moduleCmsMapper->getDbTable()->fetchAll("module_cms_1_id = " . $dataDetails[0]['module_cms_1_id'])->toArray();
-				$parentLabel = $moduleCmsDetailMapper->getDbTable ()->fetchAll ( "module_cms_1_id = " . $parentDetails[0]['parent_id']. " AND language_id = " . $language_id )->toArray();
-				if(empty($parentLabel)){
-					$this->view->parentCategory = $dataDetails[0]['title'];
-				} else {$this->view->parentCategory = $parentLabel[0]['title'];}
+				if($data['parent_id'] != 0){
+					$parentDetails = $moduleCmsMapper->getDbTable()->fetchAll("module_cms_1_id = " . $dataDetails[0]['module_cms_1_id'])->toArray();
+					$parentLabel = $moduleCmsDetailMapper->getDbTable ()->fetchAll ( "module_cms_1_id = " . $parentDetails[0]['parent_id']. " AND language_id = " . $language_id )->toArray();
+					if(empty($parentLabel)){
+						$this->view->parentCategory = $dataDetails[0]['title'];
+					} else {$this->view->parentCategory = $parentLabel[0]['title'];}
+				}else{
+					$this->view->parentCategory = "Parent";
+				}
 			}
 			$action = $this->view->url ( array (
 					"module" => "module-cms-1",
@@ -415,6 +453,11 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 		} else {
 			$this->_redirect ( '/' );
 		}
+		$this->view->uploadimagelink = $this->view->url ( array (
+				"module" => "module-cms-1",
+				"controller" => "index",
+				"action" => "uploadimage"
+		), "default", true );
 		$this->view->form = $form;
 		$this->view->assign ( array (
 				"partial" => "index/partials/edit.phtml" 
@@ -427,21 +470,22 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 		$request = $this->getRequest ();
 		
 		if (($module_cms_id = $request->getParam ( "id", "" )) != "") {
-			$parent_id = $request->getParam("p_id");
+			$childs = $this->_getChilds($module_cms_id);
+			array_unshift($childs, $module_cms_id);
 			$model = new ModuleCms1_Model_ModuleCms1 ();
 			if ($model) {
 				try {
 					$modelMapper = new ModuleCms1_Model_Mapper_ModuleCms1 ();
 					$modelMapper->getDbTable ()->getAdapter ()->beginTransaction ();
-					$modelDetailMapper = new ModuleCms1_Model_Mapper_ModuleCmsDetail1 ();
-					$data = $modelMapper->fetchAll ( "parent_id =".$module_cms_id." OR module_cms_1_id = " . $module_cms_id );
-					if ($data) {
-						foreach ( $data as $moduleCms) {
-							$dataDetails = $modelDetailMapper->fetchAll("module_cms_1_id =" .$moduleCms->getModuleCms1Id());
+					foreach ($childs as $child) {
+						$modelDetailMapper = new ModuleCms1_Model_Mapper_ModuleCmsDetail1 ();	
+						$data = $modelMapper->getDbTable()->fetchAll ( "module_cms_1_id =".$child);
+						if ($data) {
+							$dataDetails = $modelDetailMapper->fetchAll("module_cms_1_id =" .$child);
 							foreach($dataDetails as $dataDetail){
 								$deletedRows = $dataDetail->delete();
 							}
-							$moduleCms->delete ();
+							$data[0]->delete();
 						}
 					}
 					$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
@@ -482,7 +526,7 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 		
 		$this->_helper->json ( $response );
 	}
-	private function _getModuleCmsTree($customer_id = null, $language_id = null, $getOnlyParents = false) {
+	private function _getModuleCmsTree($customer_id = null, $language_id = null, $getOnlyParents = false,$nochilds = false) {
 		// Get customer_id, module_cms_id ,title, parent_id
 		$moduleCmsMapper = new ModuleCms1_Model_Mapper_ModuleCms1 ();
 		$select = $moduleCmsMapper->getDbTable ()->select ()->setIntegrityCheck ( false )->from ( array (
@@ -492,16 +536,68 @@ class ModuleCms1_IndexController extends Zend_Controller_Action {
 				'parentId' => 'mc.parent_id' 
 		) )->joinLeft ( array (
 				'mcd' => 'module_cms_detail_1' 
-		), "mcd.module_cms_1_id  = mc.module_cms_1_id AND mcd.language_id = " . $language_id, array (
+		), "mcd.module_cms_1_id  = mc.module_cms_1_id", array (
 				'text' => 'mcd.title' 
 		) );
 		if($getOnlyParents){
-			$select = $select->where("mc.module_cms_1_id IN (SELECT distinct(parent_id) FROM module_cms_1 )OR parent_id = 0  AND mc.customer_id=" . $customer_id);
+			$parent_ids = $this->_getParentIds();
+			$select = $select->where("mc.customer_id ='".$customer_id."' AND mcd.language_id ='".$language_id."' AND mc.module_cms_1_id IN('".$parent_ids."')");
+		} elseif($nochilds) {
+			$blacklisted = array();			
+			$blacklisted = $this->_getChilds($nochilds);
+			$string = is_array($blacklisted)?implode("','",$blacklisted):false;
+			$select = $select->where ( "mc.module_cms_1_id NOT IN('".$string."') AND mc.parent_id !='".$nochilds."' AND mc.module_cms_1_id != '".$nochilds."' AND mc.customer_id = '" . $customer_id . "' AND mcd.language_id =".$language_id );
 		} else {
-			$select = $select->where ( 'mc.customer_id = ' . $customer_id );
+			$select = $select->where ( "mc.customer_id = '".$customer_id."' AND mcd.language_id =".$language_id );
 		}
+		$select->order(array('mc.parent_id',"mc.order"));
 		$data = $moduleCmsMapper->getDbTable ()->fetchAll ( $select );
 		return Zend_Json::encode ( $data->toArray () );
+	}
+	
+	private function _getParentIds(){
+		$parentIds = array();
+		$mapper = new ModuleCms1_Model_Mapper_ModuleCms1();
+		$select = $mapper->getDbTable()->select()->setIntegrityCheck(false)
+				->from(array('mc'=>'module_cms_1'),'mc.parent_id')
+				->distinct('mc.parent_id');
+		$parentIdArrays = $mapper->getDbTable()->fetchAll($select);
+		foreach ($parentIdArrays as $parentIdArray) {
+			foreach ($parentIdArray as $parentId) {
+				$parentIds[] = $parentId;
+			}
+		}
+		$parentString = !empty($parentIds)?implode("','", $parentIds):false;
+		return $parentString;
+	}
+
+	private function _getChilds($childs){
+		if(!is_array($childs)){
+			$childs = array($childs);
+		}
+		$blacklisted = array();
+		while(count($this->_getBlacklistedIds($childs)) != 0){
+			$resultset = $this->_getBlacklistedIds($childs);
+			foreach ($resultset as $result) {
+				$blacklisted[] = $result;
+			}
+			$childs = $resultset;
+		}
+		return $blacklisted;
+	}
+
+	private function _getBlacklistedIds(array $ids = array()){
+		$moduleCmsMapper = new ModuleCms1_Model_Mapper_ModuleCms1 ();
+		$idstack = array();
+		foreach ($ids as $id) {
+			$result = $moduleCmsMapper->getDbTable()->fetchAll("parent_id =".$id)->toArray();
+			if(is_array($result)){
+				foreach ($result as $result) {
+					$idstack[] = $result['module_cms_1_id'];
+				}
+			}
+		}
+		return $idstack;
 	}
 	
 	private function moveUploadFile($source_dir, $dest_dir, $filename) {

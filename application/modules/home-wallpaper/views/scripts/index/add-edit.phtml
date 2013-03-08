@@ -40,7 +40,8 @@
 								<?php 
 					        	if($this->image_path[$resolution->getResolutionId()]!="") {
 					        	?>
-					        	<img alt="" src="<?php echo  $this->image_path[$resolution->getResolutionId()] ;?>" style="width: 64px;" />
+					        	<img alt="" src="<?php echo  $this->image_path[$resolution->getResolutionId()] ;?>" style="width: 64px;" class="logoImage_<?php echo $resolution->getResolutionId() ?>" />
+					        	<a style="margin-right:5px" class="deleteLogo red button-grid" id="<?php echo $resolution->getResolutionId(); ?>">Delete</a>
 					        	<?php 
 					        	}
 					        	?>
@@ -92,6 +93,14 @@
 <script type="text/javascript">
 // <!--
 $(document).ready(function() {
+	$(".deleteLogo").on("click",function(){
+		var id = $(this).attr("id");
+    	$("#image_"+id+"_path").attr("value","deleted");
+    	$(".logoImage_"+id).remove();
+    	$("#"+id).remove();
+    	$("#image_"+id).attr("value","");
+    });
+
 	$("#frmAddEditHomeWallpaper").validator().submit(function(e){
 		var form = $(this);
 		if(!e.isDefaultPrevented()){

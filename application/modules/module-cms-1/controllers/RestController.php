@@ -67,6 +67,8 @@ class ModuleCms1_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_module_cms_1"=>$models->toArray(),"tbl_module_cms_detail_1"=>$cmsDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_cms_1"=>array(),"tbl_module_cms_detail_1"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

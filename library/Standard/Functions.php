@@ -61,4 +61,32 @@ class Standard_Functions {
 	public static function getResourcePath() {
 		return APPLICATION_PATH . "/../public/resource/";
 	}
+	public static function getVersion($limit = null){
+		$mapper = new Admin_Model_Mapper_Version();
+		$active_lang_id = self::getActiveLanguage()->language_id;
+
+		$version = array();
+		$select = $mapper->getDbTable()->select(false)
+				->setIntegrityCheck(false)
+				->where("status = 1")
+				->order("created_at DESC")
+				->limit($limit);
+		
+		$data = $mapper->getDbTable()->fetchAll($select)->toArray();
+		foreach ($data as $key => $value) {
+			$version_id = (isset($data[$key]))? $data[$key]["version_id"] : false;
+			if($version_id){
+				$version[$key]["created_at"] = $value["created_at"];
+				$detailMapper = new Admin_Model_Mapper_VersionDetail();
+				$versionDetails = $detailMapper->getDbTable()->fetchAll("language_id = '".$active_lang_id."' AND version_id =".$version_id)->toArray();
+				foreach ($versionDetails as $versionDetail) {
+					$version[$key]["version_number"] = $versionDetail["version_number"];
+					$version[$key]["title"] = $versionDetail["title"];
+					$version[$key]["description"] = $versionDetail["description"];
+					$version[$key]["category"] = $versionDetail["category"];
+				}
+			}
+		}
+		return $version;
+	}
 }

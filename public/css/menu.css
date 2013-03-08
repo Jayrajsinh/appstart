@@ -35,7 +35,7 @@
 	
 	background: #F4F4F4;
 	background: -moz-linear-gradient(top, #F4F4F4, #EEEEEE);
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#EEEEEE));
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(white));
 	
 	/* Rounded corners */
 	
@@ -75,6 +75,7 @@
 	color:#09798E;
 	/*text-shadow: 1px 1px 1px #ffffff;*/
 }
+
 #menu li .drop {
 	padding-right:21px;
 	background:url("../images/drop.png") no-repeat right 8px;
@@ -100,7 +101,7 @@
 	/* Gradient background */
 	background:#F4F4F4;
 	background: -moz-linear-gradient(top, #EEEEEE, #BBBBBB);
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEEEEE), to(#BBBBBB));
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#E7E7E7));
 
 	/* Rounded Corners */
 	-moz-border-radius: 0px 5px 5px 5px;
@@ -161,8 +162,7 @@
 	font-family:Arial, Helvetica, sans-serif;
 	line-height:21px;
 	font-size:12px;
-	text-align:left;
-	text-shadow: 1px 1px 1px #FFFFFF;
+	text-align:left;	
 }
 #menu h2 {
 	font-size:21px;
@@ -185,11 +185,10 @@
 
 #menu li:hover div a {
 	font-size:12px;
-	color:#015b86;
 	margin-left: 5px;
 }
 #menu li:hover div a:hover {
-	color:#029feb;
+	color:#033C47;
 }
 
 
@@ -218,7 +217,6 @@
 #menu li .black_box {
 	background-color:#333333;
 	color: #eeeeee;
-	text-shadow: 1px 1px 1px #000;
 	padding:4px 6px 4px 6px;
 
 	/* Rounded Corners */
@@ -241,7 +239,6 @@
 	font-size:12px;
 	line-height:24px;
 	position:relative;
-	text-shadow: 1px 1px 1px #ffffff;
 	padding:0;
 	margin:0;
 	float:left;
@@ -256,7 +253,7 @@
 }
 
 #menu li .greybox li {
-	background:#F4F4F4;
+	background:#01A0BF;
 	border:1px solid #bbbbbb;
 	margin:0px 0px 4px 0px;
 	padding:4px 6px 4px 6px;
@@ -269,8 +266,11 @@
     border-radius: 5px;
 }
 #menu li .greybox li:hover {
-	background:#ffffff;
+	background:#033C47;
 	border:1px solid #aaaaaa;
 	padding:4px 6px 4px 6px;
 	margin:0px 0px 4px 0px;
+}
+.dropdown_3columns .col_1 ul li a{
+	color:#FFF !important;
 }

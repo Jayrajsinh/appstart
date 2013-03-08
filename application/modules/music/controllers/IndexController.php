@@ -502,7 +502,7 @@ class Music_IndexController extends Zend_Controller_Action
     		if(stripos($row [8] ["md.track_url"], "itunes") !== false ) {
     			$logo = '<img src="images/itunes.png" alt="" height="25" />';
     			$ext = "m4a";
-    		} else if(stripos($row [8] ["md.track_url"], "7digital") !== false ) {
+    		} else if(stripos($row [8] ["md.preview_url"], "7digital") !== false ) {
     			$logo = '<img src="images/7digital.png" alt="" height="25" />';
     		} else if(stripos($row [8] ["md.track_url"], "soundcloud") !== false ) {
     			$logo = '<img src="images/soundcloud.png" alt="" height="25" />';
@@ -742,6 +742,10 @@ class Music_IndexController extends Zend_Controller_Action
 			{
 				$finalResponse[$i] = $track;
 				$class = ($i%2 == 1)? "even" : "odd";
+                $preview = Standard_Plugin_Music_SevenDigital::preview($trackDetails->track->{"@attributes"}->id);
+                if(strlen($preview->response->url) == 0){
+                    continue;
+                }
 				$output .= '<tr class="'.$class.'">';
 				$output .= '<td>'.($i+1).'</td>';
 				$output .= '<td><input type="checkbox" name="track[]" class="track" value="'.$i++.'" /></td>';

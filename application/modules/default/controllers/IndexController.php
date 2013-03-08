@@ -38,5 +38,9 @@ class Default_IndexController extends Zend_Controller_Action
 		}
 		$this->_helper->json ( $response );
 	}
+	public function getVersionDetailsAction(){
+		$version = Standard_Functions::getVersion("");
+		return $this->_helper->json ( $version );
+	}
 }
 

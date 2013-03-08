@@ -71,13 +71,14 @@ class Default_Plugin_Authentication extends Zend_Controller_Plugin_Abstract {
 			$moduleName[$module->getModuleId()] = $module->getName();
 		}
 		$mapper = new Admin_Model_Mapper_CustomerModule();
-		$model = $mapper->fetchAll("customer_id=".Standard_Functions::getCurrentUser()->customer_id);
+		$model = $mapper->fetchAll("status=1 AND customer_id=".Standard_Functions::getCurrentUser()->customer_id);
 		$active_lang_id = Standard_Functions::getCurrentUser ()->active_language_id;
 		foreach ($model as $customerModule) {
 			$icons[$moduleName[$customerModule->getModuleId()]] = $customerModule->getIcon();
-			
+			$order[$moduleName[$customerModule->getModuleId()]] = $customerModule->getOrderNumber();
 			$mapperDetail = new Admin_Model_Mapper_CustomerModuleDetail();
 			$modelDetail = $mapperDetail->fetchAll("customer_module_id = ".$customerModule->get("customer_module_id"). " AND language_id=".$active_lang_id);
+			
 			if(is_array($modelDetail) && is_object($modelDetail[0])) {
 				$modules[$moduleName[$customerModule->getModuleId()]] = $modelDetail[0]->getScreenName();
 			}
@@ -85,14 +86,26 @@ class Default_Plugin_Authentication extends Zend_Controller_Plugin_Abstract {
 		$modules = array_filter($modules,function($element){
 			return ($element != "");
 		});
-		foreach($configArray["Modules"]["pages"] as $key=>$page) {
+		foreach($configArray["Modules"]["pages"] as $key=>$page) {		
 			$configArray["Modules"]["pages"][$key]["MM_description"] = $configArray["Modules"]["pages"][$key]["label"];
 			if(key_exists($page["module"], $modules))
 				$configArray["Modules"]["pages"][$key]["label"] = $modules[$page["module"]];
 			if(key_exists($page["module"], $icons))
 				$configArray["Modules"]["pages"][$key]["MM_icon"] = $icons[$page["module"]];
+			if(key_exists($page["module"], $order)){
+				$configArray["Modules"]["pages"][$key]["order"] = $order[$page["module"]];
+			}
 		}
+		//sorting for ordering in mega menu
+		usort($configArray["Modules"]["pages"], function($array1,$array2){
+			if ($array1["order"] == $array2["order"]) {
+        		return 0;
+    		}
+    		return ($array1["order"] < $array2["order"]) ? -1 : 1;
+		});
+		
 		$config = new Zend_Config( $configArray, true);
+
 		$navigation = new Zend_Navigation ( $config );
 		$view->navigation ( $navigation )->setAcl ( $this->_acl )->setRole ( $this->_auth->getStorage ()->read ()->group_id );
 	}

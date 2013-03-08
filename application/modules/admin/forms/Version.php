@@ -4,6 +4,14 @@ class Admin_Form_Version extends Standard_Form{
 		$this->setMethod('post');
 		$notEmpty = new Zend_Validate_NotEmpty();
 		$notEmpty->setMessage('Enter A Password.');
+		$this->addElement('hidden', 'version_id', array(
+				'value'		 => '',
+				'filters'    => array('StringTrim')
+		));
+		$this->addElement('hidden', 'version_detail_id', array(
+				'value'		 => '',
+				'filters'    => array('StringTrim')
+		));
 		$title = $this->createElement('text','title',array(
 			'label' => 'Title',
 			'required' => true,

@@ -58,13 +58,17 @@ class Website_RestController extends Standard_Rest_Controller {
 							if($websiteDetailModel) {
 								foreach($websiteDetailModel as $website_detail) {
 									$websiteDetail[] = $website_detail->toArray();
+									if(isset($websiteDetail[0]["website_logo"])) {
+										$websiteDetail[0]["website_logo"] = "resource/website/logos/".$websiteDetail[0]["website_logo"];
+									}
 								}
 							}
 							
 							$response["data"][] = array("tbl_module_website"=>$website->toArray(),"tbl_module_website_detail"=>$websiteDetail);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_website"=>array(),"tbl_module_website_detail"=>array());
 					}
-					
 					$data["status"] = "success";
 					$data["data"] = $response;
 					$this->_sendData($data);

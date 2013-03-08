@@ -3,6 +3,8 @@ $class = 'class="first"';
 $i = 0;
 echo '<ul id="menu">';
 foreach ( $this->container as $index => $page ) {
+	
+	//var_dump(get_class_methods(get_class($this->navigation())));
 	if($page->isVisible() && $this->navigation()->getAcl()->isAllowed($this->navigation()->getRole(),$page->getResource())) {
 		$class = "";
 		$dropdown = "";
@@ -22,6 +24,7 @@ foreach ( $this->container as $index => $page ) {
 			$icon = "";
 			$properties = new Zend_Config($subPage->GetCustomProperties());
 			if(isset($properties->MM_description)) $title = $properties->MM_description;
+			//if(isset($properties->MM_order)) $order = $properties->MM_order;
 			if(isset($properties->MM_icon) && $properties->MM_icon!="") {
 				$icon = "<img src='".$this->baseUrl("resource/default/images/icon/".$properties->MM_icon)."' width='20' />";
 			} else {

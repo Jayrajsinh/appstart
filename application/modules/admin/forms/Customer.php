@@ -54,7 +54,7 @@ class Admin_Form_Customer extends Standard_Form {
 		
 		//App Password
 		
-		$this->addElement('password', 'app_password', array(
+		$this->addElement('text', 'app_password', array(
             'label'      => 'App Password:',
 			'size'		 => '35',
 			'required'   => true,

@@ -33,6 +33,7 @@
 	<thead>
 		<tr>
 	        <th scope="col"><?php echo $this->translate('Title'); ?></th>
+            <th scope="col"><?php echo ($this->translate('Category')); ?></th>
 		    <th scope="col"><?php echo ($this->translate('Type')); ?></th>
 		    <th scope="col"><?php echo ($this->translate('Size (Bytes)')); ?></th>
 		    <th scope="col"><?php echo ($this->translate('Keywords')); ?></th>
@@ -53,9 +54,10 @@ var grid ="";
 $(document).ready(function() {
 
 	grid = dataTable({
-		aaSorting: [[ 5, "desc" ]],
+		aaSorting: [[ 6, "desc" ]],
 		"aoColumns": [
 						{ "sName": "dd.title" },
+                        { "sName": "mdcd.title" },
 						{ "sName": "dd.type" },
 						{ "sName": "dd.size" },
 						{ "sName": "dd.keywords" },

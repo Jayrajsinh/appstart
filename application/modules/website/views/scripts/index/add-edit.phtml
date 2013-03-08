@@ -78,6 +78,13 @@ tinyMCE.init({
 					<td><?php echo $form->description->renderLabel() ?></td>
 		        	<td><?php echo $form->description->renderViewHelper()?></td>
 				</tr>
+
+				<tr>
+					<td><label for="thumb"><?php echo $this->translate('Thumb'); ?></label></td>
+						<td><?php echo $form->website_logo->renderFile();?></td>
+						<td><img alt="" src="<?php echo $this->image_thumb?>"></td>
+						<td><input name="logo_path" type="hidden" id="logo_path"/></td>
+				</tr>
 				
 				<tr>
 					<td><?php echo $form->status->renderLabel() ?></td>
@@ -109,6 +116,33 @@ $("#frmAddEditWebsite").validator().submit(function(e){
 	                }
 	            });
 	            next();
+			}).queue(function(next){
+				if($('#website_logo').attr("value")!="") {
+					$.ajaxFileUpload({
+						url:'<?php echo $form->getAction(); ?>',
+						secureuri:false,
+						fileElementId:'website_logo',
+						dataType: 'json',
+						data:{upload:'true'},
+						success: function (data, status)
+						{
+							if(data.success != undefined) {
+								$("#logo_path").attr("value",data.success);
+								next();
+							}
+						},
+						error: function (data, status, e)
+						{
+							promptus.showErrorMessage("<?php echo $this->translate('Error uploading logo.')?>");
+							setTimeout(function(){
+								promptus.close();
+							}, 2000);
+							
+						}
+					});
+				} else {
+					next();
+				}
 			}).queue(function(next){
 				$.ajax({
 					type : "POST",

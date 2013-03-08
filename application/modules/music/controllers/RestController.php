@@ -64,6 +64,8 @@ class Music_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_module_music"=>$music->toArray(),"tbl_module_music_detail"=>$musicDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_music"=>array(),"tbl_module_music_detail"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

@@ -72,6 +72,8 @@ class HomeWallpaper_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_home_wallpaper" => $wallpaper->toArray(),"tbl_home_wallpaper_detail"=>$wallaperDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_home_wallpaper" => array(),"tbl_home_wallpaper_detail"=>array());	
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

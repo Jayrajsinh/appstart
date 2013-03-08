@@ -73,6 +73,14 @@
 								</reorder>
 				            </pages>
 						</category>
+						<explorer>
+							<label>Document Explorer</label>
+							<module>document</module>			
+							<controller>explorer</controller>
+							<action>index</action>
+							<resource>document</resource>
+							<visible>false</visible>
+						</explorer>
 					</pages>
 		    	</Document>
 	    	</pages>

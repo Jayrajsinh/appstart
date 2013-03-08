@@ -65,6 +65,8 @@ class Document_RestController extends Standard_Rest_Controller {
 								
 							$response["data"][] = array("tbl_module_document_category"=>$category->toArray(),"tbl_module_document_category_detail"=>$categoryDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_document_category"=>array(),"tbl_module_document_category_detail"=>array());	
 					}
 					
 					$documentMapper = new Document_Model_Mapper_ModuleDocument();
@@ -86,6 +88,8 @@ class Document_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_module_document"=>$document->toArray(),"tbl_module_document_detail"=>$documentDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_document"=>array(),"tbl_module_document_detail"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

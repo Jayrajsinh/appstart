@@ -7,6 +7,55 @@ $data = $this->data;
 input[type=button]{ background: none repeat scroll 0 0 lime !important;}
 label.dd-option-text,label.dd-selected-text{float:left; width: 200px;line-height:15px !important;padding-top: 15px;}
 a.dd-selected:hover{color: black !important;text-decoration: none !important;}
+div.iconBox, #background-sel-container{
+	border: 1px solid #DCDDE2;
+	border-radius: 6px 6px 6px 6px;
+	padding: 4px;
+	width: 490px;
+}
+#iconDiv{
+	overflow-x: hidden;
+	overflow-y: scroll;
+	height:85px;
+	background-color:black; 
+}
+#iconDiv div{
+	border: 1px solid #DCDDE2;
+	display: inline-block;
+	width:65px;
+	text-align: center;
+}
+#iconDiv label{
+	display:block;
+}
+#manualDiv{
+	padding-bottom: 20px;
+}
+.float-left{
+	float:left;
+	padding-left: 14px;
+}
+#background-sel-container{
+	min-height: 127px;
+}
+#b-image{
+	height: 70px;
+	padding: 4px 0 5px 0;
+}
+
+#b-color{
+	height: 40px;
+	padding: 10px 0 5px 0;
+}
+.radio{
+	margin-top: 10px;
+}
+.color-details{
+	margin-top: 7px;
+}
+.image-details{
+	margin-top:	31px; 
+}
 </style>
 <script type="text/javascript" src="<?php echo $this->baseUrl("libs/colorpicker/jquery.colorpicker.js"); ?>"></script>
 <link href="<?php echo $this->baseUrl("libs/colorpicker/jquery.colorpicker.css"); ?>" rel="stylesheet" type="text/css"/>
@@ -86,18 +135,56 @@ a.dd-selected:hover{color: black !important;text-decoration: none !important;}
 							<td><?php echo $moduleForm->screen_name->renderViewHelper()?></td>
 						</tr>
 						<tr>
-							<td><label for="icon"><?php echo $this->translate('Icon:'); ?></label> </td>
-					        <td>
-					        	<input id="icon" type="file" name="icon" />
-					        	<input id="icon_path" type="hidden" name="icon_path" />
-								<img alt="" id="img-icon" />
+							<td valign="top">
+								<label for="icon"><?php echo $this->translate('Icon:'); ?></label> 
+							</td>
+							<td valign="top">
+								<div class="iconBox" id="iconDiv">
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>
+					        	<div class="iconBox" id="manualDiv">
+					        		<input type="radio" checked='checked' name="selIcon" id="selIcon_0" value=0>
+						        	<label for=icon>Default:</label>
+						        	<input id="icon" type="file" name="icon" disabled="disabled"/>
+						        	<input id="icon_path" type="hidden" name="icon_path" />
+						        	(Size: 60px &#215; 60px )
+									<img alt="" id="img-icon" height=60 width=60 />
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<td><label for="background_image"><?php echo $this->translate('Background Image:'); ?></label> </td>
 					        <td>
-					        	 <div id="myDropdown"></div>
-					        	 <input id="background_image_path" type="hidden" name="background_image_path" />			        	 
+					        	<input type="hidden" name="background_type" value="1">
+					        	<div id="background-sel-container">
+						        	<div class="float-left" id="b-image">
+							        	<div class="float-left image-details"> 
+							        		<input type="radio" id="sel-image" name="sel-background" value="1">
+							        	</div>
+							        	<div class="float-left image-details">
+							        		<span>Image:</span>
+							        	</div>
+							        	<div class="float-left">
+							        		<div id="myDropdown"></div>
+							        	<input id="background_image" type="hidden" name="background_image" />
+							        	</div>
+							        </div>
+						        	<div class="float-left" id="b-color">
+							        	<div class="float-left color-details">
+							        		<input type="radio" name="sel-background" value="0">
+							        	</div>
+							        	<div class="float-left color-details">
+							        		<span>Color:</span>
+							        	</div>
+							        	<div class="float-left">
+											<input name="background_color" id="background_color" id="sel-color" type="text">
+										</div>
+									</div>
+								</div>
 							</td>
 						</tr>
 						<tr>
@@ -298,38 +385,86 @@ var grid ="";
 	        		$.ajax({
                     	url: window.currentEditUrl,
                         cache: false,
-                        type: "GET",
+                        type: "GET",	
                         dataType: "json",
                         success: function(json){
                         	if(json.success != undefined){ 
                             	// Success Show Record To Edit.
                             	data = json.success;
 								dropdown = json.dropdown;
+								icons = json.icons;
+								selectedIcon = icons.selected;
+									$("#iconDiv").html("") ;
+									$.each(icons.icons, function(i,icon) {
+										var checked = "";
+									if(selectedIcon == icon){
+										checked = "checked='checked'";
+									}	
+									  $("#iconDiv").append(
+										"<div>"+
+											"<label for=icon_"+i+"><img src="+
+											"<?php echo $this->baseUrl('/resource/default/images/icon/') ?>"+icon+
+											" height=60 width=60>"+
+											"</label>"+
+											"<input type=radio "+checked+" name=selIcon id=icon_"+i+" value="+icon+">"+
+										"</div>"
+										)
+									});
                             	$("#customer_module_id").attr("value",data["cm_customer_module_id"]);
                             	$("#language_id").attr("value",data["d_language_id"]);
                             	$("#icon_path").attr("value",data["cm_icon"]);
                             	$("#screen_name").attr("value",data["d_screen_name"]);
+                            	$("#background_color").attr("value",data["d_background_color"]);
+                            	//$("input")
                             	$('#myDropdown').ddslick({
                                 	data:dropdown,
-                        			width:300,
+                        			width:300,                      			
                         		    selectText: "Select your preferred background image",
                         		    imagePosition:"left",   
                         		});
                             	$('#myDropdown').on("click",function(){
                         			var data = $('#myDropdown').data('ddslick');
                         			var id = data.selectedData.value;
-                        			$("#background_image_path").attr("value",id);
+                        			$("#background_image").attr("value",id);
                             	});
-								$("#img-icon").attr("src","<?php echo $this->baseUrl()."/resource/default/images/icon/"; ?>" + data["cm_icon"]);
+                            	if(data["cm_icon"] != ""){
+                            		$("#img-icon").attr("src","<?php echo $this->baseUrl()."/resource/default/images/icon/"; ?>" + data["cm_icon"]);
+                            	}
 								//$("#img-background").attr("src","<?php //echo $this->baseUrl()."/background/"; ?>" + data["d_background_image"]);
+                            	if(data["d_background_type"]==0){
+                            		$(":radio[value=0]").attr("checked","checked");	
+                            	}else{
+                            		$(":radio[value=1]").attr("checked","checked");
+                            	}
                             	if(data["cm_visibility"]==1) {
                             		$("#visibility").attr("checked","checked");
                             	} else {
                             		$("#visibility").removeAttr("checked");
                             	}
-                            	
+                            	$("input[name=sel-background]").on("change",function(){
+                            		if($(this).val() == 1){
+                            			$("input[name=background_type]").attr("value","1")
+                            			$("input[id=background_color]").attr("disabled","disabled");
+                            		}else{
+                            			$("input[name=background_type]").attr("value","0")
+                            			$("input[id=background_color]").removeAttr("disabled","disabled");
+                            		}
+                            	});
                             	$("#data-grid").hide();
                             	$("#data-form").show();
+                            	$("#background_color").colorpicker({
+									parts: 'draggable',
+									showOn: 'both',
+									regional: 'en',
+									buttonColorize: true,
+									showNoneButton: false,
+									alpha: true,
+									close : function(){
+										//$(this).val("#"+$(this).val());
+										var self = $(this);
+										$(this).parent().find("button").css({background:"#"+self.val()});
+									}
+								});
 	                            setTimeout(function(){
 	                            	promptus.close();
 	                            }, 1000);
@@ -470,6 +605,7 @@ var grid ="";
                                             	setTimeout(function(){
                                             		prompt.close();
                                                 }, 1000);
+                                                location.href = location.href;
                                             } else if(json.errors != undefined){
                                                 var errorMessage = "<?php echo $this->translate('Unable to reorder website:'); ?><br />";
                                                 errorMessage += json.errors.message;
@@ -510,4 +646,12 @@ var grid ="";
 	$(document).on('change',"#font_color",function(){
 		alert($(this).val());
 	});
+	$(document).on("change","input:radio[name=selIcon]",function(){
+		if($('input:radio[name=selIcon]:checked').val() == 0)
+		{
+			$("#icon").removeAttr("disabled");
+		} else {
+			$("#icon").attr("disabled","disabled");
+		}			
+	});	
 </script>

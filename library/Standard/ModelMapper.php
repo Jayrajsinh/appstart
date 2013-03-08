@@ -91,7 +91,6 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 	 */
 	public function fetchAll($where = null, $order = null, $count = null, $offset = null) {
 		$models = false;
-		
 		$originalFetchAllOutput = $this->getDbTable ()->fetchAll ( $where, $order, $count, $offset );
 		
 		$originalFetchAllOutputArray = $originalFetchAllOutput->toArray ();
@@ -369,6 +368,7 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 		$searchTypeColumns = false;
 		if (isset ( $options ["search_type"] )) {
 			$searchTypeColumns = array_keys ( $options ["search_type"] );
+
 		}
 		// var_dump($replaceColumns);
 		// Searching
@@ -382,14 +382,14 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 			foreach ( $searchParams as $searchColumn => $searchValue ) {
 				if (is_array ( $searchValue )) {
 					foreach ( $searchValue as $key => $value ) {
-						$searchParams [$searchColumn . "." . $key] = $value;
+						//if($value != ""){
+							$searchParams [$searchColumn . "." . $key] = $value;
+						//}
 					}
 					unset ( $searchParams [$searchColumn] );
 				}
 			}
-			
 			foreach ( $searchParams as $searchColumn => $searchValue ) {
-				
 				$searchColumn = substr ( $searchColumn, strlen ( "search_" ) );
 				
 				// Creating custom search for replacement properties
@@ -402,11 +402,11 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 						}
 						next ( $filterReplaceColumns );
 						return false;
-					} );
+					} );					
 					if (! empty ( $searchArray )) {
-						$where .= "( ( ";
-						foreach ( $searchArray as $key => $value ) {
-							if (is_array($searchColumn) && in_array ( $searchColumn, $searchTypeColumns )) {
+						$where .= "( ( ";						
+						foreach ( $searchArray as $key => $value ) {							
+							if (is_array($searchTypeColumns) && in_array ( $searchColumn, $searchTypeColumns )) {
 								if ($options ['search_type'] [$searchColumn] == "=") {
 									$where .= $searchColumn . " = '" . $searchValue . "' AND ";
 								} else if ($options ['search_type'] [$searchColumn] == "LIKE") {
@@ -421,8 +421,11 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 					} else {
 						$where .= $searchColumn . " LIKE '%" . $searchValue . "%' AND ";
 					}
-				} else {
-					if (is_array($searchColumn) && in_array ( $searchColumn, $searchTypeColumns )) {
+				} else {	
+					/**
+					 *@todo: need to fix by TB urf (Tirth Bodawala)
+					 */
+					if (is_array($searchTypeColumns) && in_array ( $searchColumn, $searchTypeColumns )) {
 						if ($options ['search_type'] [$searchColumn] == "=") {
 							$where .= $searchColumn . " = '" . $searchValue . "' AND ";
 						} else if ($options ['search_type'] [$searchColumn] == "LIKE") {
@@ -437,15 +440,13 @@ abstract class Standard_ModelMapper implements Standard_MapperStandards {
 			$where = substr_replace ( $where, "", - 4 );
 			$where .= ") ";
 		}
-		
-		// print_r($searchParams);
-		// die;
 		$where = $where == "" ? "1=1" : $where;
 		// Get the data from database
 		// Set Offset and Limit/Count
 		$count = $request->getParam ( "iDisplayLength", 10 );
 		$offset = $request->getParam ( "iDisplayStart", 0 );
-		
+		//echo $where;
+		//die;
 		// $models = $this->fetchAll ( $where, $order , $count , $offset);
 		$total = 0;
 		$totalFiltered = 0;

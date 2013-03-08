@@ -36,6 +36,17 @@ class Admin_VersionController extends Zend_Controller_Action{
 					$allFormValues = $form->getValues ();
 					$date_time =  Standard_Functions::getCurrentDateTime ();
 					$system_user = Standard_Functions::getCurrentUser ()->system_user_id;
+					if(is_array($allFormValues['category'])){
+							$categoryArray = $allFormValues['category'];
+							$csv ="";
+							foreach ($categoryArray as $category) {
+								if($category != ""){
+									$csv .= $category;
+									$csv .= ',';
+								}
+							}
+						$allFormValues['category'] = $csv;
+					}
 					if($allFormValues["created_at"] != ""){
                       	$start_date = DateTime::createFromFormat ( "d/m/Y H:i", $allFormValues["created_at"] );
 	                       	if($start_date){
@@ -56,17 +67,6 @@ class Admin_VersionController extends Zend_Controller_Action{
 						$LanguageMapper = new Admin_Model_Mapper_Language ();
 						$LanguageModel = $LanguageMapper->fetchAll ();
 						if (is_array ( $LanguageModel )) {
-							if(is_array($allFormValues['category'])){
-								$categoryArray = $allFormValues['category'];
-								$csv ="";
-								foreach ($categoryArray as $category) {
-									if($category != ""){
-										$csv .= $category;
-										$csv .= ',';
-									}
-								}
-								$allFormValues['category'] = $csv;
-							}
 							foreach ( $LanguageModel as $languages ) {
 								$versionDetailModel = new Admin_Model_VersionDetail ( $allFormValues );
 								$versionDetailModel->setVersionId ( $version_id );
@@ -79,7 +79,7 @@ class Admin_VersionController extends Zend_Controller_Action{
 						$versionModel->setLastUpdatedAt ( $date_time );
 						$versionModel = $versionModel->save ();
 						
-						$versionDetailModel = new Version_Model_VersionDetail ( $allFormValues );
+						$versionDetailModel = new Admin_Model_VersionDetail ( $allFormValues );
 						//$pushMessageDetailModel->setMessageDate($date_time);
 						$versionDetailModel = $versionDetailModel->save ();
 					}
@@ -107,6 +107,7 @@ class Admin_VersionController extends Zend_Controller_Action{
 
 	public function gridAction()
     {
+    	$active_lang_id = Standard_Functions::getAdminActiveLanguage()->language_id;
     	$LanguageMapper = new Admin_Model_Mapper_Language ();
     	$languages = $LanguageMapper->getDbTable()->fetchAll ()->toArray();
     	$this->_helper->layout ()->disableLayout ();
@@ -124,7 +125,7 @@ class Admin_VersionController extends Zend_Controller_Action{
 				 				) 
 				    		)
     					->joinLeft ( array ("vd" => "version_detail"),
-    						"vd.version_id = v.version_id",
+    						"vd.version_id = v.version_id AND language_id =".$active_lang_id,
     									array (
 		    									"vd.title" => "title",
 		    									"vd.version_number" => "version_number",
@@ -146,38 +147,134 @@ class Admin_VersionController extends Zend_Controller_Action{
 					),null,$select);
     	
     	$rows = $response ['aaData'];
-    	foreach ( $rows as $rowId => $row ) {
-    		//print_r($row);
-    		//die();
+    	foreach ( $rows as $rowId => &$row ) {
+    		$edit = "";
     		if($languages) {
     			foreach ($languages as $lang) {
-    				//print_r($lang);
-    				//die();
-    				$editUrl = $this->view->url ( array (
-    												"module" => "admin",
-    												"controller" => "index",
-    												"action" => "edit",
-    												"id" => $row [4] ["v.version_id"],
-    												"lang" => $lang["language_id"]
-    										), "default", true );
-    				$edit[] = '<a href="'. $editUrl .'"><img src="appstart/public/images/lang/'.$lang["logo"].'" alt="'.$lang["title"].'" /></a>';
+					$editUrl = $this->view->url ( array (
+													"module" => "admin",
+													"controller" => "version",
+													"action" => "edit",
+													"id" => $row [4] ["v.version_id"],
+													"lang" => $lang["language_id"]
+											), "default", true );
+					$edit[] = '<a href="'. $editUrl .'"><img src="/appstart/public/images/lang/'.$lang["logo"].'" alt="'.$lang["title"].'" /></a>';
     			}
     		}
     		$deleteUrl = $this->view->url ( array (
     				"module" => "admin",
     				"controller" => "version",
     				"action" => "delete",
-    				"id" => $row [4] ["version_id"]
+    				"id" => $row [4] ["v.version_id"]
     		), "default", true );
-    			
+			$response ['aaData'] [$rowId] [3] = strip_tags($row[3]);
 			$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
 			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
-    		$sap = ($edit == "" || $delete == "") ? '' : '&nbsp;|&nbsp;';
-    			
-    		$response ['aaData'] [$rowId] [4] = $defaultEdit . $sap . $delete;
+    		$response ['aaData'] [$rowId] [4] = $defaultEdit.$delete;
     	}
     	
     	$jsonGrid = Zend_Json::encode ( $response );
     	$this->_response->appendBody ( $jsonGrid );
     }
+
+    public function editAction(){
+    	// edit action
+    	$active_lang_id = Standard_Functions::getAdminActiveLanguage()->language_id;
+		$form = new Admin_Form_Version ();
+		$request = $this->getRequest ();
+		if ($request->getParam ( "id", "" ) != "" && $request->getParam ( "lang", "" ) != "") {
+			$versionMapper = new Admin_Model_Mapper_Version ();
+			$version_id = $request->getParam ( "id", "" );
+			$language_id = $request->getParam ( "lang", "" );
+			$languageMapper = new Admin_Model_Mapper_Language ();
+			$languageData = $languageMapper->find ( $language_id );
+			$this->view->language = $languageData->getTitle ();
+			$data = $versionMapper->find ( $version_id )->toArray ();
+			$form->populate ( $data );
+			$dataDetails = array ();
+			$versionDetailMapper = new Admin_Model_Mapper_VersionDetail ();
+			if ($versionDetailMapper->countAll ( "version_id = " . $version_id . " AND language_id = " . $language_id ) > 0) {
+				// Record For Language Found
+				$dataDetails = $versionDetailMapper->getDbTable ()->fetchAll ( "version_id = " . $version_id . " AND language_id = " . $language_id )->toArray ();
+				if($dataDetails[0]['category'] != ""){
+					$category = $dataDetails[0]['category'];
+					$categories = explode ( ",", $category );
+					$dataDetails[0]['category'] = $categories;
+				}
+			} else {
+				// Record For Language Not Found
+				$dataDetails = $versionDetailMapper->getDbTable ()->fetchAll ( "version_id = " . $version_id . " AND language_id = " . $active_lang_id )->toArray ();
+				$dataDetails [0] ["version_detail_id"] = "";
+				$dataDetails [0] ["language_id"] = $language_id;
+				//$dataDetails[0]['message_date'] = Standard_Functions::getCurrentDateTime ();
+				
+			}
+			if (isset ( $dataDetails [0] ) && is_array ( $dataDetails [0] )) {
+				$form->populate ( $dataDetails [0] );
+			}
+			$action = $this->view->url ( array (
+					"module" => "admin",
+					"controller" => "version",
+					"action" => "save",
+					"id" => $request->getParam ( "id", "" ) 
+			), "default", true );
+			$form->setAction ( $action );
+		} else {
+			$this->_redirect ( '/' );
+		}
+		$this->view->form = $form;
+		$this->view->assign ( array (
+				"partial" => "version/partials/edit.phtml" 
+		) );
+		$this->render ( "add-edit" );
+    }
+
+    public function deleteAction(){
+    	$this->_helper->layout ()->disableLayout ();
+		$this->_helper->viewRenderer->setNoRender ();
+		$request = $this->getRequest ();
+		
+		if (($version_id = $request->getParam ( "id", "" )) != "") {
+			$versionModel = new Admin_Model_Version ();
+			$versionModel->populate ( $version_id );
+			if ($versionModel) {
+				try {    
+					$versionDetailMapper = new Admin_Model_Mapper_VersionDetail ();
+					$versionDetailMapper->getDbTable ()->getAdapter ()->beginTransaction ();
+					
+					$dataDetails = $versionDetailMapper->fetchAll ( "version_id = " . $versionModel->getVersionId () );
+					foreach ( $dataDetails as $versionDetail ) {
+						$versionDetail->delete ();
+					}
+					
+					$deletedRows = $versionModel->delete ();
+					$versionDetailMapper->getDbTable ()->getAdapter ()->commit ();
+					
+					$response = array (
+							"success" => array (
+									"deleted_rows" => $deletedRows 
+							) 
+					);
+				} catch ( Exception $e ) {
+					
+					$versionDetailMapper->getDbTable ()->getAdapter ()->rollBack ();
+					$response = array (
+							"errors" => array (
+									"message" => $e->getMessage () 
+							) 
+					);
+				}
+			} else {
+				$response = array (
+						"errors" => array (
+								"message" => "No user to delete." 
+						) 
+				);
+			}
+		} else {
+			$this->_redirect ( '/' );
+		}
+		
+		$this->_helper->json ( $response );
+	}
 }

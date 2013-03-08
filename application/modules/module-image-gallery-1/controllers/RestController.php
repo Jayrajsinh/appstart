@@ -41,7 +41,7 @@ class ModuleImageGallery1_RestController extends Standard_Rest_Controller {
 	protected function _sync() {
 		$customer_id = $this->_request->getParam("customer_id",null);
 		$device_type = $this->_request->getParam("device_type",null);
-		if($customer_id===null || $device_type == null) {
+		if($customer_id===null) {
 			$this->_sendError("Invalid request");
 		} else {
 			try{
@@ -49,6 +49,25 @@ class ModuleImageGallery1_RestController extends Standard_Rest_Controller {
 				$customer = $mapper->find($customer_id);
 				if($customer) {
 					$response = array();
+					$imageCategoryMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryCategory1();
+					$categoryModel = $imageCategoryMapper->fetchAll("customer_id=".$customer_id);
+					if($categoryModel) {
+						foreach($categoryModel as $category) {
+							$categoryDetails = array();
+							$categoryDetailMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryCategoryDetail1();
+							$categoryDetailModel = $categoryDetailMapper->fetchAll("module_image_gallery_category_1_id=".$category->getModuleImageGalleryCategory1Id());
+							if($categoryDetailModel) {
+								foreach($categoryDetailModel as $category_detail) {
+									$details = $category_detail->toArray();
+									$categoryDetails[] = $details;
+								}
+							}
+							
+							$response["data"][] = array("tbl_module_image_gallery_category_1"=>$category->toArray(),"tbl_module_image_gallery_category_detail_1"=>$categoryDetails);
+						}
+					}else{
+						$response["data"][] = array("tbl_module_image_gallery_category_1"=>array(),"tbl_module_image_gallery_category_detail_1"=>array());
+					}
 					$imageMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGallery1();
 					$imageModel = $imageMapper->fetchAll("customer_id=".$customer_id);
 					if($imageModel) {
@@ -68,6 +87,8 @@ class ModuleImageGallery1_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_module_image_gallery_1"=>$image->toArray(),"tbl_module_image_gallery_detail_1"=>$imageDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_image_gallery_1"=>array(),"tbl_module_image_gallery_detail_1"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

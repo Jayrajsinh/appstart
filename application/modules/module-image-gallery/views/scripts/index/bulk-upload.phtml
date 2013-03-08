@@ -91,7 +91,7 @@ $(document).ready(function() {
 							$.each(data.result,function(i,item) {
 								var html = '<div class="image-container">';
 								html += '<div class="thumb">';
-								html += '<img src="'+item.image_path+'" alt="" />';
+								html += '<img src="'+item.image_path+'" alt="" width=240 height=200 />';
 								html += '<input type="hidden" value="'+item.module_image_gallery_id+'" name="module_image_gallery_id[]" />';
 								html += '</div>';
 								html += '<div class="details">';

@@ -74,10 +74,10 @@
 						</reordercategory>
 						<bulkupload>
 							<label>Bulk Upload</label>
-							<module>module-image-gallery</module>			
+							<module>module-image-gallery-1</module>			
 							<controller>index</controller>
 							<action>bulk-upload</action>
-							<resource>module-image-gallery</resource>
+							<resource>module-image-gallery-1</resource>
 							<visible>false</visible>
 						</bulkupload>
 					</pages>

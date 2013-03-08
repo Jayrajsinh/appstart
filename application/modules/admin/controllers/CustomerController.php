@@ -23,6 +23,9 @@ class Admin_CustomerController extends Zend_Controller_Action {
 			$app_id = $model[0]->getAppAccessId();
 			$app_id = $app_id + 1;
 			$customerForm->getElement ( 'app_access_id' )->setValue ($app_id);
+		}else{
+			$app_id = "121321";
+			$customerForm->getElement ( 'app_access_id' )->setValue ($app_id);
 		}
 		$this->view->hasData = true;
 		
@@ -137,10 +140,11 @@ class Admin_CustomerController extends Zend_Controller_Action {
 					}
 					$userMaper = new Default_Model_Mapper_User ();
 					$users = $userMaper->fetchAll ( "user_group_id=" . $group->getUserGroupId () );
-					foreach ( $users as $user ) {
-						$user->delete ();
+					if(is_array($users)){
+						foreach ( $users as $user ) {
+							$user->delete ();
+						}
 					}
-					
 					$group->delete ();
 				}
 			}
@@ -223,15 +227,17 @@ class Admin_CustomerController extends Zend_Controller_Action {
 			try {
 				$customerUserData = $customerMapper->saveCustomer ( $refinedParams, $mode );
 				//sending email to customer
-				$email = $customerUserData['user']['email'];
-				$username = $customerUserData['user']['username'];
-				$parseVariable = array();
-				$parseVariable["{DATETIME}"] = Standard_Functions::getCurrentDateTime(null,"m-d-Y H:i:s");
-				$parseVariable["{USERNAME}"] = $username;
-				$emailObj = new Standard_Email();
-				$emailObj->sendEmail("templates/welcome_customer.phtml",
-						"Welcome To Appstart!", $parseVariable,
-						array($email => "Customer"));
+				if($mode == "add"){
+					$email = $customerUserData['user']['email'];
+					$username = $customerUserData['user']['username'];
+					$parseVariable = array();
+					$parseVariable["{DATETIME}"] = Standard_Functions::getCurrentDateTime(null,"m-d-Y H:i:s");
+					$parseVariable["{USERNAME}"] = $username;
+					$emailObj = new Standard_Email();
+					$emailObj->sendEmail("templates/welcome_customer.phtml",
+							"Welcome To Appstart!", $parseVariable,
+							array($email => "Customer"));
+				}
 			} catch ( Exception $ex ) {
 				if (strpos ( $ex->getMessage (), "Duplicate entry" ) !== false && strpos ( $ex->getMessage (), "username" ) !== false) {
 					$response = array (

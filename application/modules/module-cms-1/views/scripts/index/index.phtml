@@ -151,16 +151,16 @@ $(document).ready(function() {
 		}		
 		return source;
 	}
-	$("#dropDownButton").jqxDropDownButton({ width: 150, height: 25 });
+	$("#dropDownButton").jqxDropDownButton({ height: 25 });
     $(document).on("submit","#frmFilter",function(){
     	grid.fnDraw();
     	return false;
     });
     var source = builddata();
-	$("#jqxTree").jqxTree({source:source,width: 250 });	
+	$("#jqxTree").jqxTree({source:source});	
     $('#jqxTree').jqxTree('expandAll');
     window.grid = dataTable({
-		aaSorting: [[ 2, "desc" ]],
+		aaSorting: [[ 3, "asc" ]],
 		"aoColumns": [
 						{ "sName": "cd.title" },
 						{ "sName": "cd.thumb" },
@@ -198,7 +198,7 @@ $('#jqxTree').on('select', function (event) {
 $(document).on("click","td",function(){
 	if($(this).closest("tr").find("span.child").length){
 		if($(this).index()<4){
-			var parentid = $(this).closest("tr").find("span.child").attr("id");
+			var parentid = $(this).closest("tr").find("span.child span.child").attr("id");
 			$("#parent_id").attr("value",parentid);
 			window.grid.fnDraw();
 		}

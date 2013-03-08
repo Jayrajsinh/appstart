@@ -66,6 +66,24 @@ class Default_Form_CustomerModule extends Standard_Form {
 				'value'      => '1'
 		));
 		
+		//background type
+		$background_type = $this->createElement ( "hidden", "background_type", array (
+				'value' => '',
+				'filters' => array (
+						'StringTrim' 
+				) 
+		) );
+		$this->addElement ( $background_type);
+
+		//background color
+		$background_color = $this->createElement ( "hidden", "background_color", array (
+				'value' => '',
+				'filters' => array (
+						'StringTrim' 
+				) 
+		) );
+		$this->addElement ( $background_color);
+
 		// Submit button
 		$submit = $this->addElement ( 'submit', 'submit', array (
 				'ignore' => true,

@@ -80,16 +80,25 @@ class Admin_SystemUserController extends Zend_Controller_Action {
 			if ($form->isValid ( $request->getPost () )) {
 				// Save Record In DB
 				try {
+					$systemusermapper = new Admin_Model_Mapper_SystemUser();
 					$model = new Admin_Model_SystemUser ();
-					
+					$systemusermapper->getDbTable()->getAdapter()->beginTransaction();
 					if ($request->getParam ( "system_user_id", "" ) != "") {
 						$model->setSystemUserId ( $request->getParam ( "system_user_id" ) );
+						$model->setEmail ( $request->getParam ( "email" ) );
 					} else {
 						$model->setCreatedBy ( Standard_Functions::getCurrentUser ()->system_user_id );
 						$model->setCreatedAt ( Standard_Functions::getCurrentDateTime () );
+						$model->setEmail ( $request->getParam ( "email" ) );
+						$email = $model->getEmail();
+						$parseVariable = array();
+						$parseVariable["{DATETIME}"] = Standard_Functions::getCurrentDateTime(null,"m-d-Y H:i:s");
+						$parseVariable["{EMAIL}"] = $email;
+						$emailObj = new Standard_Email();
+						$emailObj->sendEmail("templates/welcome_user.phtml",
+								"Welcome To Appstart!", $parseVariable,
+								array($email => "System User"));
 					}
-					
-					$model->setEmail ( $request->getParam ( "email" ) );
 					if($request->getParam ( "password","" )!="")
 					{
 						$model->setPassword ( md5($request->getParam ( "password" ) . $request->getParam ( "email" )));
@@ -101,15 +110,9 @@ class Admin_SystemUserController extends Zend_Controller_Action {
 					$msg = "Record save successfully";
 					$error = false;
 					//sending email to system user
-					$email = $model->getEmail();
-					$parseVariable = array();
-					$parseVariable["{DATETIME}"] = Standard_Functions::getCurrentDateTime(null,"m-d-Y H:i:s");
-					$parseVariable["{EMAIL}"] = $email;
-					$emailObj = new Standard_Email();
-					$emailObj->sendEmail("welcome_user.phtml",
-							"Welcome To Appstart!", $parseVariable,
-							array($email => "System User"));
+					$systemusermapper->getDbTable()->getAdapter()->commit();
 				} catch ( Exception $e ) {
+					$systemusermapper->getDbTable()->getAdapter()->rollBack();
 					$msg = "Error: [" . $e->getCode () . "] " . $e->getMessage () . "";
 				}
 			} else {

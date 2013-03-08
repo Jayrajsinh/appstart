@@ -49,9 +49,6 @@ class ModuleImageGallery_CategoryController extends Zend_Controller_Action {
 		), "default", true );
 		$form->setAction($action);
 		$form->setMethod ( 'POST' );
-		$this->view->assign ( array (
-				"partial" => "category/partials/add.phtml"
-		) );
 		$this->view->form = $form;
 		$request = $this->getRequest ();
 		if ($request->getParam ( "id", "" ) != "" && $request->getParam ( "lang", "" ) != "") {
@@ -92,7 +89,7 @@ class ModuleImageGallery_CategoryController extends Zend_Controller_Action {
 			}
 			$this->view->form = $form;
 			$this->view->assign ( array (
-					"partial" => "index/partials/edit.phtml"
+					"partial" => "category/partials/edit.phtml"
 			) );
 		$this->render ( "add-edit" );
 	}

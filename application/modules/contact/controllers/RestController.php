@@ -67,6 +67,8 @@ class Contact_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_contact"=>$contact->toArray(),"tbl_contact_detail"=>$contactDetails);
 						}
+					}else{
+						$response["data"][] = array("tbl_contact"=>array(),"tbl_contact_detail"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

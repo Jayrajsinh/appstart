@@ -63,6 +63,8 @@ class PushMessage_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_push_message"=>$pushmessage->toArray(),"tbl_push_message_detail"=>$pushmessageDetail);
 						}
+					}else{
+						$response["data"][] = array("tbl_push_message"=>array(),"tbl_push_message_detail"=>array());
 					}
 					
 					$data["status"] = "success";

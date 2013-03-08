@@ -63,7 +63,6 @@ class Document_IndexController extends Zend_Controller_Action
     	$form->setAction($action);
     	$this->view->form = $form;
     	$this->view->document_path="";
-    	
     	$this->view->assign ( array (
     			"partial" => "index/partials/add.phtml"
     	) );
@@ -453,8 +452,11 @@ class Document_IndexController extends Zend_Controller_Action
     									"dd.title" => "title",
     									"dd.type" => "type",
     									"dd.size" => "size",
-    									"dd.keywords" => "keywords",
-    							))->
+    									"dd.keywords" => "keywords"))->
+                        joinLeft ( array ("mdcd" => "module_document_category_detail"),
+                                "mdcd.module_document_category_id = d.module_document_category_id AND mdcd.language_id = ".$active_lang_id, array (
+                                        "mdcd.title" => "title", 
+                                ) )->
     					where("d.customer_id=".$customer_id)->order("d.order");
 		$response = $mapper->getGridData ( array (
     					'column' => array (
@@ -465,7 +467,10 @@ class Document_IndexController extends Zend_Controller_Action
     								'd.status' => array (
     									'1' => $this->view->translate('Active'),
     									'0' => $this->view->translate('Inactive')
-    								)
+    								),
+                                    'mdcd.title' => array (
+                                        null => $this->view->translate('Menu'),
+                                    ),
     							)
     						)
     					),null, $select );
@@ -486,15 +491,15 @@ class Document_IndexController extends Zend_Controller_Action
     	$rows = $response ['aaData'];
     	foreach ( $rows as $rowId => $row ) {
     		$edit = array();
-    		if($row [6] ["dd.module_document_detail_id"]=="") {
+    		if($row [7] ["dd.module_document_detail_id"]=="") {
     			$mapper = new Document_Model_Mapper_ModuleDocumentDetail();
-    			$details = $mapper->fetchAll("module_document_id=".$row [6] ["d.module_document_id"]." AND language_id=".$default_lang_id);
+    			$details = $mapper->fetchAll("module_document_id=".$row [7] ["d.module_document_id"]." AND language_id=".$default_lang_id);
     			if(is_array($details)) {
     				$details = $details[0];
-    				$row [6] ["dd.title"] = $row[0] = $details->getTitle();
-    				$row [6] ["dd.type"] = $row[1] = $details->getType();
-    				$row [6] ["dd.size"] = $row[2] = $details->getSize();
-    				$row [6] ["dd.keywords"] = $row[3] = $details->getSize();
+    				$row [7] ["dd.title"] = $row[0] = $details->getTitle();
+    				$row [7] ["dd.type"] = $row[1] = $details->getType();
+    				$row [7] ["dd.size"] = $row[2] = $details->getSize();
+    				$row [7] ["dd.keywords"] = $row[3] = $details->getSize();
     			}
     		}
     		
@@ -505,7 +510,7 @@ class Document_IndexController extends Zend_Controller_Action
     						"module" => "document",
     						"controller" => "index",
     						"action" => "edit",
-    						"id" => $row [6] ["d.module_document_id"],
+    						"id" => $row [7] ["d.module_document_id"],
     						"lang" => $lang["l.language_id"]
     				), "default", true );
     				$edit[] = '<a href="'. $editUrl .'"><img src="images/lang/'.$lang["logo"].'" alt="'.$lang["l.title"].'" /></a>';
@@ -515,13 +520,13 @@ class Document_IndexController extends Zend_Controller_Action
     				"module" => "document",
     				"controller" => "index",
     				"action" => "delete",
-    				"id" => $row [6] ["d.module_document_id"]
+    				"id" => $row [7] ["d.module_document_id"]
     		), "default", true );
     		$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">'.implode("",$edit).'</div></div>';
 			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
        		$sap = '';
     		
-    		$response ['aaData'] [$rowId] [6] = $defaultEdit. $sap .$delete;
+    		$response ['aaData'] [$rowId] [7] = $defaultEdit. $sap .$delete;
     	}
     	$jsonGrid = Zend_Json::encode ( $response );
     	$this->_response->appendBody ( $jsonGrid );

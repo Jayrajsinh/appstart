@@ -46,6 +46,24 @@ class Website_IndexController extends Zend_Controller_Action {
 		$request = $this->getRequest();
 		$response = array();
 		if($this->_request->isPost()){
+			if ($request->getParam ( "upload", "" ) != "") {
+				$adapter = new Zend_File_Transfer_Adapter_Http ();
+				$adapter->setDestination ( Standard_Functions::getResourcePath () . "website/logos" );
+				$adapter->receive ();
+				if ($adapter->getFileName ( "website_logo" ) != "") {
+					$response = array (
+							"success" => array_pop ( explode ( '\\', $adapter->getFileName ( "website_logo" ) ) ) 
+					);
+				} else {
+					$response = array (
+							"errors" => "Error Occured" 
+					);
+				}
+				echo Zend_Json::encode ( $response );
+				// $this->_helper->json ( $response );
+				exit ();
+			}
+			$form->removeElement("website_logo");
 			if($form->isValid($this->_request->getParams())){
 				try{
 					$allFormValues = $form->getValues();
@@ -55,6 +73,7 @@ class Website_IndexController extends Zend_Controller_Action {
 					$websiteMapper = new Website_Model_Mapper_ModuleWebsite ();
 					$websiteMapper->getDbTable ()->getAdapter ()->beginTransaction ();
 					$websiteModel = new Website_Model_ModuleWebsite( $allFormValues );
+					$logo_path = $request->getParam ( "logo_path", "" );
 					if ($request->getParam ( "module_website_id", "" ) == "") {
 						// save Website
 						$maxOrder = $websiteMapper->getNextOrder ( $customer_id );
@@ -79,6 +98,9 @@ class Website_IndexController extends Zend_Controller_Action {
 								$websiteDetailModel->setCreatedAt ( $date_time );
 								$websiteDetailModel->setLastUpdatedBy ( $user_id );
 								$websiteDetailModel->setLastUpdatedAt ( $date_time );
+								if ($logo_path != "") {
+									$websiteDetailModel->setWebsiteLogo ($logo_path);
+								}
 								$websiteDetailModel = $websiteDetailModel->save ();
 							}
 						}
@@ -92,6 +114,9 @@ class Website_IndexController extends Zend_Controller_Action {
 						$websiteDetailModel->setCreatedAt ( $date_time );
 						$websiteDetailModel->setLastUpdatedBy ( $user_id );
 						$websiteDetailModel->setLastUpdatedAt ( $date_time );
+						if ($logo_path != "") {
+							$websiteDetailModel->setWebsiteLogo ($logo_path);
+						}
 						$websiteDetailModel = $websiteDetailModel->save ();
 					}
 					$customermoduleMapper = new Admin_Model_Mapper_CustomerModule();
@@ -235,6 +260,9 @@ class Website_IndexController extends Zend_Controller_Action {
 			}
 			if (isset ( $dataDetails [0] ) && is_array ( $dataDetails [0] )) {
 				$form->populate ( $dataDetails [0] );
+				$image_path = $dataDetails[0]['website_logo'];
+				$image_uri = "resource/website/logos/";
+				$this->view->image_thumb = $this->view->baseUrl($image_uri.$image_path); 
 			}
 			$action = $this->view->url ( array (
 					"module" => "website",

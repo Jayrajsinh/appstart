@@ -6,7 +6,7 @@ return array (
 		'Content' => 'contenuto',
 		//index
 		'Are you sure you want to delete this page?' => 'Sei sicuro di voler eliminare questo pagina?',
-		'Please wait while deleting page.' => "Si prega di attendere durante l'eliminazione pagina.",
+		'Please wait while deleting page.' => "Si prega di attendere durante l&#39;eliminazione pagina.",
 		'Page deleted successfully.' => 'Pagina eliminato correttamente.',
 		'Unable to delete page:' => 'Impossibile eliminare pagina:',
 		// add-edit

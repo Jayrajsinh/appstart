@@ -67,7 +67,7 @@ class Events_RestController extends Standard_Rest_Controller {
 										}
 									}
 									if(isset($details["image"])) {
-										$details["image"] = "resource/event/images/".$details["image"];
+										$details["image"] = "resource/events/images/".$details["image"];
 									}
 									$eventDetails[] = $details;
 								}
@@ -75,6 +75,8 @@ class Events_RestController extends Standard_Rest_Controller {
 							
 							$response["data"][] = array("tbl_module_events"=>$event->toArray(),"tbl_module_events_detail"=>$eventDetails,"tbl_module_events_location"=>$location);
 						}
+					}else{
+						$response["data"][] = array("tbl_module_events"=>array(),"tbl_module_events_detail"=>array(),"tbl_module_events_location"=>array());
 					}
 					$data["status"] = "success";
 					$data["data"] = $response;

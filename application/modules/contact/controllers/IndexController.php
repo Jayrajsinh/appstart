@@ -45,6 +45,7 @@ class Contact_IndexController extends Zend_Controller_Action {
 		$this->view->assign ( array (
 				"partial" => "index/partials/add.phtml" 
 		) );
+
 		$this->render ( "add-edit" );
 	}
 	public function reorderAction() {
@@ -462,4 +463,5 @@ class Contact_IndexController extends Zend_Controller_Action {
 		$jsonGrid = Zend_Json::encode ( $response );
 		$this->_response->appendBody ( $jsonGrid );
 	}
+	
 }

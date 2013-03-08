@@ -6,7 +6,7 @@ return array (
 		"Type" => "Tipo",
 		"Title" => "Titolo",
 		"Are you sure you want to delete this Social Media Entry?" => "Sei sicuro di voler cancellare questo Social Media Entry?",
-		"Please wait while deleting social media entry..." => "Si prega di attendere durante l\'eliminazione social media entry...",
+		"Please wait while deleting social media entry..." => "Si prega di attendere durante l&#39;eliminazione social media entry...",
 		"Social Media Entry deleted successfully." => "Social Media cancellato con successo.",
 		"Unable to delete social media entry:" => "Impossibile eliminare social media entry:",
 		// Add/Edit

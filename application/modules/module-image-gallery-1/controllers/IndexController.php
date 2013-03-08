@@ -37,7 +37,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 	}
 	public function bulkUploadAction() {
 		$request = $this->getRequest ();
-	
+		$active_lang_id = Standard_Functions::getCurrentUser ()->active_language_id;
 		if ($this->_request->isPost ()) {
 			$response = array ();
 			if ($request->getParam ( "upload", "" ) != "") {
@@ -165,7 +165,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 		if($models){
 			foreach($models as $key=>$records){
 				$detailMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryCategoryDetail1();
-				$detailModels = $detailMapper->fetchAll("module_image_gallery_category_1_id =" .$records->getModuleImageGalleryCategory1Id());
+				$detailModels = $detailMapper->fetchAll("language_id ='".$active_lang_id."' AND module_image_gallery_category_1_id =" .$records->getModuleImageGalleryCategory1Id());
 				foreach($detailModels as $categories){
 					$options[$categories->getModuleImageGalleryCategory1Id()] = $categories->getTitle();
 				}
@@ -347,8 +347,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 							$model->setLastUpdatedAt ( $date_time );
 							$model = $model->save ();
 							// update image details
-							$mapperDetails = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryDetail1();
-							$modelDetails = $mapperDetails->find($data["module_image_gallery_detail_1_id"]);
+							$modelDetails = new ModuleImageGallery1_Model_ModuleImageGalleryDetail1($allFormValues);
 							if (! is_dir ( $upload_dir )) {
 								mkdir ( $upload_dir, 755 );
 							}
@@ -397,58 +396,67 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 		$this->_helper->layout ()->disableLayout ();
 		$this->_helper->viewRenderer->setNoRender ();
 		$request = $this->getRequest ();
-		if (($module_image_gallery_1_id = $request->getParam ( "id", "" )) != "") {
-			$model = new ModuleImageGallery1_Model_ModuleImageGallery1 ();
-			if ($model) {
-				try {
-					$mapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGallery1 ();
-					$mapper->getDbTable ()->getAdapter ()->beginTransaction ();
-					$detailmapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryDetail1 ();
-					$data = $mapper->fetchAll ( "module_image_gallery_1_id = " . $module_image_gallery_1_id );
-					if ($data) {
-						foreach ( $data as $image ) {
-							$dataDetails = $detailmapper->fetchAll ( "module_image_gallery_1_id =" . $image->getModuleImageGallery1Id () );
-							foreach ( $dataDetails as $dataDetail ) {
-								$deletedRows = $dataDetail->delete ();
-							}
-							$image->delete ();
-						}
-					}
-					$customer_id = Standard_Functions::getCurrentUser ()->customer_id;
-					$customermoduleMapper = new Admin_Model_Mapper_CustomerModule ();
-					$customermodule = $customermoduleMapper->fetchAll ( "customer_id=" . $customer_id . " AND module_id=" . $this->_module_id );
-					if (is_array ( $customermodule )) {
-						$customermodule = $customermodule [0];
-						$customermodule->setIsPublish ( "NO" );
-						$customermodule->save ();
-					}
-					$mapper->getDbTable ()->getAdapter ()->commit ();
-					
-					$response = array (
-							"success" => array (
-									"deleted_rows" => $deletedRows 
-							) 
-					);
-				} catch ( Exception $e ) {
-					$mapper->getDbTable ()->getAdapter ()->rollBack ();
-					$response = array (
-							"errors" => array (
-									"message" => $e->getMessage () 
-							) 
-					);
-				}
-			} else {
-				$response = array (
-						"errors" => array (
-								"message" => "No user to delete." 
-						) 
-				);
-			}
-		} else {
-			$this->_redirect ( '/' );
-		}
-		$this->_helper->json ( $response );
-	}
+		if (($imageId = $request->getParam ( "id", "" )) != "") {
+    		$id = str_ireplace("image_id=", "", $imageId);
+    		$id = explode("&",$id);
+    		foreach($id  as $imageId)
+    		{
+	    		$image = new ModuleImageGallery1_Model_ModuleImageGallery1();
+	    		$image->populate($imageId);
+	    		if($image) {
+	    			$mapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGallery1();
+	    			$mapper->getDbTable()->getAdapter()->beginTransaction();
+	    			try {
+	    				$detailsMapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryDetail1();
+	    				$details = $detailsMapper->fetchAll("module_image_gallery_1_id=".$image->getModuleImageGallery1Id());
+	    				if(is_array($details)) {
+	    					foreach($details as $imageDetail) {
+	    						$imageDetail->delete();
+	    					}
+	    				}
+	    	
+	    				$deletedRows = $image->delete ();
+	    	
+	    				// set is pulish to false
+	    				$customerId = Standard_Functions::getCurrentUser ()->customer_id;
+	    				$customermoduleMapper = new Admin_Model_Mapper_CustomerModule();
+	    				$customermodule = $customermoduleMapper->fetchAll("customer_id=".$customerId." AND module_id=".$this->_module_id);
+	    				if(is_array($customermodule)) {
+	    					$customermodule = $customermodule[0];
+	    					$customermodule->setIsPublish("NO");
+	    					$customermodule->save();
+	    				}
+	    	
+	    				$mapper->getDbTable()->getAdapter()->commit();
+	    	
+	    				$response = array (
+	    						"success" => array (
+	    								"deleted_rows" => $deletedRows
+	    						)
+	    				);
+	    	
+	    			} catch (Exception $ex) {
+	    				$mapper->getDbTable()->getAdapter()->rollBack();
+	    				$response = array (
+	    						"errors" => array (
+	    								"message" => $ex->getMessage ()
+	    						)
+	    				);
+	    			}
+	    		} else {
+	    			$response = array (
+	    					"errors" => array (
+	    							"message" => "No image to delete."
+	    					)
+	    			);
+	    		}
+    		}
+    	} else {
+    		$this->_redirect ( '/' );
+    	}
+    	 
+    	$this->_helper->json ( $response );
+    }
 	public function gridAction() {
 		$this->_helper->layout ()->disableLayout ();
 		$this->_helper->viewRenderer->setNoRender ();
@@ -471,11 +479,20 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 				"migd.module_image_gallery_detail_1_id" => "module_image_gallery_detail_1_id",
 				"migd.title" => "title",
 				"migd.image_path" => "image_path" 
-		) );
+		) )->joinLeft ( array (
+				"migcd" => "module_image_gallery_category_detail_1" 
+		), 		"migcd.module_image_gallery_category_1_id = mig.module_image_gallery_category_1_id AND migcd.language_id = " . $active_lang_id, array (
+				"migcd.title" => "title", 
+		) )->joinLeft ( array (
+				"migc" => "module_image_gallery_category_1"
+		),		"migc.module_image_gallery_category_1_id = mig.module_image_gallery_category_1_id", array(
+				"migc.status" => "status"
+		));
+
 		if ($category_id != "") {
-			$select = $select->where ( "mig.module_image_gallery_category_1_id ='" . $category_id . "' AND mig.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
+			$select = $select->where ( "migc.status=1 AND mig.module_image_gallery_category_1_id ='" . $category_id . "' AND mig.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
 		} else {
-			$select = $select->where ( "	mig.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
+			$select = $select->where ( "migc.status=1 AND mig.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
 		}
 		$response = $mapper->getGridData ( array (
 				'column' => array (
@@ -489,7 +506,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 								) 
 						) 
 				) 
-		), "customer_id=" . Standard_Functions::getCurrentUser ()->customer_id, $select );
+		), null, $select);
 		$mapper = new Admin_Model_Mapper_CustomerLanguage ();
 		$select = $mapper->getDbTable ()->select ( false )->setIntegrityCheck ( false )->from ( array (
 				"l" => "language" 
@@ -502,17 +519,18 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 		), "l.language_id = cl.language_id", array (
 				"cl.customer_id" 
 		) )->where ( "cl.customer_id=" . Standard_Functions::getCurrentUser ()->customer_id );
+
 		$languages = $mapper->getDbTable ()->fetchAll ( $select )->toArray ();
 		$rows = $response ['aaData'];
 		foreach ( $rows as $rowId => $row ) {
 			$edit = array ();
-			if ($row [4] ["migd.module_image_gallery_detail_1_id"] == "") {
+			if ($row [6] ["migd.module_image_gallery_detail_1_id"] == "") {
 				$mapper = new ModuleImageGallery1_Model_Mapper_ModuleImageGalleryDetail1 ();
-				$details = $mapper->fetchAll ( "module_image_gallery_1_id=" . $row [4] ["mig.module_image_gallery_1_id"] . " AND language_id=" . $default_lang_id );
+				$details = $mapper->fetchAll ( "module_image_gallery_1_id='".$row [6] ["mig.module_image_gallery_1_id"]."' AND language_id=" . $default_lang_id );
 				if (is_array ( $details )) {
 					$details = $details [0];
-					$row [4] ["migd.title"] = $row [1] = $details->getTitle ();
-					$row [4] ["migd.image_path"] = $row [0] = $details->getImagePath ();
+					$row [6] ["migd.title"] = $row [1] = $details->getTitle ();
+					$row [6] ["migd.image_path"] = $row [0] = $details->getImagePath ();
 				}
 			}
 			$response ['aaData'] [$rowId] = $row;
@@ -522,7 +540,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 							"module" => "module-image-gallery-1",
 							"controller" => "index",
 							"action" => "edit",
-							"id" => $row [4] ["mig.module_image_gallery_1_id"],
+							"id" => $row [6] ["mig.module_image_gallery_1_id"],
 							"lang" => $lang ["l.language_id"] 
 					), "default", true );
 					$edit [] = '<a href="' . $editUrl . '"><img src="images/lang/' . $lang ["logo"] . '" alt="' . $lang ["l.title"] . '" /></a>';
@@ -532,23 +550,25 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 					"module" => "module-image-gallery-1",
 					"controller" => "index",
 					"action" => "delete",
-					"id" => $row [4] ["mig.module_image_gallery_1_id"] 
+					"id" => $row [6] ["mig.module_image_gallery_1_id"] 
 			), "default", true );
 			
 			$defaultEdit = '<div id="editLanguage">&nbsp;<div class="flag-list">' . implode ( "", $edit ) . '</div></div>';
 			$delete = '<a href="' . $deleteUrl . '" class="button-grid greay grid_delete" >'.$this->view->translate('Delete').'</a>';
 			$sap = '';
 			
-			$image_path = $row [4] ["migd.image_path"];
+			$image_path = $row [6] ["migd.image_path"];
 			$image_uri = "resource/module-image-gallery-1/thumb/" . $customer_id . "/";
 			$ext_image_path = array_pop ( explode ( ".", $image_path ) );
 			if ($image_path != "" && file_exists ( $image_uri . str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $image_path ) )) {
 				$image_path = str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $image_path );
 			}
-			$response ['aaData'] [$rowId] [1] = "<img src='" . $this->view->baseurl ( $image_uri . $image_path ) . "' />";
-			$response ['aaData'] [$rowId] [4] = $defaultEdit . $sap . $delete;
+
+			$response ['aaData'] [$rowId] [0] = "<input type='checkbox' name='image_id' class='image_id' value='".$row [6] ["mig.module_image_gallery_1_id"]."' />";
+			$response ['aaData'] [$rowId] [3] = "<img src='" . $this->view->baseurl ( $image_uri . $image_path ) . "' height=100 />";
+			$response ['aaData'] [$rowId] [6] = $defaultEdit . $sap . $delete;
 		}
-		$jsonGrid = Zend_Json::encode ( $response );
+		$jsonGrid = Zend_Json::encode ( $response );		
 		$this->_response->appendBody ( $jsonGrid );
 	}
 	private function moveUploadFile($source_dir, $dest_dir, $filename) {
@@ -568,7 +588,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 			if (copy ( $source_dir . $source_file_name, $dest_dir . $filename )) {
 			}
 			$thumbname = str_replace ( "." . $expension, "_thumb." . $expension, $filename );
-			$this->generateThumb ( $dest_dir . $filename, $dest_dir . $thumbname, 0, 100 );
+			$this->generateThumb ( $dest_dir . $filename, $dest_dir . $thumbname, 0, 200 );
 		} catch ( Exception $ex ) {
 		}
 		return $filename;
@@ -717,7 +737,7 @@ class ModuleImageGallery1_IndexController extends Zend_Controller_Action {
 			if ($image_path != "") {
 				$image_path = str_replace ( "." . $ext_image_path, "_thumb." . $ext_image_path, $image_path );
 			}
-			$response [$key] ['migd.image_path'] = "<img src='" . $this->view->baseurl ( $image_uri . $image_path ) . "' />";
+			$response [$key] ['migd.image_path'] = "<img src='" . $this->view->baseurl ( $image_uri . $image_path ) . "' height=100/>";
 		}
 		$this->view->currentCategory = $category_id;
 		$this->view->data = $response;

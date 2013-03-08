@@ -65,7 +65,7 @@ tinyMCE.init({
 	mode : "exact",
 	elements : "ta1,ta2",
 	theme : "advanced",
-	plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave,visualblocks",
+	plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,visualblocks",
 
 	// Theme options
 	theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect,|,undo,redo,code",
@@ -182,25 +182,25 @@ tinyMCE.init({
 		        	<?php echo $form->notes->renderViewHelper()?>
 				</td>
 			</tr>
-			<tr>
-		    	<td><?php echo $form->recurrence->renderLabel() ?></td>
+			<!--<tr>
+		    	<td><?php //echo $form->recurrence->renderLabel() ?></td>
 		        <td>
-		        	<?php echo $form->recurrence->renderViewHelper()?>
+		        	<?php //echo $form->recurrence->renderViewHelper()?>
 				</td>
 			</tr>
 			<tr>
-		    	<td><?php echo $form->stop_by->renderLabel() ?></td>
+		    	<td><?php //echo $form->stop_by->renderLabel() ?></td>
 		        <td>
-		        	<?php echo $form->stop_by->renderViewHelper()?>
-		        	<?php echo $form->stop_at->renderViewHelper()?>
+		        	<?php //echo $form->stop_by->renderViewHelper()?>
+		        	<?php //echo $form->stop_at->renderViewHelper()?>
 		        	<div id="divOcurrence" style="display:inline;">
-		        		<input id="stop_at_ocurrence" name="stop_at_ocurrence" value="1" />
+		        		<input id="stop_at_ocurrence" name="stop_at_occurence" value="1" />
 		        	</div>
 		        	<div id="divDate" style="display: none;">
 		        		<input id="stop_at_date" name="stop_at_date" value=""  />
 		        	</div>
 				</td>
-			</tr>
+			</tr> -->
 			<tr>
 		    	<td><?php echo $form->status->renderLabel() ?></td>
 		        <td>
@@ -307,29 +307,35 @@ $(document).ready(function() {
 		timeFormat: 'hh:mm',
 		firstDay:1
 	});
-	$('#stop_at_date').datetimepicker({ 
-		showOn: "both",
-		buttonImage: "<?php echo $this->baseUrl("images/calander.png");?>",
-		buttonImageOnly: true,
-		dateFormat: 'dd/mm/yy', 
-		showSecond: false,
-		timeFormat: 'hh:mm',
-		firstDay:1
-	});
-	$("#stop_by").on("change",function(){
-		if($(this).attr("value")==1) {
-			$( "#divDate" ).css("display","none");
-			$( "#divOcurrence" ).css("display","inline");
-			$( "#stop_at" ).attr("value",$("#stop_at_ocurrence").attr("value"));
-		} else {
-			$( "#divOcurrence" ).css("display","none");
-			$( "#divDate" ).css("display","inline");
-			$( "#stop_at" ).attr("value",$("#stop_at_date").attr("value"));
-		}
-	});
-	$( "#stop_at_date, #stop_at_ocurrence" ).on("change",function(){
-		$( "#stop_at" ).attr("value",$(this).attr("value"));
-	});
+	// $('#stop_at_date').datetimepicker({ 
+	// 	showOn: "both",
+	// 	buttonImage: "<?php echo $this->baseUrl("images/calander.png");?>",
+	// 	buttonImageOnly: true,
+	// 	dateFormat: 'dd/mm/yy', 
+	// 	showSecond: false,
+	// 	timeFormat: 'hh:mm',
+	// 	firstDay:1
+	// });
+
+	// $("#stop_by").on("change",function(){
+	// 	if($(this).attr("value")==1) {
+	// 		$( "#divDate" ).css("display","none");
+	// 		$( "#divOcurrence" ).css("display","inline");
+	// 		$( "#stop_at" ).attr("value",$("#stop_at_ocurrence").attr("value"));
+	// 	} else {
+	// 		$( "#divOcurrence" ).css("display","none");
+	// 		$( "#divDate" ).css("display","inline");
+	// 		$( "#stop_at" ).attr("value",$("#stop_at_date").attr("value"));
+	// 	}
+	// });
+	// $( "#stop_at_date, #stop_at_ocurrence" ).on("change",function(){
+	// 	$( "#stop_at" ).attr("value",$(this).attr("value"));
+	// });
+	// if($("#stop_by").val() == 1){
+	// 	$("#stop_at_ocurrence").attr("value",$("#stop_at").val());
+	// }else{
+	// 	$("#stop_at_date").attr("value",$("#stop_at").val());
+	// }
 	$("#frmAddEditEvent").validator().submit(function(e){
 		var form = $(this);
 		if(!e.isDefaultPrevented()){
@@ -696,14 +702,15 @@ $(document).ready(function() {
 			longitudeValue: obj.longitude,
 			id: window.rowNumber
 			}
-			console.log(obj.country);
 		    var output = Mustache.render(tmpTemplate,dbData);
 			$('#locationContainer').append(output);
 			$("#locationContainer").find('*[id="country"]:last option[value="'+obj.country+'"]').attr("selected","selected");
 			window.rowNumber++;
 		}	
 	}
+	$("#stop_by").trigger("change");
 });
+
 // -->
 function selectAll() {
 	if($("#chkSelectAll").attr("checked") == "checked") {

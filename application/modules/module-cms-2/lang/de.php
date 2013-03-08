@@ -10,7 +10,7 @@ return array (
 		'Page deleted successfully.' => 'Seiten erfolgreich gel&#246;scht.',
 		'Unable to delete page:' => 'Kann Seiten l&#246;schen:',
 		// add-edit
-		'Select Category:' => 'Kategorie auswählen:',
+		'Select Category:' => 'Kategorie ausw&#228;hlen:',
 		'Page Title:' => 'Seiten Titel:',
 		'Page Content:' => 'Seiten Content:',
 		'Add Page' => 'F&#252;gen Seiten',

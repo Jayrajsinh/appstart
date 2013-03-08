@@ -39,7 +39,7 @@ $image_uri = $this->baseUrl("resource/home-wallpaper/wallpapers/C" . Standard_Fu
 						$resolution_id = $homeWallpaperImage->getResolutionId();
 						$img_uri = "resource/home-wallpaper/wallpapers/C" . Standard_Functions::getCurrentUser ()->customer_id . "/R".$resolution_id;
 						$filename = $homeWallpaperImage->get("image_path");
-						if(file_exists(Standard_Functions::getResourcePath () . "home-wallpaper/wallpapers/C" . Standard_Functions::getCurrentUser ()->customer_id ."/R".$resolution_id."/".$filename)) {
+						if(file_exists(Standard_Functions::getResourcePath () . "home-wallpaper/wallpapers/C" . Standard_Functions::getCurrentUser ()->customer_id ."/R".$resolution_id."/".$filename) && $filename != "") {
 							$ext = array_pop(explode(".",$filename));
 							$filename = str_replace(".".$ext, "_thumb.".$ext, $filename);
 					

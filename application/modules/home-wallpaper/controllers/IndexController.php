@@ -155,8 +155,11 @@ class HomeWallpaper_IndexController extends Zend_Controller_Action {
 					
 					$ext = array_pop(explode(".",$filename));
 					$filename = str_replace(".".$ext, "_thumb.".$ext, $filename);
-					
-					$image_path[$resolution_id] = $this->view->baseUrl($img_uri ."/" . $filename);
+					if($filename != ""){
+						$image_path[$resolution_id] = $this->view->baseUrl($img_uri ."/" . $filename);
+					}else{
+						$image_path[$resolution_id] = "";
+					}
 				}
 				$this->view->image_path = $image_path;
 				
@@ -278,13 +281,16 @@ class HomeWallpaper_IndexController extends Zend_Controller_Action {
 						foreach($homeWallpaperImageModels as $homeWallpaperImage) {
 							$resolution_id = $homeWallpaperImage->getResolutionId();
 							$filename = $request->getParam ( "image_".$resolution_id."_path" );
-							if( $filename != "" ) {
+							if( $filename != "" && $filename != "deleted" ) {
 								// Move Uploaded Files
 								$source_dir = Standard_Functions::getResourcePath () . "home-wallpaper/tmp/images/R".$resolution_id."/";
 								$upload_dir = Standard_Functions::getResourcePath () . "home-wallpaper/wallpapers/C" . $customerId."/R".$resolution_id."/";
 								$this->moveUploadFile ( $source_dir , $upload_dir , $filename );
 								
 								$homeWallpaperImage->setImagePath($filename);
+								$homeWallpaperImage->save();
+							}elseif($filename == "deleted"){
+								$homeWallpaperImage->setImagePath("");
 								$homeWallpaperImage->save();
 							}
 						}
@@ -334,7 +340,6 @@ class HomeWallpaper_IndexController extends Zend_Controller_Action {
 			if (! is_dir ( $dest_dir )) {
 				mkdir ( $dest_dir, 755 );
 			}
-			
 			while(!file_exists($source_dir . $source_file_name)) {}
 			
 			if (copy ( $source_dir . $source_file_name, $dest_dir . $filename )) {
@@ -362,7 +367,6 @@ class HomeWallpaper_IndexController extends Zend_Controller_Action {
 				$source_image = imagecreatefrompng ( $src );
 				break;
 		}
-		
 		$width = imagesx ( $source_image );
 		$height = imagesy ( $source_image );
 		
@@ -579,7 +583,7 @@ class HomeWallpaper_IndexController extends Zend_Controller_Action {
 				$resolution_id = $homeWallpaperImage->getResolutionId();
 				$img_uri = "resource/home-wallpaper/wallpapers/C" . Standard_Functions::getCurrentUser ()->customer_id . "/R".$resolution_id."/";
 				$filename = $homeWallpaperImage->get("image_path");
-				if(file_exists(Standard_Functions::getResourcePath () . "home-wallpaper/wallpapers/C" . Standard_Functions::getCurrentUser ()->customer_id ."/R".$resolution_id."/".$filename)) {
+				if(file_exists(Standard_Functions::getResourcePath () . "home-wallpaper/wallpapers/C" . Standard_Functions::getCurrentUser ()->customer_id ."/R".$resolution_id."/".$filename) && $filename != "") {
 					$ext = array_pop(explode(".",$filename));
 					$filename = str_replace(".".$ext, "_thumb.".$ext, $filename);
 

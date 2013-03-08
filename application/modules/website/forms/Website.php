@@ -82,6 +82,14 @@ class Website_Form_Website extends Standard_Form {
 		) );
 		$this->addElement ( $description );
 		
+		//Website Thumb 
+		$thumb = $this->createElement('file','website_logo');
+		$thumb->setLabel(false)
+			 ->setDestination(Standard_Functions::getResourcePath(). "website/logos/")
+			 ->addValidator('Size', false, 10485760)
+			 ->addValidator('Extension', false, 'jpeg,jpg,png,gif');
+		$this->addElement($thumb);
+
 		$this->addElement ( 'checkbox', 'status', array (
 				'label' => 'Active',
 				'value' => '1' 

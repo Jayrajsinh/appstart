@@ -13,6 +13,8 @@ class Default_RestController extends Standard_Rest_Controller {
 				$this->_authenticate();
 			} else if($service == "sync") {
 				$this->_sync();
+			}else if($service == "gcm") {
+				$this->_gcm();
 			} else {
 				$this->_sendError("Invalid service");
 			}
@@ -111,14 +113,18 @@ class Default_RestController extends Standard_Rest_Controller {
 								if($customerModuleDetails) {
 									foreach($customerModuleDetails as $moduleDetail) {
 										$tempDetail = $moduleDetail->toArray();
-										if($resolution_id > 0 && $tempDetail["background_image"] > 0){
+										if($resolution_id > 0 && is_numeric($tempDetail["background_image"])){
 											$homeWallpaperImageMapper = new HomeWallpaper_Model_Mapper_HomeWallpaperImage();
 											$homeWallpaperImageModels = $homeWallpaperImageMapper->fetchAll("home_wallpaper_detail_id=".$tempDetail["background_image"]." AND resolution_id=".$resolution_id);
 											if($homeWallpaperImageModels){
-												$tempDetail["background_image"] = "resource/home-wallpaper/wallpapers/C".$customer_id."/R".$resolution_id."/".$homeWallpaperImageModels[0]->get("image_path");
+												if($homeWallpaperImageModels[0]->get("image_path") != ""){
+													$tempDetail["background_image"] = "resource/home-wallpaper/wallpapers/C".$customer_id."/R".$resolution_id."/".$homeWallpaperImageModels[0]->get("image_path");
+												}else{
+													$tempDetail["background_image"] = "";	
+												}
+											}else{
+												$tempDetail["background_image"] = "";	
 											}
-										} else {
-											$tempDetail["background_image"] = "";
 										}
 										$details[] = $tempDetail;
 									}
@@ -151,6 +157,14 @@ class Default_RestController extends Standard_Rest_Controller {
 							}
 						}
 						
+						$allLanguages = new Admin_Model_Mapper_Language();
+						$allLanguages = $allLanguages->fetchAll();
+						if($allLanguages){
+							foreach ($allLanguages as $language) {
+								$response["tbl_language"][] = $language->toArray();
+							}
+						}
+
 						$data["status"] = "success";
 						$data["data"] = $response;
 						$this->_sendData($data);
@@ -169,4 +183,29 @@ class Default_RestController extends Standard_Rest_Controller {
 		// TODO Auto-generated method stub
 	}
 
+	protected function _gcm(){
+		$customer_id = $this->_request->getParam("customer_id",null);
+		$device_id = $this->_request->getParam("device_id",null);
+		$reg_id = $this->_request->getParam("reg_id",null);
+		if($customer_id===null) {
+			$this->_sendError("Invalid request");
+		}else{
+			try{
+				if($device_id != "" && $customer_id != ""){
+					$clouduserModel = new Default_Model_CloudUser();
+					$clouduserMapper = new Default_Model_Mapper_CloudUser();
+					$clouduserExists = $clouduserMapper->getDbTable()->fetchAll("device_id =".$device_id)->toArray();
+					if($clouduserExists){
+						$clouduserModel->setCloudUserId($clouduserExists[0]["cloud_user_id"]);
+					}
+					$clouduserModel->setCustomerId($customer_id);
+					$clouduserModel->setDeviceId($device_id);
+					$clouduserModel->setRegId($reg_id);
+					$clouduserModel->save();
+				}
+			}catch(Exception $ex){
+				$this->_sendError($ex->getMessage());
+			}
+		}
+	}
 }
